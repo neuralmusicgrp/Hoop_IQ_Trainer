@@ -39,3 +39,9 @@ Next planned milestones:
 - v0.4.0 Supabase team dashboard planning
 - v0.5.0 Player/team accounts
 - v0.6.0 Coach dashboard
+
+## Live App
+
+Hoop IQ Trainer is live here:
+
+https://neuralmusicgrp.github.io/Hoop_IQ_Trainer/
