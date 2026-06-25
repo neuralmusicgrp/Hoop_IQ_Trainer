@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hoop IQ Trainer v2</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --panel: #191d27;
+      --panel2: #242a38;
+      --text: #f8fafc;
+      --muted: #b7c0cf;
+      --soft: rgba(255,255,255,.07);
+      --border: rgba(255,255,255,.13);
+      --accent: #ff9f1c;
+      --accent2: #2ec4b6;
+      --green: #4ade80;
+      --red: #fb7185;
+      --blue: #60a5fa;
+      --shadow: 0 20px 60px rgba(0,0,0,.38);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(255,159,28,.22), transparent 34%),
+        radial-gradient(circle at 100% 5%, rgba(96,165,250,.18), transparent 28%),
+        radial-gradient(circle at 100% 100%, rgba(46,196,182,.18), transparent 32%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      width: min(1080px, 100%);
+      margin: 0 auto;
+      padding: 16px 16px 100px;
+    }
+
+    header {
+      padding: 14px 0 8px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      gap: 13px;
+      align-items: center;
+    }
+
+    .logo {
+      width: 56px;
+      height: 56px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--accent), #ffd166);
+      color: #111;
+      font-size: 30px;
+      font-weight: 1000;
+      box-shadow: 0 12px 30px rgba(255,159,28,.26);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 8vw, 4.25rem);
+      line-height: .88;
+      letter-spacing: -.07em;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: clamp(1.35rem, 5vw, 2rem);
+      letter-spacing: -.035em;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 1.05rem;
+    }
+
+    p { line-height: 1.45; }
+
+    .subtitle {
+      margin: 4px 0 0;
+      color: var(--muted);
+      line-height: 1.42;
+      max-width: 760px;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.035));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      margin: 14px 0;
+      backdrop-filter: blur(10px);
+    }
+
+    .screen {
+      display: none;
+      animation: rise .18s ease-out;
+    }
+
+    .screen.active { display: block; }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(7px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .stat {
+      border: 1px solid var(--border);
+      background: var(--soft);
+      border-radius: 17px;
+      padding: 12px;
+      min-height: 75px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.35rem;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: .78rem;
+      line-height: 1.15;
+    }
+
+    .grid { display: grid; gap: 12px; }
+    .home-grid { grid-template-columns: repeat(2, 1fr); }
+    .three-grid { grid-template-columns: repeat(3, 1fr); }
+
+    button, .button {
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      color: var(--text);
+      border-radius: 18px;
+      padding: 15px;
+      min-height: 58px;
+      font-size: 1rem;
+      font-weight: 850;
+      cursor: pointer;
+      text-align: left;
+      touch-action: manipulation;
+      transition: transform .1s ease, background .1s ease, border-color .1s ease;
+    }
+
+    button:active { transform: scale(.985); }
+    button.primary {
+      background: linear-gradient(135deg, var(--accent), #ffd166);
+      color: #171717;
+      border: 0;
+    }
+    button.secondary {
+      background: linear-gradient(135deg, var(--accent2), #7dd3fc);
+      color: #061313;
+      border: 0;
+    }
+    button.blue {
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      color: #06101d;
+      border: 0;
+    }
+    button.ghost { background: rgba(255,255,255,.055); color: var(--muted); }
+    button.danger { background: rgba(251,113,133,.16); border-color: rgba(251,113,133,.48); }
+    button.success { background: rgba(74,222,128,.16); border-color: rgba(74,222,128,.48); }
+    button.full { width: 100%; text-align: center; }
+    button.option { width: 100%; text-align: left; line-height: 1.35; }
+    button.correct { background: rgba(74,222,128,.22); border-color: rgba(74,222,128,.85); }
+    button.wrong { background: rgba(251,113,133,.22); border-color: rgba(251,113,133,.85); }
+
+    .tiny { color: var(--muted); font-size: .84rem; line-height: 1.35; }
+    .micro { color: var(--muted); font-size: .74rem; line-height: 1.25; }
+    .muted { color: var(--muted); }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .row > button, .row > .button, .row > select, .row > input {
+      flex: 1 1 160px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 7px 11px;
+      border: 1px solid var(--border);
+      background: var(--soft);
+      color: var(--muted);
+      font-size: .78rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .pill.hot { color: #111; background: var(--accent); border-color: transparent; }
+    .pill.cool { color: #061313; background: var(--accent2); border-color: transparent; }
+
+    .mode-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .filters button {
+      min-height: 44px;
+      padding: 10px;
+      border-radius: 14px;
+      font-size: .78rem;
+      text-align: center;
+    }
+
+    .filters button.active {
+      background: rgba(255,159,28,.21);
+      border-color: rgba(255,159,28,.7);
+      color: #fff;
+    }
+
+    .term-card {
+      min-height: 355px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .big-term {
+      font-size: clamp(2.7rem, 14vw, 6.5rem);
+      line-height: .86;
+      margin: 10px 0;
+      letter-spacing: -.075em;
+    }
+
+    .category {
+      color: var(--accent);
+      font-weight: 1000;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-size: .78rem;
+    }
+
+    .definition {
+      font-size: 1.08rem;
+      line-height: 1.45;
+      margin: 10px 0;
+    }
+
+    .cue, .coach-note, .mistake {
+      padding: 11px 12px;
+      border-radius: 12px;
+      margin-top: 10px;
+      line-height: 1.4;
+      color: var(--muted);
+    }
+
+    .cue { border-left: 4px solid var(--accent2); background: rgba(46,196,182,.09); }
+    .coach-note { border-left: 4px solid var(--accent); background: rgba(255,159,28,.09); }
+    .mistake { border-left: 4px solid var(--red); background: rgba(251,113,133,.08); }
+
+    .bar {
+      height: 10px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255,255,255,.08);
+      margin: 10px 0 14px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width .18s ease;
+    }
+
+    .question {
+      font-size: clamp(1.28rem, 5vw, 2.2rem);
+      font-weight: 1000;
+      line-height: 1.12;
+      margin: 12px 0 18px;
+      white-space: pre-line;
+      letter-spacing: -.03em;
+    }
+
+    .feedback {
+      display: none;
+      border: 1px solid var(--border);
+      background: var(--soft);
+      padding: 14px;
+      border-radius: 16px;
+      line-height: 1.45;
+      margin-top: 14px;
+    }
+    .feedback.show { display: block; }
+    .feedback.good { border-color: rgba(74,222,128,.62); }
+    .feedback.bad { border-color: rgba(251,113,133,.62); }
+
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.07);
+      color: var(--text);
+      border-radius: 16px;
+      padding: 13px;
+      font-size: 1rem;
+      outline: none;
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+
+    label {
+      display: block;
+      color: var(--muted);
+      font-weight: 850;
+      font-size: .82rem;
+      margin: 12px 0 6px;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: rgba(255,159,28,.85);
+    }
+
+    option { color: #111; }
+
+    details {
+      border: 1px solid var(--border);
+      background: var(--soft);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 16px;
+      font-weight: 1000;
+      color: var(--accent);
+    }
+    summary::-webkit-details-marker { display: none; }
+
+    .term-row {
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .term-row strong { display: block; margin-bottom: 5px; }
+
+    .list { display: grid; gap: 10px; }
+
+    .missed-item, .progress-card, .edit-item {
+      border: 1px solid var(--border);
+      background: var(--soft);
+      border-radius: 17px;
+      padding: 14px;
+    }
+
+    .score-big {
+      text-align: center;
+      font-size: clamp(3.2rem, 16vw, 7rem);
+      line-height: .85;
+      color: var(--accent);
+      font-weight: 1000;
+      letter-spacing: -.08em;
+      margin: 18px 0;
+    }
+
+    .category-bars {
+      display: grid;
+      gap: 12px;
+    }
+
+    .catbar {
+      border: 1px solid var(--border);
+      background: var(--soft);
+      border-radius: 16px;
+      padding: 12px;
+    }
+
+    .catbar-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-weight: 850;
+      font-size: .9rem;
+    }
+
+    .footer-nav {
+      position: fixed;
+      z-index: 20;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15,17,23,.9);
+      backdrop-filter: blur(14px);
+      border-top: 1px solid var(--border);
+      padding: 9px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 7px;
+    }
+
+    .footer-nav button {
+      min-height: 49px;
+      padding: 8px 5px;
+      border-radius: 14px;
+      font-size: .72rem;
+      text-align: center;
+    }
+
+    .file-input {
+      padding: 13px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 760px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .home-grid, .three-grid { grid-template-columns: 1fr; }
+      .filters { grid-template-columns: repeat(2, 1fr); }
+      .filters button:first-child { grid-column: span 2; }
+      .panel { padding: 14px; }
+      button { min-height: 62px; }
+      .footer-nav { grid-template-columns: repeat(5, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div class="brand">
+        <div class="logo">🏀</div>
+        <div>
+          <h1>Hoop IQ Trainer <span style="color:var(--accent);">v2</span></h1>
+          <p class="subtitle">A mobile basketball language trainer with coach edits, category workouts, daily reps, progress tracking, and import/export.</p>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><strong id="statBest">0%</strong><span>Best Score</span></div>
+        <div class="stat"><strong id="statSessions">0</strong><span>Quiz Sessions</span></div>
+        <div class="stat"><strong id="statStudied">0</strong><span>Cards Studied</span></div>
+        <div class="stat"><strong id="statDaily">0</strong><span>Daily Workouts</span></div>
+      </div>
+    </header>
+
+    <section id="home" class="screen active">
+      <div class="panel">
+        <div class="mode-title">
+          <h2>Choose Your Workout</h2>
+          <span class="pill hot" id="termCount">31 terms</span>
+        </div>
+
+        <div class="grid home-grid">
+          <button class="primary" onclick="chooseStudy()">Study Flashcards<br><span class="micro">Pick all terms or one category.</span></button>
+          <button class="secondary" onclick="chooseQuiz()">Take Quiz<br><span class="micro">Mixed, category, or missed-term training.</span></button>
+          <button class="blue" onclick="startDailyWorkout()">Daily 10<br><span class="micro">A quick workout weighted toward missed terms.</span></button>
+          <button onclick="showScreen('dashboard')">Progress Dashboard<br><span class="micro">See strengths, misses, and category accuracy.</span></button>
+          <button onclick="showScreen('library')">Term Library<br><span class="micro">Browse the full coach homework list.</span></button>
+          <button onclick="showScreen('edit')">Coach Edit Mode<br><span class="micro">Update definitions when coach replies.</span></button>
+          <button onclick="showScreen('data')">Import / Export<br><span class="micro">Save or load updated terminology JSON.</span></button>
+          <button class="ghost" onclick="showScreen('settings')">Player / Settings<br><span class="micro">Name, reset progress, and app notes.</span></button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Training Focus</h2>
+        <p class="tiny">Start with flashcards. Then take a mixed quiz. Missed terms become your weakness workout. When coach sends his exact meanings, update them in Coach Edit Mode.</p>
+      </div>
+    </section>
+
+    <section id="picker" class="screen">
+      <div class="panel">
+        <div class="mode-title">
+          <h2 id="pickerTitle">Choose Category</h2>
+          <span class="pill" id="pickerMode">Study</span>
+        </div>
+        <p class="tiny" id="pickerHelp">Choose all terms or focus on one category.</p>
+        <div class="grid" id="pickerButtons"></div>
+      </div>
+    </section>
+
+    <section id="flashcards" class="screen">
+      <div class="panel term-card">
+        <div>
+          <div class="mode-title">
+            <h2>Flashcards</h2>
+            <span class="pill" id="cardProgress">1 / 31</span>
+          </div>
+          <div class="bar"><div class="bar-fill" id="cardBar"></div></div>
+          <div class="category" id="cardCategory"></div>
+          <div class="big-term" id="cardTerm"></div>
+          <div id="cardDetails" style="display:none;">
+            <p class="definition" id="cardDefinition"></p>
+            <div class="coach-note"><strong>Coach Definition:</strong> <span id="cardCoach"></span></div>
+            <div class="cue"><strong>Player Cue:</strong> <span id="cardCue"></span></div>
+            <div class="mistake"><strong>Common Mistake:</strong> <span id="cardMistake"></span></div>
+            <p><span class="pill" id="cardDifficulty"></span></p>
+          </div>
+        </div>
+        <div class="row">
+          <button class="primary" id="revealBtn" onclick="revealCard()">Show Meaning</button>
+          <button onclick="nextCard()">Next Card</button>
+          <button class="ghost" onclick="showScreen('home')">Home</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="quiz" class="screen">
+      <div class="panel">
+        <div class="mode-title">
+          <h2 id="quizModeTitle">Quiz</h2>
+          <span class="pill" id="quizProgress">1 / 10</span>
+        </div>
+        <div class="bar"><div id="quizBar" class="bar-fill"></div></div>
+        <div class="row">
+          <span class="pill" id="quizScore">Score: 0</span>
+          <span class="pill" id="quizCategoryPill">All Terms</span>
+        </div>
+        <div class="question" id="questionText"></div>
+        <div class="grid" id="answers"></div>
+        <div class="feedback" id="feedback"></div>
+        <div class="row" style="margin-top:14px;">
+          <button id="nextQuestionBtn" class="primary" onclick="nextQuestion()" style="display:none;">Next Question</button>
+          <button class="ghost" onclick="finishQuiz()">End Quiz</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="results" class="screen">
+      <div class="panel">
+        <h2 style="text-align:center;">Workout Complete</h2>
+        <div class="score-big" id="finalScore">0%</div>
+        <p style="text-align:center;" id="resultMessage"></p>
+        <div id="roundMissedPreview" class="list"></div>
+        <div class="row" style="margin-top:16px;">
+          <button class="primary" onclick="rerunLastQuiz()">Run It Back</button>
+          <button onclick="startMissedQuiz()">Train Missed Terms</button>
+          <button class="ghost" onclick="showScreen('dashboard')">Dashboard</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="dashboard" class="screen">
+      <div class="panel">
+        <div class="mode-title">
+          <h2>Progress Dashboard</h2>
+          <span class="pill cool" id="dashPlayer">Player</span>
+        </div>
+
+        <div class="grid three-grid">
+          <div class="progress-card"><strong id="dashBest">0%</strong><p class="tiny">Best quiz score</p></div>
+          <div class="progress-card"><strong id="dashSessions">0</strong><p class="tiny">Total quiz sessions</p></div>
+          <div class="progress-card"><strong id="dashDaily">0</strong><p class="tiny">Daily workouts completed</p></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Category Accuracy</h2>
+        <div id="categoryAccuracy" class="category-bars"></div>
+      </div>
+
+      <div class="panel">
+        <div class="mode-title">
+          <h2>Missed Terms</h2>
+          <span class="pill" id="dashMissedCount">0 missed</span>
+        </div>
+        <div id="dashMissedList" class="list"></div>
+        <div class="row" style="margin-top:14px;">
+          <button class="primary" onclick="startMissedQuiz()">Quiz Missed Terms</button>
+          <button class="ghost" onclick="clearMissed()">Clear Missed</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="library" class="screen">
+      <div class="panel">
+        <div class="mode-title">
+          <h2>Term Library</h2>
+          <span class="pill" id="libraryCount">Coach Homework</span>
+        </div>
+        <div class="filters" id="libraryFilters"></div>
+      </div>
+      <div class="panel">
+        <div id="libraryList" class="list"></div>
+      </div>
+    </section>
+
+    <section id="edit" class="screen">
+      <div class="panel">
+        <div class="mode-title">
+          <h2>Coach Edit Mode</h2>
+          <span class="pill">Saved on this device</span>
+        </div>
+        <p class="tiny">When coach replies, update the term here. The coach definition is the truth for this team. Your edits save automatically when you tap “Save Term.”</p>
+        <label for="editSelect">Choose Term</label>
+        <select id="editSelect" onchange="loadEditForm()"></select>
+
+        <label>Term</label>
+        <input id="editTerm" />
+
+        <label>Category</label>
+        <select id="editCategory">
+          <option>Action</option>
+          <option>Screen</option>
+          <option>Screener Post-Screen Action</option>
+          <option>Cut</option>
+        </select>
+
+        <label>General Definition</label>
+        <textarea id="editDefinition"></textarea>
+
+        <label>Coach Definition</label>
+        <textarea id="editCoach"></textarea>
+
+        <label>Player Cue</label>
+        <textarea id="editCue"></textarea>
+
+        <label>Common Mistake</label>
+        <textarea id="editMistake"></textarea>
+
+        <label>Difficulty</label>
+        <select id="editDifficulty">
+          <option>Beginner</option>
+          <option>Intermediate</option>
+          <option>Advanced</option>
+          <option>Coach Specific</option>
+        </select>
+
+        <div class="row" style="margin-top:14px;">
+          <button class="primary" onclick="saveEditedTerm()">Save Term</button>
+          <button onclick="duplicateTerm()">Duplicate as New Term</button>
+          <button class="danger" onclick="resetTermsConfirm()">Reset All Terms to Default</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="data" class="screen">
+      <div class="panel">
+        <div class="mode-title">
+          <h2>Import / Export</h2>
+          <span class="pill">JSON</span>
+        </div>
+        <p class="tiny">Export saves your current terminology, including coach edits. Import lets you load a newer team version.</p>
+        <div class="row">
+          <button class="primary" onclick="exportTerms()">Export Current Terms</button>
+          <button class="ghost" onclick="copyTermsToClipboard()">Copy JSON</button>
+        </div>
+
+        <label for="importFile">Import JSON File</label>
+        <input id="importFile" class="file-input" type="file" accept="application/json,.json" onchange="importTermsFile(event)" />
+
+        <label for="importText">Or Paste JSON Here</label>
+        <textarea id="importText" placeholder='Paste exported term JSON here...'></textarea>
+        <div class="row">
+          <button class="secondary" onclick="importTermsText()">Import Pasted JSON</button>
+          <button class="danger" onclick="resetTermsConfirm()">Reset to Default Terms</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="settings" class="screen">
+      <div class="panel">
+        <h2>Player / Settings</h2>
+        <label>Player Name</label>
+        <input id="playerName" placeholder="Enter player name" />
+        <div class="row">
+          <button class="primary" onclick="savePlayerName()">Save Player Name</button>
+          <button class="danger" onclick="resetProgressConfirm()">Reset Progress Only</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>App Notes</h2>
+        <p class="tiny">This app works offline. It stores progress and coach edits in this browser only using localStorage. Export JSON before moving to another phone or computer.</p>
+      </div>
+    </section>
+  </main>
+
+  <nav class="footer-nav">
+    <button onclick="showScreen('home')">Home</button>
+    <button onclick="chooseStudy()">Study</button>
+    <button onclick="chooseQuiz()">Quiz</button>
+    <button onclick="showScreen('dashboard')">Stats</button>
+    <button onclick="showScreen('edit')">Edit</button>
+  </nav>
+
+  <script>
+    const DEFAULT_TERMS = [
+      { id:"pistol", term:"Pistol", category:"Action", definition:"A quick side action involving a guard and wing, often using a pass, dribble handoff, or ball screen.", coachDefinition:"Add coach's exact version of Pistol here.", cue:"Side action: pass, handoff, attack.", commonMistake:"Standing still after the first pass instead of flowing into the next action.", difficulty:"Intermediate" },
+      { id:"split", term:"Split", category:"Action", definition:"Two players cut or screen off each other after a pass, often creating confusion for defenders.", coachDefinition:"Add coach's exact version of Split here.", cue:"Pass, screen or cut, then separate.", commonMistake:"Cutting too slowly or not reading the defender.", difficulty:"Intermediate" },
+      { id:"zoom", term:"Zoom", category:"Action", definition:"An action usually involving an off-ball screen into a dribble handoff.", coachDefinition:"Add coach's exact version of Zoom here.", cue:"Screen into handoff.", commonMistake:"Looping too wide instead of cutting tight off the screen and handoff.", difficulty:"Intermediate" },
+      { id:"spain", term:"Spain", category:"Action", definition:"A ball screen action with a back screen set on the screener's defender.", coachDefinition:"Add coach's exact version of Spain here.", cue:"Ball screen plus back screen.", commonMistake:"The back screener arrives late or the roller does not roll with force.", difficulty:"Advanced" },
+      { id:"flex", term:"Flex", category:"Action", definition:"A screening and cutting action often involving a baseline cut and a down screen.", coachDefinition:"Add coach's exact version of Flex here.", cue:"Screen, cut baseline, replace.", commonMistake:"The cutter drifts instead of using the screen shoulder-to-shoulder.", difficulty:"Intermediate" },
+      { id:"circle-motion", term:"Circle Motion", category:"Action", definition:"A motion concept where players rotate to maintain spacing, movement, and passing angles.", coachDefinition:"Add coach's exact version of Circle Motion here.", cue:"Move, replace, keep spacing.", commonMistake:"Watching the ball and forgetting to replace open spots.", difficulty:"Intermediate" },
+      { id:"euro-ball-screen-action", term:"Euro Ball Screen Action", category:"Action", definition:"A ball screen concept using spacing, movement, and reads often seen in European-style offenses.", coachDefinition:"Add coach's exact version of Euro Ball Screen Action here.", cue:"Screen, space, read.", commonMistake:"Forcing the first option instead of reading the defense.", difficulty:"Advanced" },
+      { id:"bulldog-motion", term:"Bulldog Motion", category:"Action", definition:"A team-specific motion action. The exact meaning should come from your coach's system.", coachDefinition:"Add coach's exact version of Bulldog Motion here.", cue:"Listen for coach's team cue.", commonMistake:"Guessing the action instead of learning the team-specific rule.", difficulty:"Coach Specific" },
+      { id:"slash", term:"Slash", category:"Action", definition:"An attacking cut or drive through open space, often toward the rim.", coachDefinition:"Add coach's exact version of Slash here.", cue:"Cut hard through open space.", commonMistake:"Jogging through the cut instead of attacking the open lane.", difficulty:"Beginner" },
+
+      { id:"step-up", term:"Step Up", category:"Screen", definition:"A ball screen set with the screener stepping up from below the ball handler.", coachDefinition:"Add coach's exact version of Step Up here.", cue:"Big steps up to screen.", commonMistake:"Setting the screen too flat or too far from the ball handler.", difficulty:"Intermediate" },
+      { id:"veer", term:"Veer", category:"Screen", definition:"A screen or re-screen action where the screener changes angle or redirects to screen another defender.", coachDefinition:"Add coach's exact version of Veer here.", cue:"Change angle, screen again.", commonMistake:"Not making real contact or changing the angle too late.", difficulty:"Advanced" },
+      { id:"ghost", term:"Ghost", category:"Screen", definition:"A fake screen where the screener slips out before making solid contact.", coachDefinition:"Add coach's exact version of Ghost here.", cue:"Fake screen, slip out.", commonMistake:"Making too much contact and turning the ghost into a normal screen.", difficulty:"Intermediate" },
+      { id:"brush", term:"Brush", category:"Screen", definition:"A light screen or contact action used to disrupt a defender without a full stationary screen.", coachDefinition:"Add coach's exact version of Brush here.", cue:"Light contact, keep moving.", commonMistake:"Stopping completely or creating illegal contact.", difficulty:"Intermediate" },
+      { id:"flip", term:"Flip", category:"Screen", definition:"A screen where the screener changes the angle at the last moment.", coachDefinition:"Add coach's exact version of Flip here.", cue:"Change the screen angle.", commonMistake:"Flipping too early so the defender can adjust.", difficulty:"Intermediate" },
+      { id:"ram", term:"Ram", category:"Screen", definition:"An off-ball screen that frees a player before they set a ball screen.", coachDefinition:"Add coach's exact version of Ram here.", cue:"Screen the screener.", commonMistake:"The ram screen is soft, so the ball screen arrives without advantage.", difficulty:"Advanced" },
+      { id:"hammer", term:"Hammer", category:"Screen", definition:"A weak-side back screen, often used to free a shooter in the corner.", coachDefinition:"Add coach's exact version of Hammer here.", cue:"Back screen for corner shot.", commonMistake:"The passer drives without seeing the weak-side corner action.", difficulty:"Advanced" },
+      { id:"flare", term:"Flare", category:"Screen", definition:"A screen that helps a player move away from the ball toward the perimeter.", coachDefinition:"Add coach's exact version of Flare here.", cue:"Screen away to open space.", commonMistake:"The cutter comes toward the ball instead of fading away to space.", difficulty:"Intermediate" },
+      { id:"gortat", term:"Gortat", category:"Screen", definition:"A seal or screen by a big near the rim to hold off the shot blocker or defender.", coachDefinition:"Add coach's exact version of Gortat here.", cue:"Seal the rim protector.", commonMistake:"Not making the seal early enough to protect the finish.", difficulty:"Advanced" },
+      { id:"rip", term:"Rip", category:"Screen", definition:"A back screen, often used to free a cutter toward the basket.", coachDefinition:"Add coach's exact version of Rip here.", cue:"Back screen, cut hard.", commonMistake:"The cutter waits for the screen instead of timing the cut sharply.", difficulty:"Intermediate" },
+
+      { id:"dive", term:"Dive", category:"Screener Post-Screen Action", definition:"The screener cuts hard directly to the rim after screening.", coachDefinition:"Add coach's exact version of Dive here.", cue:"Screen, then rim run.", commonMistake:"Floating after the screen instead of putting pressure on the rim.", difficulty:"Beginner" },
+      { id:"roll", term:"Roll", category:"Screener Post-Screen Action", definition:"The screener turns and moves toward the basket after setting a ball screen.", coachDefinition:"Add coach's exact version of Roll here.", cue:"Screen, turn, roll.", commonMistake:"Opening the wrong way or rolling without seeing the ball.", difficulty:"Beginner" },
+      { id:"short-roll", term:"Short Roll", category:"Screener Post-Screen Action", definition:"The screener rolls into the middle area instead of all the way to the rim.", coachDefinition:"Add coach's exact version of Short Roll here.", cue:"Roll short, catch, decide.", commonMistake:"Catching and panicking instead of making the next read.", difficulty:"Intermediate" },
+      { id:"pop", term:"Pop", category:"Screener Post-Screen Action", definition:"The screener moves away from the basket after screening to receive a pass or shoot.", coachDefinition:"Add coach's exact version of Pop here.", cue:"Screen, step out.", commonMistake:"Popping without spacing to a useful passing angle.", difficulty:"Beginner" },
+
+      { id:"ucla", term:"UCLA", category:"Cut", definition:"A cut from the wing or guard spot off a high-post screen toward the basket.", coachDefinition:"Add coach's exact version of UCLA here.", cue:"Pass, cut off high post.", commonMistake:"Cutting around the screen instead of tight off the screener.", difficulty:"Intermediate" },
+      { id:"back-door", term:"Back Door", category:"Cut", definition:"A cut behind an overplaying defender toward the basket.", coachDefinition:"Add coach's exact version of Back Door here.", cue:"Defender overplays, cut behind.", commonMistake:"Showing the cut too early or not making eye contact with passer.", difficulty:"Beginner" },
+      { id:"iverson", term:"Iverson", category:"Cut", definition:"A cut across the court over screens near the elbows or high posts.", coachDefinition:"Add coach's exact version of Iverson here.", cue:"Cut across the top.", commonMistake:"Drifting high and wide instead of using the screens tightly.", difficulty:"Intermediate" },
+      { id:"l-cut", term:"L Cut", category:"Cut", definition:"A cut shaped like an L, usually down then out to get open.", coachDefinition:"Add coach's exact version of L Cut here.", cue:"Down then out.", commonMistake:"Rounding the corner instead of making a sharp angle.", difficulty:"Beginner" },
+      { id:"v-cut", term:"V Cut", category:"Cut", definition:"A cut shaped like a V, using a sharp change of direction to get open.", coachDefinition:"Add coach's exact version of V Cut here.", cue:"In then out sharp.", commonMistake:"No change of speed or direction.", difficulty:"Beginner" },
+      { id:"u-cut", term:"U Cut", category:"Cut", definition:"A rounded cut shaped like a U to change sides or create separation.", coachDefinition:"Add coach's exact version of U Cut here.", cue:"Loop around with purpose.", commonMistake:"Looping slowly with no purpose or timing.", difficulty:"Beginner" },
+      { id:"slice", term:"Slice", category:"Cut", definition:"A hard cut across the lane or through the defense.", coachDefinition:"Add coach's exact version of Slice here.", cue:"Cut across hard.", commonMistake:"Cutting without seeing the ball or the open space.", difficulty:"Intermediate" },
+      { id:"zipper", term:"Zipper", category:"Cut", definition:"A vertical cut up from the baseline or low area using a down screen.", coachDefinition:"Add coach's exact version of Zipper here.", cue:"Cut up the lane line.", commonMistake:"Coming up too wide or failing to use the down screen.", difficulty:"Intermediate" }
+    ];
+
+    const CATEGORIES = ["Action", "Screen", "Screener Post-Screen Action", "Cut"];
+    const QUIZ_LENGTH = 10;
+    const progressKey = "hoopIQTrainerV2Progress";
+    const termsKey = "hoopIQTrainerV2Terms";
+
+    let TERMS = loadTerms();
+
+    let state = {
+      cardDeck: [],
+      cardIndex: 0,
+      quizQuestions: [],
+      currentQuestionIndex: 0,
+      score: 0,
+      answered: false,
+      missedThisRound: [],
+      lastMode: "mixed",
+      lastCategory: "All",
+      isDaily: false
+    };
+
+    function defaultProgress() {
+      return {
+        playerName: "",
+        bestScore: 0,
+        sessions: 0,
+        cardsStudied: 0,
+        dailyWorkouts: 0,
+        missedTerms: [],
+        categoryStats: CATEGORIES.reduce((acc, c) => {
+          acc[c] = { correct: 0, total: 0 };
+          return acc;
+        }, {})
+      };
+    }
+
+    function getProgress() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(progressKey) || "{}");
+        const merged = Object.assign(defaultProgress(), saved);
+        merged.categoryStats = Object.assign(defaultProgress().categoryStats, saved.categoryStats || {});
+        CATEGORIES.forEach(c => {
+          merged.categoryStats[c] = Object.assign({ correct: 0, total: 0 }, merged.categoryStats[c] || {});
+        });
+        return merged;
+      } catch {
+        return defaultProgress();
+      }
+    }
+
+    function saveProgress(progress) {
+      localStorage.setItem(progressKey, JSON.stringify(progress));
+      updateStats();
+    }
+
+    function loadTerms() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(termsKey) || "null");
+        if (Array.isArray(saved) && saved.length) return sanitizeTerms(saved);
+      } catch {}
+      return structuredClone(DEFAULT_TERMS);
+    }
+
+    function saveTerms() {
+      localStorage.setItem(termsKey, JSON.stringify(TERMS));
+      updateStats();
+      renderEditSelect();
+    }
+
+    function sanitizeTerms(terms) {
+      return terms.map((t, idx) => ({
+        id: t.id || slugify(t.term || `term-${idx}`),
+        term: t.term || "Untitled Term",
+        category: CATEGORIES.includes(t.category) ? t.category : "Action",
+        definition: t.definition || "",
+        coachDefinition: t.coachDefinition || "Add coach's exact version here.",
+        cue: t.cue || "",
+        commonMistake: t.commonMistake || "Add common mistake here.",
+        difficulty: t.difficulty || "Intermediate"
+      }));
+    }
+
+    function slugify(value) {
+      return String(value).toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || `term-${Date.now()}`;
+    }
+
+    function updateStats() {
+      const progress = getProgress();
+      document.getElementById("statBest").textContent = `${progress.bestScore}%`;
+      document.getElementById("statSessions").textContent = progress.sessions;
+      document.getElementById("statStudied").textContent = progress.cardsStudied;
+      document.getElementById("statDaily").textContent = progress.dailyWorkouts;
+      document.getElementById("termCount").textContent = `${TERMS.length} terms`;
+      document.getElementById("playerName").value = progress.playerName || "";
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      if (id === "dashboard") renderDashboard();
+      if (id === "library") renderLibrary("All");
+      if (id === "edit") { renderEditSelect(); loadEditForm(); }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function savePlayerName() {
+      const progress = getProgress();
+      progress.playerName = document.getElementById("playerName").value.trim();
+      saveProgress(progress);
+      alert(progress.playerName ? `Saved for ${progress.playerName}.` : "Player name cleared.");
+    }
+
+    function shuffle(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function sample(array, count) {
+      return shuffle(array).slice(0, Math.min(count, array.length));
+    }
+
+    function termsByCategory(category) {
+      if (!category || category === "All") return TERMS;
+      if (category === "Missed") {
+        const missed = getProgress().missedTerms || [];
+        return missed.map(id => TERMS.find(t => t.id === id || t.term === id)).filter(Boolean);
+      }
+      return TERMS.filter(t => t.category === category);
+    }
+
+    function chooseStudy() {
+      showPicker("Study Flashcards", "Study", "Choose all terms or focus on one category.", category => startFlashcards(category));
+    }
+
+    function chooseQuiz() {
+      showPicker("Take Quiz", "Quiz", "Choose all terms, one category, or missed-term training.", category => {
+        if (category === "Missed") startMissedQuiz();
+        else startQuiz("mixed", category);
+      }, true);
+    }
+
+    function showPicker(title, mode, help, callback, includeMissed = false) {
+      showScreen("picker");
+      document.getElementById("pickerTitle").textContent = title;
+      document.getElementById("pickerMode").textContent = mode;
+      document.getElementById("pickerHelp").textContent = help;
+      const wrap = document.getElementById("pickerButtons");
+      wrap.innerHTML = "";
+
+      const options = ["All", ...CATEGORIES];
+      if (includeMissed) options.push("Missed");
+
+      options.forEach(category => {
+        const count = category === "All" ? TERMS.length : category === "Missed" ? (getProgress().missedTerms || []).length : termsByCategory(category).length;
+        const btn = document.createElement("button");
+        btn.className = category === "All" ? "primary" : category === "Missed" ? "secondary" : "";
+        btn.innerHTML = `${category}<br><span class="micro">${count} term${count === 1 ? "" : "s"}</span>`;
+        btn.onclick = () => callback(category);
+        wrap.appendChild(btn);
+      });
+    }
+
+    function startFlashcards(category = "All") {
+      const deck = termsByCategory(category);
+      if (!deck.length) {
+        alert("No terms found for that category.");
+        return;
+      }
+      state.cardDeck = shuffle(deck);
+      state.cardIndex = 0;
+      showScreen("flashcards");
+      renderCard();
+    }
+
+    function renderCard() {
+      const term = state.cardDeck[state.cardIndex % state.cardDeck.length];
+      document.getElementById("cardProgress").textContent = `${state.cardIndex + 1} / ${state.cardDeck.length}`;
+      document.getElementById("cardBar").style.width = `${((state.cardIndex + 1) / state.cardDeck.length) * 100}%`;
+      document.getElementById("cardCategory").textContent = term.category;
+      document.getElementById("cardTerm").textContent = term.term;
+      document.getElementById("cardDefinition").textContent = term.definition;
+      document.getElementById("cardCoach").textContent = term.coachDefinition;
+      document.getElementById("cardCue").textContent = term.cue;
+      document.getElementById("cardMistake").textContent = term.commonMistake;
+      document.getElementById("cardDifficulty").textContent = term.difficulty;
+      document.getElementById("cardDetails").style.display = "none";
+      document.getElementById("revealBtn").style.display = "block";
+    }
+
+    function revealCard() {
+      document.getElementById("cardDetails").style.display = "block";
+      document.getElementById("revealBtn").style.display = "none";
+      const progress = getProgress();
+      progress.cardsStudied += 1;
+      saveProgress(progress);
+    }
+
+    function nextCard() {
+      state.cardIndex = (state.cardIndex + 1) % state.cardDeck.length;
+      renderCard();
+    }
+
+    function startQuiz(mode = "mixed", category = "All", customTerms = null, isDaily = false) {
+      const sourceTerms = customTerms || termsByCategory(category);
+      if (!sourceTerms.length) {
+        alert("No terms available for that quiz.");
+        return;
+      }
+      state.lastMode = mode;
+      state.lastCategory = category;
+      state.isDaily = isDaily;
+      state.quizQuestions = buildQuiz(mode, sourceTerms, isDaily);
+      state.currentQuestionIndex = 0;
+      state.score = 0;
+      state.answered = false;
+      state.missedThisRound = [];
+      showScreen("quiz");
+      document.getElementById("quizModeTitle").textContent = isDaily ? "Daily 10" : modeTitle(mode);
+      document.getElementById("quizCategoryPill").textContent = category === "All" ? "All Terms" : category;
+      renderQuestion();
+    }
+
+    function startDailyWorkout() {
+      const progress = getProgress();
+      const missedTerms = (progress.missedTerms || []).map(id => TERMS.find(t => t.id === id || t.term === id)).filter(Boolean);
+      let weighted = [...TERMS];
+      if (missedTerms.length) {
+        weighted = [...TERMS, ...missedTerms, ...missedTerms, ...missedTerms];
+      }
+      startQuiz("mixed", "Daily Weighted", weighted, true);
+    }
+
+    function startMissedQuiz() {
+      const missedTerms = termsByCategory("Missed");
+      if (!missedTerms.length) {
+        alert("No missed terms yet. Take a quiz first.");
+        return;
+      }
+      startQuiz("mixed", "Missed", missedTerms, false);
+    }
+
+    function rerunLastQuiz() {
+      if (state.lastCategory === "Missed") startMissedQuiz();
+      else startQuiz(state.lastMode, state.lastCategory, null, false);
+    }
+
+    function modeTitle(mode) {
+      if (mode === "category") return "Category Quiz";
+      if (mode === "definition") return "Definition Match";
+      if (mode === "cue") return "Cue Match";
+      return "Mixed Quiz";
+    }
+
+    function buildQuiz(mode, sourceTerms, isDaily) {
+      const unique = [];
+      const seen = new Set();
+      shuffle(sourceTerms).forEach(t => {
+        if (!seen.has(t.id)) { seen.add(t.id); unique.push(t); }
+      });
+
+      const picked = sample(unique.length >= QUIZ_LENGTH ? unique : TERMS, QUIZ_LENGTH);
+      return picked.map(term => {
+        const actual = mode === "mixed" ? sample(["category", "definition", "cue", "mistake"], 1)[0] : mode;
+        if (actual === "category") return makeCategoryQuestion(term);
+        if (actual === "cue") return makeCueQuestion(term);
+        if (actual === "mistake") return makeMistakeQuestion(term);
+        return makeDefinitionQuestion(term);
+      });
+    }
+
+    function makeCategoryQuestion(term) {
+      return {
+        type: "category",
+        term,
+        question: `What category is “${term.term}”?`,
+        answer: term.category,
+        options: shuffle(CATEGORIES),
+        explanation: `${term.term} belongs to ${term.category}. Cue: ${term.cue}`
+      };
+    }
+
+    function makeDefinitionQuestion(term) {
+      const wrong = sample(TERMS.filter(t => t.id !== term.id), 3).map(t => t.term);
+      return {
+        type: "definition",
+        term,
+        question: `Which term matches this meaning?\n\n${term.definition}`,
+        answer: term.term,
+        options: shuffle([term.term, ...wrong]),
+        explanation: `${term.term}: ${term.cue}`
+      };
+    }
+
+    function makeCueQuestion(term) {
+      const wrong = sample(TERMS.filter(t => t.id !== term.id), 3).map(t => t.term);
+      return {
+        type: "cue",
+        term,
+        question: `Which term uses this player cue?\n\n“${term.cue}”`,
+        answer: term.term,
+        options: shuffle([term.term, ...wrong]),
+        explanation: `${term.term} is a ${term.category}. ${term.definition}`
+      };
+    }
+
+    function makeMistakeQuestion(term) {
+      const wrong = sample(TERMS.filter(t => t.id !== term.id), 3).map(t => t.term);
+      return {
+        type: "mistake",
+        term,
+        question: `Which term has this common mistake?\n\n“${term.commonMistake}”`,
+        answer: term.term,
+        options: shuffle([term.term, ...wrong]),
+        explanation: `${term.term}: ${term.definition}`
+      };
+    }
+
+    function renderQuestion() {
+      const q = state.quizQuestions[state.currentQuestionIndex];
+      state.answered = false;
+
+      document.getElementById("quizProgress").textContent = `${state.currentQuestionIndex + 1} / ${state.quizQuestions.length}`;
+      document.getElementById("quizBar").style.width = `${((state.currentQuestionIndex + 1) / state.quizQuestions.length) * 100}%`;
+      document.getElementById("quizScore").textContent = `Score: ${state.score}`;
+      document.getElementById("questionText").innerText = q.question;
+      document.getElementById("feedback").className = "feedback";
+      document.getElementById("feedback").innerHTML = "";
+      document.getElementById("nextQuestionBtn").style.display = "none";
+
+      const answers = document.getElementById("answers");
+      answers.innerHTML = "";
+      q.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.className = "option";
+        btn.textContent = option;
+        btn.onclick = () => answerQuestion(option, btn);
+        answers.appendChild(btn);
+      });
+    }
+
+    function answerQuestion(selected, btn) {
+      if (state.answered) return;
+      state.answered = true;
+      const q = state.quizQuestions[state.currentQuestionIndex];
+      const correct = selected === q.answer;
+
+      document.querySelectorAll("#answers button").forEach(button => {
+        if (button.textContent === q.answer) button.classList.add("correct");
+        if (button === btn && !correct) button.classList.add("wrong");
+      });
+
+      const feedback = document.getElementById("feedback");
+      feedback.classList.add("show", correct ? "good" : "bad");
+
+      if (correct) {
+        state.score += 1;
+        feedback.innerHTML = `<strong>Correct.</strong><br>${q.explanation}`;
+      } else {
+        feedback.innerHTML = `<strong>Not quite.</strong><br>Correct answer: <strong>${q.answer}</strong><br>${q.explanation}`;
+        state.missedThisRound.push(q.term.id);
+      }
+
+      const progress = getProgress();
+      const cat = q.term.category;
+      progress.categoryStats[cat] = progress.categoryStats[cat] || { correct: 0, total: 0 };
+      progress.categoryStats[cat].total += 1;
+      if (correct) progress.categoryStats[cat].correct += 1;
+      saveProgress(progress);
+
+      document.getElementById("quizScore").textContent = `Score: ${state.score}`;
+      document.getElementById("nextQuestionBtn").style.display = "block";
+    }
+
+    function nextQuestion() {
+      if (state.currentQuestionIndex < state.quizQuestions.length - 1) {
+        state.currentQuestionIndex += 1;
+        renderQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function finishQuiz() {
+      const total = state.quizQuestions.length || 1;
+      const percent = Math.round((state.score / total) * 100);
+      const progress = getProgress();
+
+      progress.sessions += 1;
+      if (state.isDaily) progress.dailyWorkouts += 1;
+      progress.bestScore = Math.max(progress.bestScore, percent);
+      progress.missedTerms = Array.from(new Set([...(progress.missedTerms || []), ...state.missedThisRound]));
+      saveProgress(progress);
+
+      document.getElementById("finalScore").textContent = `${percent}%`;
+      document.getElementById("resultMessage").textContent =
+        percent >= 90 ? "Elite work. You are speaking coach's language." :
+        percent >= 75 ? "Solid run. Review the misses and sharpen the reads." :
+        percent >= 60 ? "You are building it. Stay with the reps." :
+        "Back to the lab. Flashcards first, then run it again.";
+
+      renderRoundMissedPreview();
+      showScreen("results");
+    }
+
+    function renderRoundMissedPreview() {
+      const wrap = document.getElementById("roundMissedPreview");
+      wrap.innerHTML = "";
+      const missed = Array.from(new Set(state.missedThisRound)).map(id => TERMS.find(t => t.id === id)).filter(Boolean);
+      if (!missed.length) {
+        wrap.innerHTML = `<div class="missed-item"><strong>No misses this round.</strong><p class="tiny">Clean reps. Keep sharpening.</p></div>`;
+        return;
+      }
+      missed.forEach(t => {
+        const div = document.createElement("div");
+        div.className = "missed-item";
+        div.innerHTML = `<strong>${t.term}</strong><p class="tiny">${t.category} · ${t.cue}</p>`;
+        wrap.appendChild(div);
+      });
+    }
+
+    function renderDashboard() {
+      const progress = getProgress();
+      document.getElementById("dashPlayer").textContent = progress.playerName || "Player";
+      document.getElementById("dashBest").textContent = `${progress.bestScore}%`;
+      document.getElementById("dashSessions").textContent = progress.sessions;
+      document.getElementById("dashDaily").textContent = progress.dailyWorkouts;
+
+      const catWrap = document.getElementById("categoryAccuracy");
+      catWrap.innerHTML = "";
+      CATEGORIES.forEach(cat => {
+        const stats = progress.categoryStats[cat] || { correct: 0, total: 0 };
+        const pct = stats.total ? Math.round((stats.correct / stats.total) * 100) : 0;
+        const div = document.createElement("div");
+        div.className = "catbar";
+        div.innerHTML = `
+          <div class="catbar-head"><span>${cat}</span><span>${pct}% · ${stats.correct}/${stats.total}</span></div>
+          <div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div>
+        `;
+        catWrap.appendChild(div);
+      });
+
+      const missed = (progress.missedTerms || []).map(id => TERMS.find(t => t.id === id || t.term === id)).filter(Boolean);
+      document.getElementById("dashMissedCount").textContent = `${missed.length} missed`;
+      const list = document.getElementById("dashMissedList");
+      list.innerHTML = "";
+
+      if (!missed.length) {
+        list.innerHTML = `<div class="missed-item">No missed terms yet. Take a quiz and this area will become your weakness map.</div>`;
+      } else {
+        missed.forEach(t => {
+          const div = document.createElement("div");
+          div.className = "missed-item";
+          div.innerHTML = `<strong>${t.term}</strong><p class="tiny">${t.category}</p><p class="tiny">${t.definition}</p><p class="tiny"><strong>Cue:</strong> ${t.cue}</p>`;
+          list.appendChild(div);
+        });
+      }
+    }
+
+    function clearMissed() {
+      const progress = getProgress();
+      progress.missedTerms = [];
+      saveProgress(progress);
+      renderDashboard();
+    }
+
+    function renderLibrary(activeCategory = "All") {
+      const filters = document.getElementById("libraryFilters");
+      filters.innerHTML = "";
+      ["All", ...CATEGORIES].forEach(cat => {
+        const btn = document.createElement("button");
+        btn.textContent = cat;
+        btn.className = cat === activeCategory ? "active" : "";
+        btn.onclick = () => renderLibrary(cat);
+        filters.appendChild(btn);
+      });
+
+      const list = document.getElementById("libraryList");
+      list.innerHTML = "";
+      const source = termsByCategory(activeCategory);
+      document.getElementById("libraryCount").textContent = `${source.length} terms`;
+
+      source.forEach(t => {
+        const div = document.createElement("div");
+        div.className = "missed-item";
+        div.innerHTML = `
+          <div class="mode-title" style="margin:0 0 4px;">
+            <strong>${t.term}</strong>
+            <span class="pill">${t.category}</span>
+          </div>
+          <p class="tiny">${t.definition}</p>
+          <p class="tiny"><strong>Coach:</strong> ${t.coachDefinition}</p>
+          <p class="tiny"><strong>Cue:</strong> ${t.cue}</p>
+          <p class="tiny"><strong>Mistake:</strong> ${t.commonMistake}</p>
+          <p><span class="pill">${t.difficulty}</span></p>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function renderEditSelect() {
+      const select = document.getElementById("editSelect");
+      if (!select) return;
+      const oldValue = select.value;
+      select.innerHTML = "";
+      TERMS.forEach(t => {
+        const option = document.createElement("option");
+        option.value = t.id;
+        option.textContent = `${t.term} · ${t.category}`;
+        select.appendChild(option);
+      });
+      if (oldValue && TERMS.find(t => t.id === oldValue)) select.value = oldValue;
+    }
+
+    function loadEditForm() {
+      const select = document.getElementById("editSelect");
+      if (!select || !TERMS.length) return;
+      const term = TERMS.find(t => t.id === select.value) || TERMS[0];
+      select.value = term.id;
+      document.getElementById("editTerm").value = term.term;
+      document.getElementById("editCategory").value = term.category;
+      document.getElementById("editDefinition").value = term.definition;
+      document.getElementById("editCoach").value = term.coachDefinition;
+      document.getElementById("editCue").value = term.cue;
+      document.getElementById("editMistake").value = term.commonMistake;
+      document.getElementById("editDifficulty").value = term.difficulty;
+    }
+
+    function saveEditedTerm() {
+      const id = document.getElementById("editSelect").value;
+      const index = TERMS.findIndex(t => t.id === id);
+      if (index < 0) return;
+      TERMS[index] = {
+        id,
+        term: document.getElementById("editTerm").value.trim() || "Untitled Term",
+        category: document.getElementById("editCategory").value,
+        definition: document.getElementById("editDefinition").value.trim(),
+        coachDefinition: document.getElementById("editCoach").value.trim(),
+        cue: document.getElementById("editCue").value.trim(),
+        commonMistake: document.getElementById("editMistake").value.trim(),
+        difficulty: document.getElementById("editDifficulty").value
+      };
+      saveTerms();
+      alert("Term saved.");
+      renderEditSelect();
+      document.getElementById("editSelect").value = id;
+      loadEditForm();
+    }
+
+    function duplicateTerm() {
+      const id = document.getElementById("editSelect").value;
+      const source = TERMS.find(t => t.id === id);
+      if (!source) return;
+      const copy = structuredClone(source);
+      copy.term = `${copy.term} Copy`;
+      copy.id = `${slugify(copy.term)}-${Date.now()}`;
+      TERMS.push(copy);
+      saveTerms();
+      renderEditSelect();
+      document.getElementById("editSelect").value = copy.id;
+      loadEditForm();
+      alert("Duplicated as new term.");
+    }
+
+    function resetTermsConfirm() {
+      if (!confirm("Reset all terminology back to the default v2 list? This will remove coach edits saved on this device.")) return;
+      TERMS = structuredClone(DEFAULT_TERMS);
+      saveTerms();
+      renderLibrary("All");
+      renderEditSelect();
+      loadEditForm();
+      alert("Terms reset to default.");
+    }
+
+    function resetProgressConfirm() {
+      if (!confirm("Reset progress only? Your edited terms will stay saved.")) return;
+      localStorage.setItem(progressKey, JSON.stringify(defaultProgress()));
+      updateStats();
+      alert("Progress reset.");
+    }
+
+    function exportTerms() {
+      const payload = {
+        app: "Hoop IQ Trainer",
+        version: "2.0",
+        exportedAt: new Date().toISOString(),
+        terms: TERMS
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "hoop-iq-trainer-terms.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    async function copyTermsToClipboard() {
+      const payload = {
+        app: "Hoop IQ Trainer",
+        version: "2.0",
+        exportedAt: new Date().toISOString(),
+        terms: TERMS
+      };
+      try {
+        await navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
+        alert("Term JSON copied to clipboard.");
+      } catch {
+        document.getElementById("importText").value = JSON.stringify(payload, null, 2);
+        alert("Clipboard blocked. JSON has been placed in the paste box.");
+      }
+    }
+
+    function importTermsObject(obj) {
+      const incoming = Array.isArray(obj) ? obj : obj.terms;
+      if (!Array.isArray(incoming) || !incoming.length) {
+        alert("Import failed. JSON must include a terms array.");
+        return;
+      }
+      TERMS = sanitizeTerms(incoming);
+      saveTerms();
+      alert(`Imported ${TERMS.length} terms.`);
+      renderLibrary("All");
+    }
+
+    function importTermsFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          importTermsObject(JSON.parse(e.target.result));
+        } catch {
+          alert("Import failed. The file was not valid JSON.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function importTermsText() {
+      const value = document.getElementById("importText").value.trim();
+      if (!value) {
+        alert("Paste JSON first.");
+        return;
+      }
+      try {
+        importTermsObject(JSON.parse(value));
+        document.getElementById("importText").value = "";
+      } catch {
+        alert("Import failed. The pasted text was not valid JSON.");
+      }
+    }
+
+    updateStats();
+    renderEditSelect();
+  </script>
+</body>
+</html>
