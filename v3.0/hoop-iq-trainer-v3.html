@@ -1223,6 +1223,31 @@
     }
 
 
+
+    function normalizeTerms(list) {
+      return (Array.isArray(list) ? list : []).map((term, index) => {
+        const baseTerm = term && typeof term === "object" ? term : {};
+        const termName = baseTerm.term || `Custom Term ${index + 1}`;
+
+        return {
+          id: baseTerm.id || slugify(termName),
+          term: termName,
+          category: baseTerm.category || "Action",
+          definition: baseTerm.definition || "Add definition here.",
+          coachDefinition: baseTerm.coachDefinition || "Coach-specific version pending.",
+          cue: baseTerm.cue || "",
+          commonMistake: baseTerm.commonMistake || "Add common mistake here.",
+          diagramNote: baseTerm.diagramNote || "Add diagram note here.",
+          diagramType: baseTerm.diagramType || "generic",
+          difficulty: baseTerm.difficulty || "Intermediate",
+          tags: Array.isArray(baseTerm.tags) ? baseTerm.tags : [],
+          role: Array.isArray(baseTerm.role) ? baseTerm.role : [],
+          motionSteps: Array.isArray(baseTerm.motionSteps) ? baseTerm.motionSteps : []
+        };
+      });
+    }
+
+
     function mergeWithDefaultTerms(savedTerms) {
       const savedList = Array.isArray(savedTerms) ? savedTerms : [];
       const savedById = new Map(savedList.map(term => [term.id || slugify(term.term || ""), term]));
