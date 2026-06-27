@@ -1222,12 +1222,64 @@
       updateStats();
     }
 
+
+    function mergeWithDefaultTerms(savedTerms) {
+      const savedList = Array.isArray(savedTerms) ? savedTerms : [];
+      const savedById = new Map(savedList.map(term => [term.id || slugify(term.term || ""), term]));
+
+      const merged = DEFAULT_TERMS.map(defaultTerm => {
+        const saved = savedById.get(defaultTerm.id);
+        if (!saved) return structuredClone(defaultTerm);
+
+        return {
+          ...structuredClone(defaultTerm),
+          ...saved,
+          id: defaultTerm.id,
+          term: saved.term || defaultTerm.term,
+          category: saved.category || defaultTerm.category,
+          definition: saved.definition || defaultTerm.definition,
+          coachDefinition: saved.coachDefinition || defaultTerm.coachDefinition,
+          cue: saved.cue || defaultTerm.cue,
+          commonMistake: saved.commonMistake || defaultTerm.commonMistake,
+          diagramNote: saved.diagramNote || defaultTerm.diagramNote,
+          diagramType: saved.diagramType || defaultTerm.diagramType || "generic",
+          difficulty: saved.difficulty || defaultTerm.difficulty || "Intermediate",
+          tags: Array.isArray(saved.tags) && saved.tags.length ? saved.tags : (Array.isArray(defaultTerm.tags) ? defaultTerm.tags : []),
+          role: Array.isArray(saved.role) && saved.role.length ? saved.role : (Array.isArray(defaultTerm.role) ? defaultTerm.role : []),
+          motionSteps: Array.isArray(saved.motionSteps) && saved.motionSteps.length ? saved.motionSteps : (Array.isArray(defaultTerm.motionSteps) ? defaultTerm.motionSteps : [])
+        };
+      });
+
+      savedList.forEach(saved => {
+        const savedId = saved.id || slugify(saved.term || "");
+        if (savedId && !merged.some(term => term.id === savedId)) {
+          merged.push(saved);
+        }
+      });
+
+      return normalizeTerms(merged);
+    }
+
+
     function loadTerms() {
       try {
-        const saved = JSON.parse(localStorage.getItem(termsKey) || "null");
-        if (Array.isArray(saved) && saved.length) return sanitizeTerms(saved);
-      } catch {}
-      return structuredClone(DEFAULT_TERMS);
+        const raw = localStorage.getItem(termsKey);
+        if (!raw) return normalizeTerms(structuredClone(DEFAULT_TERMS));
+
+        const parsed = JSON.parse(raw);
+        const savedTerms = Array.isArray(parsed) ? parsed : parsed.terms;
+        const merged = mergeWithDefaultTerms(savedTerms);
+
+        const savedCount = Array.isArray(savedTerms) ? savedTerms.length : 0;
+        if (savedCount !== merged.length || merged.some(term => !savedTerms?.some(saved => saved.id === term.id))) {
+          localStorage.setItem(termsKey, JSON.stringify(merged));
+        }
+
+        return merged;
+      } catch (error) {
+        console.warn("Could not load saved terms. Falling back to defaults.", error);
+        return normalizeTerms(structuredClone(DEFAULT_TERMS));
+      }
     }
 
     function saveTerms() {
