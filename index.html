@@ -301,6 +301,17 @@
       color: #fff;
     }
 
+    .motion-help {
+      margin: 8px 0 12px;
+      color: var(--muted);
+      font-size: .86rem;
+      line-height: 1.35;
+    }
+
+    .motion-step-buttons {
+      gap: 8px;
+    }
+
     .checkpoint-box {
       padding: 11px 12px;
       border-radius: 12px;
@@ -597,6 +608,7 @@
             <h3>Motion Steps</h3>
             <span class="pill" id="motionStepCount">Step 1</span>
           </div>
+          <p class="motion-help">Tap each step to walk through the action. This is step-by-step teaching, not full animation yet.</p>
           <div class="motion-step-buttons" id="motionStepButtons"></div>
           <p class="definition" id="motionStepDescription"></p>
           <div class="checkpoint-box"><strong>Checkpoint:</strong> <span id="motionStepCheckpoint"></span></div>
