@@ -784,10 +784,94 @@
   <script>
     const COPYRIGHT_NOTICE = "© 2026 Anthony Boyd / Worldmedia Publishing & Consulting LLC. All rights reserved.";
     const DEFAULT_TERMS = [
-      { id:"pistol", term:"Pistol", category:"Action", definition:"An early-offense sideline action involving a ball handler, a wing, and a nearby screener or connector. It commonly flows into a dribble handoff, keep, or ball screen before the defense is fully set.", coachDefinition:"Coach-specific version pending.", cue:"Attack early. Connect with the wing, then flow into handoff, keep, or ball screen.", commonMistake:"Jogging into it or treating Pistol like a slow half-court set instead of an early advantage action.", diagramNote:"1 pushes the ball toward the wing. 2 rises or receives, while 5 is nearby to connect with a handoff or ball screen.", diagramType:"pistol", difficulty:"Intermediate" },
+      { id:"pistol", term:"Pistol", category:"Action", definition:"An early-offense sideline action involving a ball handler, a wing, and a nearby screener or connector. It commonly flows into a dribble handoff, keep, or ball screen before the defense is fully set.", coachDefinition:"Coach-specific version pending.", cue:"Attack early. Connect with the wing, then flow into handoff, keep, or ball screen.", commonMistake:"Jogging into it or treating Pistol like a slow half-court set instead of an early advantage action.", diagramNote:"1 pushes the ball toward the wing. 2 rises or receives, while 5 is nearby to connect with a handoff or ball screen.", diagramType:"pistol", difficulty:"Intermediate", motionSteps:[
+        {
+          label:"Step 1",
+          description:"1 advances the ball and hits 2 on the wing or slot.",
+          players:{ "1":{x:300,y:430}, "2":{x:120,y:345}, "3":{x:500,y:345}, "4":{x:105,y:145}, "5":{x:300,y:260} },
+          movements:[{player:"1", from:{x:300,y:430}, to:{x:225,y:380}}],
+          passes:[{from:"1", to:"2"}],
+          screens:[],
+          checkpoint:"Start early before the defense is fully set."
+        },
+        {
+          label:"Step 2",
+          description:"1 follows the pass toward 2 while 5 is nearby as the connector.",
+          players:{ "1":{x:225,y:380}, "2":{x:120,y:345}, "3":{x:500,y:345}, "4":{x:105,y:145}, "5":{x:250,y:300} },
+          movements:[{player:"1", from:{x:225,y:380}, to:{x:150,y:350}}],
+          passes:[],
+          screens:[],
+          checkpoint:"Pass and follow. Do not stand after the pass."
+        },
+        {
+          label:"Step 3",
+          description:"2 can hand the ball back to 1, keep it, or flow into a ball screen with 5.",
+          players:{ "1":{x:150,y:350}, "2":{x:120,y:345}, "3":{x:500,y:345}, "4":{x:105,y:145}, "5":{x:210,y:325} },
+          movements:[{player:"5", from:{x:250,y:300}, to:{x:165,y:345}}],
+          passes:[{from:"2", to:"1", type:"handoff"}],
+          screens:[{screener:"5", defenderOf:"1", type:"ballScreen"}],
+          checkpoint:"Read the handoff, keep, or ball-screen option."
+        }
+      ] },
       { id:"split", term:"Split", category:"Action", definition:"An action after an entry pass where two nearby offensive players screen, cut, or exchange with each other instead of standing and watching the ball.", coachDefinition:"Coach-specific version pending.", cue:"After the entry pass, move immediately. Screen, cut, or replace.", commonMistake:"Feeding the ball inside and standing still while defenders relax.", diagramNote:"After the ball is entered, two perimeter players cross, screen, or exchange to punish defenders watching the ball.", diagramType:"generic", difficulty:"Advanced" },
-      { id:"zoom", term:"Zoom", category:"Action", definition:"A screen-into-handoff action. Most commonly, a player comes off a pin-down or down screen and immediately receives a dribble handoff to attack with momentum.", coachDefinition:"Coach-specific version pending.", cue:"Come tight off the screen, take the handoff, and turn the corner.", commonMistake:"Looping too wide or catching the handoff without downhill speed.", diagramNote:"2 cuts off 5 or another screener, receives the handoff, and attacks before the defense can reset.", diagramType:"zoom", difficulty:"Intermediate" },
-      { id:"spain", term:"Spain / Stack Pick-and-Roll", category:"Action", definition:"A pick-and-roll where a third offensive player sets a back screen on the rolling screener’s defender. The back screener often pops or spaces after screening.", coachDefinition:"Coach-specific version pending.", cue:"Ball handler attacks, screener rolls, third player back-screens the roller’s defender then spaces.", commonMistake:"The back screen arrives late, or the roller does not roll hard enough to create confusion.", diagramNote:"5 sets a ball screen for 1. 2 back-screens 5’s defender as 5 rolls, then 2 pops or spaces.", diagramType:"spain", difficulty:"Advanced" },
+      { id:"zoom", term:"Zoom", category:"Action", definition:"A screen-into-handoff action. Most commonly, a player comes off a pin-down or down screen and immediately receives a dribble handoff to attack with momentum.", coachDefinition:"Coach-specific version pending.", cue:"Come tight off the screen, take the handoff, and turn the corner.", commonMistake:"Looping too wide or catching the handoff without downhill speed.", diagramNote:"2 cuts off 5 or another screener, receives the handoff, and attacks before the defense can reset.", diagramType:"zoom", difficulty:"Intermediate", motionSteps:[
+        {
+          label:"Step 1",
+          description:"5 sets a pin-down or down screen for 2.",
+          players:{ "1":{x:300,y:365}, "2":{x:115,y:150}, "3":{x:500,y:345}, "4":{x:500,y:150}, "5":{x:145,y:240} },
+          movements:[],
+          passes:[],
+          screens:[{screener:"5", cutter:"2", type:"downScreen"}],
+          checkpoint:"2 must set up the defender before using the screen."
+        },
+        {
+          label:"Step 2",
+          description:"2 comes tight off 5 toward the ball.",
+          players:{ "1":{x:300,y:365}, "2":{x:170,y:285}, "3":{x:500,y:345}, "4":{x:500,y:150}, "5":{x:145,y:240} },
+          movements:[{player:"2", from:{x:115,y:150}, to:{x:170,y:285}}],
+          passes:[],
+          screens:[],
+          checkpoint:"Come shoulder-to-shoulder off the screen."
+        },
+        {
+          label:"Step 3",
+          description:"1 hands the ball to 2, and 2 turns the corner with momentum.",
+          players:{ "1":{x:245,y:330}, "2":{x:230,y:330}, "3":{x:500,y:345}, "4":{x:500,y:150}, "5":{x:145,y:240} },
+          movements:[{player:"2", from:{x:170,y:285}, to:{x:260,y:360}}],
+          passes:[{from:"1", to:"2", type:"handoff"}],
+          screens:[],
+          checkpoint:"Do not drift wide. Take the handoff downhill."
+        }
+      ] },
+      { id:"spain", term:"Spain / Stack Pick-and-Roll", category:"Action", definition:"A pick-and-roll where a third offensive player sets a back screen on the rolling screener’s defender. The back screener often pops or spaces after screening.", coachDefinition:"Coach-specific version pending.", cue:"Ball handler attacks, screener rolls, third player back-screens the roller’s defender then spaces.", commonMistake:"The back screen arrives late, or the roller does not roll hard enough to create confusion.", diagramNote:"5 sets a ball screen for 1. 2 back-screens 5’s defender as 5 rolls, then 2 pops or spaces.", diagramType:"spain", difficulty:"Advanced", motionSteps:[
+        {
+          label:"Step 1",
+          description:"5 sets a ball screen for 1.",
+          players:{ "1":{x:300,y:410}, "2":{x:300,y:250}, "3":{x:500,y:345}, "4":{x:105,y:345}, "5":{x:300,y:330} },
+          movements:[],
+          passes:[],
+          screens:[{screener:"5", defenderOf:"1", type:"ballScreen"}],
+          checkpoint:"The ball handler must attack the screen with pace."
+        },
+        {
+          label:"Step 2",
+          description:"5 rolls while 2 back-screens 5s defender.",
+          players:{ "1":{x:250,y:350}, "2":{x:300,y:250}, "3":{x:500,y:345}, "4":{x:105,y:345}, "5":{x:300,y:275} },
+          movements:[{player:"5", from:{x:300,y:330}, to:{x:300,y:205}}],
+          passes:[],
+          screens:[{screener:"2", defenderOf:"5", type:"backScreen"}],
+          checkpoint:"The back screen must hit the rollers defender on time."
+        },
+        {
+          label:"Step 3",
+          description:"1 reads the roller first, then the popping back screener.",
+          players:{ "1":{x:235,y:340}, "2":{x:355,y:300}, "3":{x:500,y:345}, "4":{x:105,y:345}, "5":{x:300,y:175} },
+          movements:[{player:"2", from:{x:300,y:250}, to:{x:355,y:300}}],
+          passes:[{from:"1", to:"5", type:"rollPass"}],
+          screens:[],
+          checkpoint:"Read rim first, then pop or weak side."
+        }
+      ] },
       { id:"flex", term:"Flex", category:"Action", definition:"A continuity action built around a baseline cross-screen followed by a down screen. It creates layups, post touches, and jump shots through constant screening and cutting.", coachDefinition:"Coach-specific version pending.", cue:"Screen across, then screen down. Cut hard and keep spacing.", commonMistake:"Drifting off the screen instead of cutting shoulder-to-shoulder.", diagramNote:"A player uses a baseline cross-screen, then the screener or another player receives a down screen.", diagramType:"flex", difficulty:"Beginner" },
       { id:"circle-motion", term:"Circle Motion", category:"Action", definition:"A motion concept where players pass, cut, and rotate to fill open spots around the perimeter so the floor stays balanced and nobody stands still.", coachDefinition:"Coach-specific version pending.", cue:"Pass, cut, fill, and keep the circle moving.", commonMistake:"Watching the ball and failing to replace open spots.", diagramNote:"Players rotate around the perimeter and replace each other to maintain spacing and rhythm.", diagramType:"generic", difficulty:"Advanced" },
       { id:"euro-ball-screen-action", term:"Euro Ball Screen", category:"Action", definition:"A team-specific or non-universal ball-screen term. It often refers to an empty-side, side, or angle ball-screen variation designed to change the ball handler’s driving angle and force defensive rotation.", coachDefinition:"Coach-specific version pending. Use the coach’s definition first because this term is not universal.", cue:"Read the screen angle, attack the open side, and punish the help.", commonMistake:"Assuming this term means the same thing in every system.", diagramNote:"Side or angle ball screen with spacing that changes the driving angle. Update once coach confirms the team version.", diagramType:"roll", difficulty:"Coach Specific" },
@@ -800,7 +884,35 @@
       { id:"brush", term:"Brush Screen", category:"Screen", definition:"A brush is off-ball movement that functions like a screen without heavy contact. It briefly delays a defender while keeping the action flowing.", coachDefinition:"Coach-specific version pending.", cue:"Brush the defender’s path without stopping the flow.", commonMistake:"Creating illegal moving contact instead of using body path and timing.", diagramNote:"A player cuts close enough to delay the defender without setting a full stationary screen.", diagramType:"generic", difficulty:"Advanced" },
       { id:"flip", term:"Flip Screen", category:"Screen", definition:"A ball screen where the screener quickly changes or flips the screen angle at the last second to attack the defender from a new side.", coachDefinition:"Coach-specific version pending.", cue:"Re-angle your body and flip the screen before the defense adjusts.", commonMistake:"Flipping too early so the defender can see it and recover.", diagramNote:"5 changes the screen angle late so 1 can attack the opposite lane.", diagramType:"roll", difficulty:"Advanced" },
       { id:"ram", term:"Ram Screen", category:"Screen", definition:"An off-ball screen set for the player who is about to set the main ball screen. It helps the ball screener arrive with speed, separation, and advantage.", coachDefinition:"Coach-specific version pending.", cue:"Screen the screener before they set the ball screen.", commonMistake:"Setting a soft ram screen that gives the ball screener no advantage.", diagramNote:"4 screens 5 before 5 comes up to set the ball screen for 1.", diagramType:"ram", difficulty:"Intermediate" },
-      { id:"hammer", term:"Hammer Screen", category:"Screen", definition:"A weak-side back screen that frees a shooter cutting along the baseline to the opposite corner, usually while the ball handler drives baseline.", coachDefinition:"Coach-specific version pending.", cue:"Screen the weak-side defender and free the corner shooter.", commonMistake:"The driver misses the weak-side corner read, or the screen arrives late.", diagramNote:"1 drives baseline while 4 or 5 sets a weak-side back screen for 2 cutting to the corner.", diagramType:"hammer", difficulty:"Beginner" },
+      { id:"hammer", term:"Hammer Screen", category:"Screen", definition:"A weak-side back screen that frees a shooter cutting along the baseline to the opposite corner, usually while the ball handler drives baseline.", coachDefinition:"Coach-specific version pending.", cue:"Screen the weak-side defender and free the corner shooter.", commonMistake:"The driver misses the weak-side corner read, or the screen arrives late.", diagramNote:"1 drives baseline while 4 or 5 sets a weak-side back screen for 2 cutting to the corner.", diagramType:"hammer", difficulty:"Beginner", motionSteps:[
+        {
+          label:"Step 1",
+          description:"1 drives baseline from the strong side.",
+          players:{ "1":{x:135,y:345}, "2":{x:500,y:345}, "3":{x:500,y:150}, "4":{x:360,y:205}, "5":{x:105,y:185} },
+          movements:[{player:"1", from:{x:135,y:345}, to:{x:95,y:230}}],
+          passes:[],
+          screens:[],
+          checkpoint:"The driver must force weak-side help to commit."
+        },
+        {
+          label:"Step 2",
+          description:"4 sets a weak-side back screen for 2.",
+          players:{ "1":{x:95,y:230}, "2":{x:500,y:345}, "3":{x:500,y:150}, "4":{x:360,y:205}, "5":{x:105,y:185} },
+          movements:[{player:"2", from:{x:500,y:345}, to:{x:500,y:170}}],
+          passes:[],
+          screens:[{screener:"4", cutter:"2", type:"backScreen"}],
+          checkpoint:"The hammer screen frees the corner shooter."
+        },
+        {
+          label:"Step 3",
+          description:"1 passes across to 2 in the opposite corner.",
+          players:{ "1":{x:95,y:230}, "2":{x:500,y:170}, "3":{x:500,y:150}, "4":{x:360,y:205}, "5":{x:105,y:185} },
+          movements:[],
+          passes:[{from:"1", to:"2", type:"skipPass"}],
+          screens:[],
+          checkpoint:"The pass must arrive before the defense recovers."
+        }
+      ] },
       { id:"flare", term:"Flare Screen", category:"Screen", definition:"An off-ball screen that lets a teammate fade away from the ball toward open perimeter space.", coachDefinition:"Coach-specific version pending.", cue:"Screen the defender’s back side so the shooter can drift to space.", commonMistake:"The cutter comes toward the ball instead of fading to open space.", diagramNote:"A player uses a screen to fade away from the ball toward the wing or corner.", diagramType:"flare", difficulty:"Beginner" },
       { id:"gortat", term:"Gortat Screen", category:"Screen", definition:"A seal by the rolling big near the rim to block or pin the help defender and clear a driving lane for the ball handler. It must be done legally.", coachDefinition:"Coach-specific version pending.", cue:"Seal the rim protector legally. Do not shove or move into the defender.", commonMistake:"Turning the seal into an offensive foul by moving or extending into the defender.", diagramNote:"5 seals the rim protector while 1 drives to finish.", diagramType:"generic", difficulty:"Advanced" },
       { id:"rip", term:"Rip Screen", category:"Screen", definition:"A back screen that frees a teammate to cut toward the rim. Traditionally, it is often a guard screening for a big or a cutter near the lane.", coachDefinition:"Coach-specific version pending.", cue:"Screen the defender’s back and send the cutter to the basket.", commonMistake:"Poor timing between the screen and the cutter’s basket cut.", diagramNote:"A back screen frees a teammate cutting hard toward the rim.", diagramType:"rip", difficulty:"Intermediate" },
@@ -810,7 +922,35 @@
       { id:"short-roll", term:"Short Roll", category:"Screener Post-Screen Action", definition:"A controlled roll where the screener stops around the free-throw line, elbow, or middle pocket area to catch and make the next read.", coachDefinition:"Coach-specific version pending.", cue:"Catch in the middle and decide: pass, shoot, or drive.", commonMistake:"Catching in the middle and panicking instead of reading the floor.", diagramNote:"5 rolls into the middle pocket area, catches, and becomes a passer, shooter, or driver.", diagramType:"roll", difficulty:"Intermediate" },
       { id:"pop", term:"Pop", category:"Screener Post-Screen Action", definition:"After setting a screen, the screener moves away from the basket to open shooting space, usually beyond the arc or in the mid-range.", coachDefinition:"Coach-specific version pending.", cue:"Screen, separate, and be ready to shoot or move it.", commonMistake:"Popping to a crowded area or without a clear passing angle.", diagramNote:"5 screens, then pops away from the rim to open space.", diagramType:"pop", difficulty:"Beginner" },
 
-      { id:"ucla", term:"UCLA Cut", category:"Cut", definition:"A cut where the ball handler passes to the wing, then uses a high-post back screen near the elbow to cut toward the basket.", coachDefinition:"Coach-specific version pending.", cue:"Pass to the wing, use the back screen, and cut hard to the rim.", commonMistake:"Cutting around the screen instead of tight off the screener.", diagramNote:"1 passes to the wing, then cuts off 5’s high-post back screen toward the rim.", diagramType:"ucla", difficulty:"Intermediate" },
+      { id:"ucla", term:"UCLA Cut", category:"Cut", definition:"A cut where the ball handler passes to the wing, then uses a high-post back screen near the elbow to cut toward the basket.", coachDefinition:"Coach-specific version pending.", cue:"Pass to the wing, use the back screen, and cut hard to the rim.", commonMistake:"Cutting around the screen instead of tight off the screener.", diagramNote:"1 passes to the wing, then cuts off 5’s high-post back screen toward the rim.", diagramType:"ucla", difficulty:"Intermediate", motionSteps:[
+        {
+          label:"Step 1",
+          description:"1 passes to 2 on the wing.",
+          players:{ "1":{x:300,y:410}, "2":{x:120,y:345}, "3":{x:500,y:345}, "4":{x:500,y:150}, "5":{x:255,y:255} },
+          movements:[],
+          passes:[{from:"1", to:"2"}],
+          screens:[],
+          checkpoint:"The pass starts the UCLA action."
+        },
+        {
+          label:"Step 2",
+          description:"5 sets a high-post back screen for 1.",
+          players:{ "1":{x:300,y:410}, "2":{x:120,y:345}, "3":{x:500,y:345}, "4":{x:500,y:150}, "5":{x:255,y:255} },
+          movements:[{player:"1", from:{x:300,y:410}, to:{x:255,y:285}}],
+          passes:[],
+          screens:[{screener:"5", cutter:"1", type:"backScreen"}],
+          checkpoint:"1 must cut tight off the high-post screen."
+        },
+        {
+          label:"Step 3",
+          description:"1 cuts toward the rim for a possible layup or post catch.",
+          players:{ "1":{x:255,y:165}, "2":{x:120,y:345}, "3":{x:500,y:345}, "4":{x:500,y:150}, "5":{x:255,y:255} },
+          movements:[{player:"1", from:{x:255,y:285}, to:{x:255,y:165}}],
+          passes:[{from:"2", to:"1", type:"entryPass"}],
+          screens:[],
+          checkpoint:"Cut hard to the rim and show hands."
+        }
+      ] },
       { id:"back-door", term:"Backdoor Cut", category:"Cut", definition:"A sudden cut behind the defender toward the basket, usually when the defender overplays or denies the passing lane.", coachDefinition:"Coach-specific version pending.", cue:"If the defender denies the pass, cut behind them.", commonMistake:"Telegraphing the cut or failing to make eye contact with the passer.", diagramNote:"2 reads overplay, plants, and cuts behind the defender to the rim.", diagramType:"backdoor", difficulty:"Beginner" },
       { id:"iverson", term:"Iverson Cut", category:"Cut", definition:"A horizontal cut across the court, usually over two screens near the elbows, to catch the ball on the opposite wing.", coachDefinition:"Coach-specific version pending.", cue:"Sprint shoulder-to-shoulder over the screens and get open on the far side.", commonMistake:"Drifting high and wide instead of using both screens tightly.", diagramNote:"2 cuts across the top using screens near both elbows.", diagramType:"iverson", difficulty:"Intermediate" },
       { id:"l-cut", term:"L-Cut", category:"Cut", definition:"A cut shaped like the letter L. The player moves along one line, then breaks sharply at a right angle to get open.", coachDefinition:"Coach-specific version pending.", cue:"Walk the defender one way, then snap out sharply.", commonMistake:"Rounding the corner instead of making a sharp angle.", diagramNote:"2 moves vertically, plants, then cuts sharply out to the perimeter.", diagramType:"generic", difficulty:"Beginner" },
