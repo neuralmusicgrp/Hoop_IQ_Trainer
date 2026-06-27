@@ -274,6 +274,43 @@
     .mistake { border-left: 4px solid var(--red); background: rgba(251,113,133,.08); }
     .diagram-note { border-left: 4px solid var(--blue); background: rgba(96,165,250,.08); }
 
+    .motion-panel {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(124,58,237,.10);
+    }
+
+    .motion-step-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+      gap: 8px;
+      margin: 10px 0 12px;
+    }
+
+    .motion-step-buttons button {
+      min-height: 42px;
+      padding: 9px;
+      font-size: .84rem;
+    }
+
+    .motion-step-buttons button.active {
+      background: rgba(167,139,250,.28);
+      border-color: rgba(167,139,250,.9);
+      color: #fff;
+    }
+
+    .checkpoint-box {
+      padding: 11px 12px;
+      border-radius: 12px;
+      border-left: 4px solid #a78bfa;
+      background: rgba(167,139,250,.10);
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+
     .bar {
       height: 10px;
       border-radius: 999px;
@@ -554,6 +591,17 @@
         </div>
 
         <div class="court-wrap" id="diagramCourt"></div>
+
+        <div class="motion-panel" id="motionPanel" style="display:none;">
+          <div class="mode-title">
+            <h3>Motion Steps</h3>
+            <span class="pill" id="motionStepCount">Step 1</span>
+          </div>
+          <div class="motion-step-buttons" id="motionStepButtons"></div>
+          <p class="definition" id="motionStepDescription"></p>
+          <div class="checkpoint-box"><strong>Checkpoint:</strong> <span id="motionStepCheckpoint"></span></div>
+        </div>
+
 
         <div class="legend">
           <div class="legend-item"><strong>Solid Arrow:</strong><br>player cut/movement</div>
@@ -1119,7 +1167,7 @@
       { id:"low-man", term:"Low Man", category:"Defensive Concept", definition:"The weak-side help defender closest to the rim. The low man is often responsible for tagging the roller or protecting the basket.", coachDefinition:"Coach-specific version pending.", cue:"On offense, read the low man. If they help, pass to the open shooter.", commonMistake:"Driving without seeing the help defender at the rim.", diagramNote:"The low man is the weak-side defender nearest the basket who must choose between tagging the roller and staying with a shooter.", diagramType:"generic", difficulty:"Advanced", tags:["defense","help defense","read"], role:["ball handler","roller","weak-side shooter"], motionSteps:[] }
     ];
 
-    const CATEGORIES = ["Action", "Screen", "Screener Post-Screen Action", "Cut"];
+    const CATEGORIES = [...new Set(DEFAULT_TERMS.map(t => t.category))];
     const QUIZ_LENGTH = 10;
     const progressKey = "hoopIQTrainerV3Progress";
     const termsKey = "hoopIQTrainerV3Terms";
@@ -1131,6 +1179,7 @@
       cardIndex: 0,
       diagramDeck: [],
       diagramIndex: 0,
+      motionStepIndex: 0,
       quizQuestions: [],
       currentQuestionIndex: 0,
       score: 0,
@@ -1198,7 +1247,10 @@
         commonMistake: t.commonMistake || "Add common mistake here.",
         diagramNote: t.diagramNote || "Add diagram note here.",
         diagramType: t.diagramType || "generic",
-        difficulty: t.difficulty || "Intermediate"
+        difficulty: t.difficulty || "Intermediate",
+        tags: Array.isArray(t.tags) ? t.tags : [],
+        role: Array.isArray(t.role) ? t.role : [],
+        motionSteps: Array.isArray(t.motionSteps) ? t.motionSteps : []
       }));
     }
 
@@ -1333,6 +1385,7 @@
       const term = state.cardDeck[state.cardIndex % state.cardDeck.length];
       state.diagramDeck = [term, ...TERMS.filter(t => t.id !== term.id)];
       state.diagramIndex = 0;
+      state.motionStepIndex = 0;
       showScreen("diagramStudy");
       renderDiagramStudy();
     }
@@ -1342,6 +1395,7 @@
       if (!deck.length) return alert("No diagrams found for that category.");
       state.diagramDeck = shuffle(deck);
       state.diagramIndex = 0;
+      state.motionStepIndex = 0;
       showScreen("diagramStudy");
       renderDiagramStudy();
     }
@@ -1353,20 +1407,118 @@
       document.getElementById("diagramCategory").textContent = term.category;
       document.getElementById("diagramTerm").textContent = term.term;
       document.getElementById("diagramDifficulty").textContent = term.difficulty;
-      document.getElementById("diagramCourt").innerHTML = courtSvg(term);
+      const motionStep = renderMotionSteps(term);
+      document.getElementById("diagramCourt").innerHTML = courtSvg(term, false, motionStep);
       document.getElementById("diagramDefinition").textContent = term.definition;
       document.getElementById("diagramCoach").textContent = term.coachDefinition;
       document.getElementById("diagramCue").textContent = term.cue;
       document.getElementById("diagramNote").textContent = term.diagramNote;
     }
 
+
+    function renderMotionSteps(term) {
+      const panel = document.getElementById("motionPanel");
+      const buttons = document.getElementById("motionStepButtons");
+      const count = document.getElementById("motionStepCount");
+      const description = document.getElementById("motionStepDescription");
+      const checkpoint = document.getElementById("motionStepCheckpoint");
+
+      const steps = Array.isArray(term.motionSteps) ? term.motionSteps : [];
+      if (!steps.length) {
+        panel.style.display = "none";
+        buttons.innerHTML = "";
+        description.textContent = "";
+        checkpoint.textContent = "";
+        return null;
+      }
+
+      if (state.motionStepIndex >= steps.length) state.motionStepIndex = 0;
+      const step = steps[state.motionStepIndex];
+
+      panel.style.display = "block";
+      count.textContent = `${step.label || "Step " + (state.motionStepIndex + 1)} / ${steps.length}`;
+      description.textContent = step.description || "";
+      checkpoint.textContent = step.checkpoint || "Watch the spacing, timing, and next read.";
+
+      buttons.innerHTML = "";
+      steps.forEach((item, index) => {
+        const btn = document.createElement("button");
+        btn.textContent = item.label || `Step ${index + 1}`;
+        btn.className = index === state.motionStepIndex ? "active" : "";
+        btn.onclick = () => selectMotionStep(index);
+        buttons.appendChild(btn);
+      });
+
+      return step;
+    }
+
+    function selectMotionStep(index) {
+      state.motionStepIndex = index;
+      renderDiagramStudy();
+    }
+
+    function pathBetween(from, to) {
+      const midX = (from.x + to.x) / 2;
+      return `M${from.x} ${from.y} C${midX} ${from.y}, ${midX} ${to.y}, ${to.x} ${to.y}`;
+    }
+
+    function motionStepMoves(step) {
+      const playerMap = step.players || {};
+      const players = Object.entries(playerMap).map(([label, pos]) => ({
+        label,
+        x: pos.x,
+        y: pos.y
+      }));
+
+      const lookup = {};
+      players.forEach(p => lookup[p.label] = p);
+
+      const playerMoves = (step.movements || [])
+        .filter(move => move.from && move.to)
+        .map(move => ({ d: pathBetween(move.from, move.to) }));
+
+      const passes = (step.passes || [])
+        .map(pass => {
+          const from = lookup[String(pass.from)];
+          const to = lookup[String(pass.to)];
+          if (!from || !to) return null;
+          return { d: pathBetween(from, to) };
+        })
+        .filter(Boolean);
+
+      const screens = (step.screens || [])
+        .map(screen => {
+          const anchor = lookup[String(screen.screener)] || lookup[String(screen.cutter)] || lookup[String(screen.defenderOf)];
+          if (!anchor) return null;
+          const verticalTypes = ["downScreen", "pinDown", "ramScreen"];
+          const isVertical = verticalTypes.includes(screen.type);
+          return isVertical
+            ? { x1: anchor.x, y1: anchor.y - 24, x2: anchor.x, y2: anchor.y + 24, label: screen.type || "SCREEN" }
+            : { x1: anchor.x - 24, y1: anchor.y, x2: anchor.x + 24, y2: anchor.y, label: screen.type || "SCREEN" };
+        })
+        .filter(Boolean);
+
+      const extra = [{ type:"space", x:300, y:70, text: step.label || "motion step" }];
+
+      return {
+        players: players.length ? players : basePlayers(),
+        playerMoves,
+        passes,
+        screens,
+        extra
+      };
+    }
+
+
     function nextDiagram() {
       state.diagramIndex = (state.diagramIndex + 1) % state.diagramDeck.length;
+      state.motionStepIndex = 0;
       renderDiagramStudy();
     }
 
     function prevDiagram() {
       state.diagramIndex = (state.diagramIndex - 1 + state.diagramDeck.length) % state.diagramDeck.length;
+      state.motionStepIndex = 0;
       renderDiagramStudy();
     }
 
@@ -1814,8 +1966,8 @@
       } catch { alert("Import failed. The pasted text was not valid JSON."); }
     }
 
-    function courtSvg(term, compact = false) {
-      const moves = diagramMoves(term.diagramType || "generic");
+    function courtSvg(term, compact = false, motionStep = null) {
+      const moves = motionStep ? motionStepMoves(motionStep) : diagramMoves(term.diagramType || "generic");
       const label = compact ? "" : `<text x="300" y="35" text-anchor="middle" font-size="20" font-weight="900" fill="#2b1606">${escapeSvg(term.term)}</text>`;
       return `
         <svg class="court" viewBox="0 0 600 520" role="img" aria-label="Half court diagram for ${escapeSvg(term.term)}">
