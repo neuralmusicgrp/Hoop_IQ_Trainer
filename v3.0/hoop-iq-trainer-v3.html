@@ -883,7 +883,35 @@
       { id:"ghost", term:"Ghost Screen", category:"Screen", definition:"A fake ball screen. The would-be screener sprints toward the ball like they are setting a screen, then slips or pops to open space before contact.", coachDefinition:"Coach-specific version pending.", cue:"Sell the screen, then sprint away into space.", commonMistake:"Making heavy contact and turning the ghost into a normal ball screen.", diagramNote:"5 approaches as if screening, then exits early to space before contact.", diagramType:"pop", difficulty:"Intermediate" },
       { id:"brush", term:"Brush Screen", category:"Screen", definition:"A brush is off-ball movement that functions like a screen without heavy contact. It briefly delays a defender while keeping the action flowing.", coachDefinition:"Coach-specific version pending.", cue:"Brush the defender’s path without stopping the flow.", commonMistake:"Creating illegal moving contact instead of using body path and timing.", diagramNote:"A player cuts close enough to delay the defender without setting a full stationary screen.", diagramType:"generic", difficulty:"Advanced" },
       { id:"flip", term:"Flip Screen", category:"Screen", definition:"A ball screen where the screener quickly changes or flips the screen angle at the last second to attack the defender from a new side.", coachDefinition:"Coach-specific version pending.", cue:"Re-angle your body and flip the screen before the defense adjusts.", commonMistake:"Flipping too early so the defender can see it and recover.", diagramNote:"5 changes the screen angle late so 1 can attack the opposite lane.", diagramType:"roll", difficulty:"Advanced" },
-      { id:"ram", term:"Ram Screen", category:"Screen", definition:"An off-ball screen set for the player who is about to set the main ball screen. It helps the ball screener arrive with speed, separation, and advantage.", coachDefinition:"Coach-specific version pending.", cue:"Screen the screener before they set the ball screen.", commonMistake:"Setting a soft ram screen that gives the ball screener no advantage.", diagramNote:"4 screens 5 before 5 comes up to set the ball screen for 1.", diagramType:"ram", difficulty:"Intermediate" },
+      { id:"ram", term:"Ram Screen", category:"Screen", definition:"An off-ball screen set for the player who is about to set the main ball screen. It helps the ball screener arrive with speed, separation, and advantage.", coachDefinition:"Coach-specific version pending.", cue:"Screen the screener before they set the ball screen.", commonMistake:"Setting a soft ram screen that gives the ball screener no advantage.", diagramNote:"4 screens 5 before 5 comes up to set the ball screen for 1.", diagramType:"ram", difficulty:"Intermediate", motionSteps:[
+        {
+          label:"Step 1",
+          description:"4 sets an off-ball screen for 5 before 5 sets the ball screen.",
+          players:{ "1":{x:300,y:410}, "2":{x:100,y:345}, "3":{x:500,y:345}, "4":{x:245,y:240}, "5":{x:315,y:230} },
+          movements:[],
+          passes:[],
+          screens:[{screener:"4", cutter:"5", type:"ramScreen"}],
+          checkpoint:"Ram means screen the screener first."
+        },
+        {
+          label:"Step 2",
+          description:"5 uses the ram screen and sprints into the ball screen.",
+          players:{ "1":{x:300,y:410}, "2":{x:100,y:345}, "3":{x:500,y:345}, "4":{x:245,y:240}, "5":{x:305,y:335} },
+          movements:[{player:"5", from:{x:315,y:230}, to:{x:305,y:335}}],
+          passes:[],
+          screens:[],
+          checkpoint:"5 must arrive with speed and separation."
+        },
+        {
+          label:"Step 3",
+          description:"5 sets the ball screen for 1, creating an advantage.",
+          players:{ "1":{x:300,y:410}, "2":{x:100,y:345}, "3":{x:500,y:345}, "4":{x:245,y:240}, "5":{x:305,y:335} },
+          movements:[{player:"1", from:{x:300,y:410}, to:{x:360,y:350}}],
+          passes:[],
+          screens:[{screener:"5", defenderOf:"1", type:"ballScreen"}],
+          checkpoint:"The first screen should make the main ball screen harder to guard."
+        }
+      ] },
       { id:"hammer", term:"Hammer Screen", category:"Screen", definition:"A weak-side back screen that frees a shooter cutting along the baseline to the opposite corner, usually while the ball handler drives baseline.", coachDefinition:"Coach-specific version pending.", cue:"Screen the weak-side defender and free the corner shooter.", commonMistake:"The driver misses the weak-side corner read, or the screen arrives late.", diagramNote:"1 drives baseline while 4 or 5 sets a weak-side back screen for 2 cutting to the corner.", diagramType:"hammer", difficulty:"Beginner", motionSteps:[
         {
           label:"Step 1",
@@ -957,10 +985,122 @@
       { id:"v-cut", term:"V-Cut", category:"Cut", definition:"A change-of-direction cut where the player takes the defender away from the ball, then cuts sharply back to receive the pass.", coachDefinition:"Coach-specific version pending.", cue:"Push the defender away, plant, and explode back to the ball.", commonMistake:"No change of speed or direction.", diagramNote:"2 cuts toward the defender, plants, and bursts back out.", diagramType:"generic", difficulty:"Beginner" },
       { id:"u-cut", term:"U-Cut", category:"Cut", definition:"A looping cut that curves through the lane or around the floor before returning to open space.", coachDefinition:"Coach-specific version pending.", cue:"Curve your path to lose the defender and reappear in space.", commonMistake:"Looping slowly with no purpose or timing.", diagramNote:"2 loops through space in a rounded U shape to change sides or create separation.", diagramType:"generic", difficulty:"Beginner" },
       { id:"slice", term:"Slice Cut", category:"Cut", definition:"A diagonal cut across the lane or court, often from the wing toward the opposite block or basket area.", coachDefinition:"Coach-specific version pending.", cue:"Cut diagonally through the defense with purpose.", commonMistake:"Cutting without seeing the ball or the open space.", diagramNote:"A player cuts diagonally across the lane or court into a scoring or spacing area.", diagramType:"generic", difficulty:"Intermediate" },
-      { id:"zipper", term:"Zipper Cut", category:"Cut", definition:"A vertical cut from the low block or baseline area up toward the wing, slot, or top of the floor, usually using a down screen.", coachDefinition:"Coach-specific version pending.", cue:"Start low, come straight up off the screen, and catch facing the floor.", commonMistake:"Coming up too wide or failing to use the down screen.", diagramNote:"2 starts low and cuts up the lane line or slot area using a down screen.", diagramType:"zipper", difficulty:"Intermediate" },
-      { id:"chicago", term:"Chicago", category:"Action", definition:"A pin-down screen that flows directly into a dribble handoff. The cutter comes off the down screen and immediately receives the handoff to attack with momentum.", coachDefinition:"Coach-specific version pending.", cue:"Come tight off the pin-down, take the handoff, and turn the corner.", commonMistake:"Catching the handoff too wide or too slow to create an advantage.", diagramNote:"2 uses a pin-down from 5, then receives a handoff from 1 or a nearby connector.", diagramType:"zoom", difficulty:"Intermediate", tags:["handoff","off-ball screen","DHO"], role:["cutter","handoff receiver"], motionSteps:[] },
-      { id:"miami", term:"Miami", category:"Action", definition:"A dribble handoff that flows into a ball screen. The handoff creates the first advantage, then the ball screen creates the second.", coachDefinition:"Coach-specific version pending.", cue:"Use the handoff first, then attack the ball screen immediately.", commonMistake:"Pausing between the handoff and the ball screen.", diagramNote:"2 receives a DHO, then 5 immediately follows into a ball screen.", diagramType:"roll", difficulty:"Intermediate", tags:["handoff","ball screen","DHO"], role:["ball handler","screener"], motionSteps:[] },
-      { id:"double-drag-77", term:"Double Drag / 77", category:"Action", definition:"An early-offense action with two staggered ball screens, usually set in transition or semi-transition to open the middle of the floor.", coachDefinition:"Coach-specific version pending.", cue:"Use both screens with pace and read the first defender who helps.", commonMistake:"Waiting too long and letting the defense get set.", diagramNote:"4 and 5 set two ball screens for 1 above the arc or in early offense.", diagramType:"roll", difficulty:"Advanced", tags:["pick and roll","transition","two screens"], role:["ball handler","screeners"], motionSteps:[] },
+      { id:"zipper", term:"Zipper Cut", category:"Cut", definition:"A vertical cut from the low block or baseline area up toward the wing, slot, or top of the floor, usually using a down screen.", coachDefinition:"Coach-specific version pending.", cue:"Start low, come straight up off the screen, and catch facing the floor.", commonMistake:"Coming up too wide or failing to use the down screen.", diagramNote:"2 starts low and cuts up the lane line or slot area using a down screen.", diagramType:"zipper", difficulty:"Intermediate", motionSteps:[
+        {
+          label:"Step 1",
+          description:"2 starts low near the block or baseline.",
+          players:{ "1":{x:300,y:410}, "2":{x:125,y:160}, "3":{x:500,y:345}, "4":{x:500,y:150}, "5":{x:150,y:245} },
+          movements:[],
+          passes:[],
+          screens:[],
+          checkpoint:"Start low enough to create vertical separation."
+        },
+        {
+          label:"Step 2",
+          description:"5 sets a down screen for 2.",
+          players:{ "1":{x:300,y:410}, "2":{x:125,y:160}, "3":{x:500,y:345}, "4":{x:500,y:150}, "5":{x:150,y:245} },
+          movements:[],
+          passes:[],
+          screens:[{screener:"5", cutter:"2", type:"downScreen"}],
+          checkpoint:"The down screen must free 2 to come straight up."
+        },
+        {
+          label:"Step 3",
+          description:"2 zippers up to the wing or slot to catch.",
+          players:{ "1":{x:300,y:410}, "2":{x:150,y:345}, "3":{x:500,y:345}, "4":{x:500,y:150}, "5":{x:150,y:245} },
+          movements:[{player:"2", from:{x:125,y:160}, to:{x:150,y:345}}],
+          passes:[{from:"1", to:"2"}],
+          screens:[],
+          checkpoint:"Come straight up off the screen and catch facing the floor."
+        }
+      ] },
+      { id:"chicago", term:"Chicago", category:"Action", definition:"A pin-down screen that flows directly into a dribble handoff. The cutter comes off the down screen and immediately receives the handoff to attack with momentum.", coachDefinition:"Coach-specific version pending.", cue:"Come tight off the pin-down, take the handoff, and turn the corner.", commonMistake:"Catching the handoff too wide or too slow to create an advantage.", diagramNote:"2 uses a pin-down from 5, then receives a handoff from 1 or a nearby connector.", diagramType:"zoom", difficulty:"Intermediate", tags:["handoff","off-ball screen","DHO"], role:["cutter","handoff receiver"], motionSteps:[
+        {
+          label:"Step 1",
+          description:"5 sets a pin-down screen for 2.",
+          players:{ "1":{x:300,y:365}, "2":{x:115,y:150}, "3":{x:500,y:345}, "4":{x:500,y:150}, "5":{x:145,y:240} },
+          movements:[],
+          passes:[],
+          screens:[{screener:"5", cutter:"2", type:"pinDown"}],
+          checkpoint:"2 must set up the defender before using the pin-down."
+        },
+        {
+          label:"Step 2",
+          description:"2 comes off the pin-down toward the ball.",
+          players:{ "1":{x:300,y:365}, "2":{x:185,y:295}, "3":{x:500,y:345}, "4":{x:500,y:150}, "5":{x:145,y:240} },
+          movements:[{player:"2", from:{x:115,y:150}, to:{x:185,y:295}}],
+          passes:[],
+          screens:[],
+          checkpoint:"Come tight off the screen. Do not drift wide."
+        },
+        {
+          label:"Step 3",
+          description:"1 hands the ball to 2, creating the Chicago action.",
+          players:{ "1":{x:245,y:330}, "2":{x:230,y:330}, "3":{x:500,y:345}, "4":{x:500,y:150}, "5":{x:145,y:240} },
+          movements:[{player:"2", from:{x:185,y:295}, to:{x:260,y:360}}],
+          passes:[{from:"1", to:"2", type:"handoff"}],
+          screens:[],
+          checkpoint:"Chicago is pin-down into handoff. Catch with momentum."
+        }
+      ] },
+      { id:"miami", term:"Miami", category:"Action", definition:"A dribble handoff that flows into a ball screen. The handoff creates the first advantage, then the ball screen creates the second.", coachDefinition:"Coach-specific version pending.", cue:"Use the handoff first, then attack the ball screen immediately.", commonMistake:"Pausing between the handoff and the ball screen.", diagramNote:"2 receives a DHO, then 5 immediately follows into a ball screen.", diagramType:"roll", difficulty:"Intermediate", tags:["handoff","ball screen","DHO"], role:["ball handler","screener"], motionSteps:[
+        {
+          label:"Step 1",
+          description:"1 initiates a dribble handoff with 2.",
+          players:{ "1":{x:300,y:365}, "2":{x:145,y:330}, "3":{x:500,y:345}, "4":{x:500,y:150}, "5":{x:300,y:250} },
+          movements:[{player:"2", from:{x:145,y:330}, to:{x:250,y:345}}],
+          passes:[{from:"1", to:"2", type:"handoff"}],
+          screens:[],
+          checkpoint:"Take the handoff moving downhill."
+        },
+        {
+          label:"Step 2",
+          description:"5 follows the handoff by setting a ball screen for 2.",
+          players:{ "1":{x:245,y:345}, "2":{x:270,y:345}, "3":{x:500,y:345}, "4":{x:500,y:150}, "5":{x:300,y:300} },
+          movements:[{player:"5", from:{x:300,y:250}, to:{x:305,y:335}}],
+          passes:[],
+          screens:[{screener:"5", defenderOf:"2", type:"ballScreen"}],
+          checkpoint:"Do not pause between the handoff and ball screen."
+        },
+        {
+          label:"Step 3",
+          description:"2 attacks off the ball screen while 5 rolls or pops.",
+          players:{ "1":{x:245,y:345}, "2":{x:355,y:360}, "3":{x:500,y:345}, "4":{x:500,y:150}, "5":{x:300,y:270} },
+          movements:[{player:"2", from:{x:270,y:345}, to:{x:355,y:360}}, {player:"5", from:{x:305,y:335}, to:{x:300,y:270}}],
+          passes:[],
+          screens:[],
+          checkpoint:"Miami is handoff into ball screen. Read the second advantage."
+        }
+      ] },
+      { id:"double-drag-77", term:"Double Drag / 77", category:"Action", definition:"An early-offense action with two staggered ball screens, usually set in transition or semi-transition to open the middle of the floor.", coachDefinition:"Coach-specific version pending.", cue:"Use both screens with pace and read the first defender who helps.", commonMistake:"Waiting too long and letting the defense get set.", diagramNote:"4 and 5 set two ball screens for 1 above the arc or in early offense.", diagramType:"roll", difficulty:"Advanced", tags:["pick and roll","transition","two screens"], role:["ball handler","screeners"], motionSteps:[
+        {
+          label:"Step 1",
+          description:"4 and 5 sprint into two staggered ball screens for 1.",
+          players:{ "1":{x:300,y:430}, "2":{x:100,y:345}, "3":{x:500,y:345}, "4":{x:260,y:335}, "5":{x:340,y:315} },
+          movements:[{player:"4", from:{x:170,y:255}, to:{x:260,y:335}}, {player:"5", from:{x:430,y:255}, to:{x:340,y:315}}],
+          passes:[],
+          screens:[{screener:"4", defenderOf:"1", type:"ballScreen"}, {screener:"5", defenderOf:"1", type:"ballScreen"}],
+          checkpoint:"The two screens must arrive quickly before the defense is set."
+        },
+        {
+          label:"Step 2",
+          description:"1 uses the first screen, then immediately uses the second screen.",
+          players:{ "1":{x:315,y:355}, "2":{x:100,y:345}, "3":{x:500,y:345}, "4":{x:260,y:335}, "5":{x:340,y:315} },
+          movements:[{player:"1", from:{x:300,y:430}, to:{x:315,y:355}}],
+          passes:[],
+          screens:[],
+          checkpoint:"Use both screens with pace. Do not split too early unless it is open."
+        },
+        {
+          label:"Step 3",
+          description:"The first screener can pop while the second screener rolls.",
+          players:{ "1":{x:365,y:330}, "2":{x:100,y:345}, "3":{x:500,y:345}, "4":{x:230,y:355}, "5":{x:340,y:220} },
+          movements:[{player:"1", from:{x:315,y:355}, to:{x:365,y:330}}, {player:"4", from:{x:260,y:335}, to:{x:230,y:355}}, {player:"5", from:{x:340,y:315}, to:{x:340,y:220}}],
+          passes:[],
+          screens:[],
+          checkpoint:"Read roller, popper, then weak side."
+        }
+      ] },
       { id:"forty-five-cut", term:"45 Cut", category:"Cut", definition:"A cut from the wing or slot at roughly a 45-degree angle toward the basket, often used when the defense shifts or the low man turns their head.", coachDefinition:"Coach-specific version pending.", cue:"Cut behind the defense when your defender looks at the ball.", commonMistake:"Standing in the corner instead of cutting when the help defender turns.", diagramNote:"2 cuts diagonally from the wing toward the rim when help shifts away.", diagramType:"generic", difficulty:"Intermediate", tags:["cut","weak side","rim pressure"], role:["cutter"], motionSteps:[] },
       { id:"laker-cut", term:"Laker Cut", category:"Cut", definition:"A cut made by the passer after feeding the post. The passer cuts either over or under the post player to the basket or opposite side.", coachDefinition:"Coach-specific version pending.", cue:"After feeding the post, cut with purpose. Do not stand.", commonMistake:"Passing into the post and watching instead of cutting.", diagramNote:"1 passes to 5 in the post, then cuts around 5 to the rim or opposite side.", diagramType:"generic", difficulty:"Intermediate", tags:["post entry","cut","split action"], role:["passer","cutter"], motionSteps:[] },
       { id:"slip", term:"Slip", category:"Screener Post-Screen Action", definition:"The screener cuts to the basket before making contact, usually because the defense jumps high, switches early, or overplays the screen.", coachDefinition:"Coach-specific version pending.", cue:"If your defender cheats the screen, slip early to the rim.", commonMistake:"Forcing contact when the defense has already opened a slip lane.", diagramNote:"5 starts to screen for 1, then cuts early to the basket before contact.", diagramType:"roll", difficulty:"Intermediate", tags:["screen read","rim cut","pick and roll"], role:["screener"], motionSteps:[] },
