@@ -1501,6 +1501,10 @@
       return textValue;
     }
 
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
     function renderMotionSteps(term) {
       const panel = document.getElementById("motionPanel");
       const buttons = document.getElementById("motionStepButtons");
@@ -1794,12 +1798,13 @@
 
       const answers = document.getElementById("answers");
       answers.innerHTML = "";
+      const questionKey = state.activeQuestionKey;
       q.options.forEach(option => {
         const btn = document.createElement("button");
         btn.className = "option";
         btn.textContent = option;
-        btn.dataset.questionKey = state.activeQuestionKey;
-        btn.onclick = () => answerQuestion(option, btn, state.activeQuestionKey);
+        btn.dataset.questionKey = questionKey;
+        btn.onclick = () => answerQuestion(option, btn, questionKey);
         answers.appendChild(btn);
       });
     }
