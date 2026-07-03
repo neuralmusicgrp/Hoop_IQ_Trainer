@@ -2122,6 +2122,15 @@
     }
 
 
+    function svgText(x, y, text, options = {}) {
+      const size = options.size || 13;
+      const weight = options.weight || 800;
+      const fill = options.fill || "#111827";
+      const anchor = options.anchor || "middle";
+      return `<text x="${x}" y="${y}" text-anchor="${anchor}" fill="${fill}" font-size="${size}" font-weight="${weight}">${escapeSvg(formatDiagramLabel(text, ""))}</text>`;
+    }
+
+
     function playerSvg(p) {
       const label = formatDiagramLabel(p.n ?? p.label, "Player");
       return `<g>
