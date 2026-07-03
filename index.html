@@ -1714,11 +1714,15 @@
       return { type:"mistake", term, question:`Which term has this common mistake?\n\n“${term.commonMistake}”`, answer:term.term, options:shuffle([term.term, ...wrong]), explanation:`${term.term}: ${term.definition}` };
     }
 
+    function diagramQuizClue(term) {
+      return term.quizClue || term.definition || term.coachDefinition || term.diagramNote || "Use the player movement, screen angle, pass, and cut timing to identify the action.";
+    }
+
     function makeDiagramQuestion(term) {
       const sameCategory = TERMS.filter(t => t.id !== term.id && t.category === term.category);
       const other = TERMS.filter(t => t.id !== term.id && t.category !== term.category);
       const wrong = sample([...sameCategory, ...other], 3).map(t => t.term);
-      return { type:"diagram", term, question:"Name this action, screen, cut, or screener movement.", answer:term.term, options:shuffle([term.term, ...wrong]), explanation:`${term.term}: ${term.diagramNote}` };
+      return { type:"diagram", term, question:"Name this action, screen, cut, or screener movement.", clue:diagramQuizClue(term), answer:term.term, options:shuffle([term.term, ...wrong]), explanation:`${term.term}: ${term.diagramNote}` };
     }
 
     function renderQuestion() {
@@ -1738,6 +1742,20 @@
         diagramWrap.style.display = "block";
         const firstMotionStep = Array.isArray(q.term.motionSteps) && q.term.motionSteps.length ? q.term.motionSteps[0] : null;
         diagramWrap.innerHTML = courtSvg(q.term, true, firstMotionStep);
+
+        const clueBox = document.createElement("div");
+        clueBox.className = "checkpoint-box";
+        clueBox.style.marginTop = "12px";
+
+        const clueLabel = document.createElement("strong");
+        clueLabel.textContent = "Definition clue: ";
+
+        const clueText = document.createElement("span");
+        clueText.textContent = q.clue || diagramQuizClue(q.term);
+
+        clueBox.appendChild(clueLabel);
+        clueBox.appendChild(clueText);
+        diagramWrap.appendChild(clueBox);
       } else {
         diagramWrap.style.display = "none";
         diagramWrap.innerHTML = "";
