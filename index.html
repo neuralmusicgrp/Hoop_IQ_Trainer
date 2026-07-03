@@ -1493,6 +1493,14 @@
     }
 
 
+
+    function safeMotionText(value, fallback = "") {
+      if (value === undefined || value === null || value === "") return fallback;
+      const textValue = String(value).trim();
+      if (!textValue || textValue.toLowerCase() === "undefined" || textValue.toLowerCase() === "null") return fallback;
+      return textValue;
+    }
+
     function renderMotionSteps(term) {
       const panel = document.getElementById("motionPanel");
       const buttons = document.getElementById("motionStepButtons");
@@ -1514,8 +1522,8 @@
 
       panel.style.display = "block";
       count.textContent = `${step.label || "Step " + (state.motionStepIndex + 1)} / ${steps.length}`;
-      description.textContent = step.description || "";
-      checkpoint.textContent = step.checkpoint || "Watch the spacing, timing, and next read.";
+      description.textContent = safeMotionText(step.description, step.label || `Step ${state.motionStepIndex + 1}`);
+      checkpoint.textContent = safeMotionText(step.checkpoint, "Watch spacing, timing, and the next read.");
 
       buttons.innerHTML = "";
       steps.forEach((item, index) => {
