@@ -301,6 +301,21 @@
       color: #fff;
     }
 
+    .quiz-motion-panel {
+      margin-top: 12px;
+    }
+
+    .quiz-motion-panel .motion-step-buttons {
+      margin-bottom: 10px;
+    }
+
+    .quiz-step-meta {
+      color: var(--muted);
+      line-height: 1.42;
+      margin: 0 0 10px;
+      font-size: .92rem;
+    }
+
     .checkpoint-box {
       padding: 11px 12px;
       border-radius: 12px;
@@ -1725,6 +1740,80 @@
       return { type:"diagram", term, question:"Name this action, screen, cut, or screener movement.", clue:diagramQuizClue(term), answer:term.term, options:shuffle([term.term, ...wrong]), explanation:`${term.term}: ${term.diagramNote}` };
     }
 
+    function renderQuizDiagram(q, diagramWrap) {
+      diagramWrap.innerHTML = "";
+
+      const steps = Array.isArray(q.term.motionSteps) ? q.term.motionSteps.slice(0, 3) : [];
+      const diagramHost = document.createElement("div");
+      diagramWrap.appendChild(diagramHost);
+
+      const renderStep = index => {
+        const step = steps[index] || null;
+        diagramHost.innerHTML = courtSvg(q.term, true, step);
+      };
+
+      if (steps.length) {
+        let activeStepIndex = 0;
+        renderStep(activeStepIndex);
+
+        const panel = document.createElement("div");
+        panel.className = "quiz-motion-panel";
+
+        const buttons = document.createElement("div");
+        buttons.className = "motion-step-buttons";
+
+        const meta = document.createElement("p");
+        meta.className = "quiz-step-meta";
+
+        const checkpoint = document.createElement("div");
+        checkpoint.className = "checkpoint-box";
+
+        const updateStepText = () => {
+          const step = steps[activeStepIndex];
+          meta.textContent = safeMotionText(step.description, step.label || `Step ${activeStepIndex + 1}`);
+          checkpoint.innerHTML = `<strong>Checkpoint:</strong> ${escapeSvg(safeMotionText(step.checkpoint, "Watch spacing, timing, and the next read."))}`;
+        };
+
+        steps.forEach((step, index) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.textContent = step.label || `Step ${index + 1}`;
+          btn.className = index === activeStepIndex ? "active" : "";
+          btn.onclick = () => {
+            activeStepIndex = index;
+            renderStep(activeStepIndex);
+            buttons.querySelectorAll("button").forEach((button, buttonIndex) => {
+              button.className = buttonIndex === activeStepIndex ? "active" : "";
+            });
+            updateStepText();
+          };
+          buttons.appendChild(btn);
+        });
+
+        updateStepText();
+        panel.appendChild(buttons);
+        panel.appendChild(meta);
+        panel.appendChild(checkpoint);
+        diagramWrap.appendChild(panel);
+      } else {
+        renderStep(0);
+      }
+
+      const clueBox = document.createElement("div");
+      clueBox.className = "checkpoint-box";
+      clueBox.style.marginTop = "12px";
+
+      const clueLabel = document.createElement("strong");
+      clueLabel.textContent = "Definition clue: ";
+
+      const clueText = document.createElement("span");
+      clueText.textContent = q.clue || diagramQuizClue(q.term);
+
+      clueBox.appendChild(clueLabel);
+      clueBox.appendChild(clueText);
+      diagramWrap.appendChild(clueBox);
+    }
+
     function renderQuestion() {
       const q = state.quizQuestions[state.currentQuestionIndex];
       state.answered = false;
@@ -1740,22 +1829,7 @@
       const diagramWrap = document.getElementById("quizDiagramWrap");
       if (q.type === "diagram") {
         diagramWrap.style.display = "block";
-        const firstMotionStep = Array.isArray(q.term.motionSteps) && q.term.motionSteps.length ? q.term.motionSteps[0] : null;
-        diagramWrap.innerHTML = courtSvg(q.term, true, firstMotionStep);
-
-        const clueBox = document.createElement("div");
-        clueBox.className = "checkpoint-box";
-        clueBox.style.marginTop = "12px";
-
-        const clueLabel = document.createElement("strong");
-        clueLabel.textContent = "Definition clue: ";
-
-        const clueText = document.createElement("span");
-        clueText.textContent = q.clue || diagramQuizClue(q.term);
-
-        clueBox.appendChild(clueLabel);
-        clueBox.appendChild(clueText);
-        diagramWrap.appendChild(clueBox);
+        renderQuizDiagram(q, diagramWrap);
       } else {
         diagramWrap.style.display = "none";
         diagramWrap.innerHTML = "";
@@ -2086,11 +2160,11 @@
       return `
         <svg class="court" viewBox="0 0 600 520" role="img" aria-label="Half court diagram for ${escapeSvg(term.term)}">
           <defs>
-            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="#111827"></path>
+            <marker id="arrow" viewBox="0 0 14 14" refX="12" refY="7" markerWidth="9" markerHeight="9" markerUnits="strokeWidth" orient="auto" overflow="visible">
+              <path d="M 1 1 L 13 7 L 1 13 L 4 7 z" fill="#111827"></path>
             </marker>
-            <marker id="passArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"></path>
+            <marker id="passArrow" viewBox="0 0 14 14" refX="12" refY="7" markerWidth="9" markerHeight="9" markerUnits="strokeWidth" orient="auto" overflow="visible">
+              <path d="M 1 1 L 13 7 L 1 13 L 4 7 z" fill="#2563eb"></path>
             </marker>
           </defs>
 
@@ -2151,14 +2225,14 @@
 
     function svgMoveArrow(d, options = {}) {
       const stroke = options.stroke || "#111827";
-      const width = options.width || 5;
-      return `<path d="${d}" fill="none" stroke="${stroke}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>`;
+      const width = options.width || 6;
+      return `<path d="${d}" fill="none" stroke="${stroke}" stroke-width="${width}" stroke-opacity=".95" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>`;
     }
 
     function svgPassArrow(d, options = {}) {
       const stroke = options.stroke || "#2563eb";
-      const width = options.width || 5;
-      return `<path d="${d}" fill="none" stroke="${stroke}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="12 10" marker-end="url(#passArrow)"/>`;
+      const width = options.width || 6;
+      return `<path d="${d}" fill="none" stroke="${stroke}" stroke-width="${width}" stroke-opacity=".95" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="14 9" marker-end="url(#passArrow)"/>`;
     }
 
 
