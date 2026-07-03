@@ -2215,6 +2215,20 @@
           playerMoves = [{d:"M300 430 C250 395, 200 372, 130 365"}];
           screens = [{x1:132,y1:275,x2:165,y2:245}];
           break;
+        case "chicago":
+          players = [{n:1,x:300,y:430},{n:2,x:92,y:365},{n:3,x:505,y:365},{n:4,x:155,y:250},{n:5,x:300,y:205}];
+          screens = [{x1:138,y1:260,x2:175,y2:238,label:"Pin-Down"}];
+          playerMoves = [
+            {d:"M92 365 C105 320, 130 280, 165 250"},
+            {d:"M165 250 C205 232, 255 215, 300 205"},
+            {d:"M300 205 C330 250, 350 300, 365 355"}
+          ];
+          passes = [{d:"M300 430 C240 392, 185 365, 92 365"}];
+          extra = [
+            {type:"space",x:300,y:245,text:"DHO"},
+            {type:"space",x:165,y:230,text:"pin-down to handoff"}
+          ];
+          break;
         case "zoom":
           players = [{n:1,x:300,y:430},{n:2,x:80,y:365},{n:3,x:520,y:365},{n:4,x:505,y:150},{n:5,x:170,y:250}];
           screens = [{x1:155,y1:250,x2:190,y2:250}];
