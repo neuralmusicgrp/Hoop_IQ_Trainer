@@ -1759,10 +1759,35 @@
       return `<div class="motion-step-buttons" style="margin-top:12px;">${buttons}</div>`;
     }
 
+    function resetQuizQuestionUi() {
+      const active = document.activeElement;
+      if (active && typeof active.blur === "function") active.blur();
+
+      const answers = document.getElementById("answers");
+      if (answers) {
+        answers.querySelectorAll("button").forEach(button => {
+          button.classList.remove("correct", "wrong");
+          button.disabled = false;
+          button.dataset.questionKey = "";
+        });
+        answers.innerHTML = "";
+      }
+
+      const feedback = document.getElementById("feedback");
+      if (feedback) {
+        feedback.className = "feedback";
+        feedback.innerHTML = "";
+      }
+
+      const nextButton = document.getElementById("nextQuestionBtn");
+      if (nextButton) nextButton.style.display = "none";
+    }
+
     function renderQuestion() {
       const q = state.quizQuestions[state.currentQuestionIndex];
       state.answered = false;
       state.activeQuestionKey = `${state.currentQuestionIndex}:${q.term.id}:${q.answer}`;
+      resetQuizQuestionUi();
 
       document.getElementById("quizProgress").textContent = `${state.currentQuestionIndex + 1} / ${state.quizQuestions.length}`;
       document.getElementById("quizBar").style.width = `${((state.currentQuestionIndex + 1) / state.quizQuestions.length) * 100}%`;
@@ -1851,8 +1876,7 @@
     function nextQuestion() {
       state.answered = false;
       state.activeQuestionKey = "";
-      document.getElementById("feedback").className = "feedback";
-      document.getElementById("feedback").innerHTML = "";
+      resetQuizQuestionUi();
 
       if (state.currentQuestionIndex < state.quizQuestions.length - 1) {
         state.currentQuestionIndex += 1;
