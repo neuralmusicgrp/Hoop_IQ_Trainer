@@ -1542,6 +1542,7 @@
     function motionStepMoves(step) {
       const playerMap = step.players || {};
       const players = Object.entries(playerMap).map(([label, pos]) => ({
+        n: label,
         label,
         x: pos.x,
         y: pos.y
@@ -1570,8 +1571,8 @@
           const verticalTypes = ["downScreen", "pinDown", "ramScreen"];
           const isVertical = verticalTypes.includes(screen.type);
           return isVertical
-            ? { x1: anchor.x, y1: anchor.y - 24, x2: anchor.x, y2: anchor.y + 24, label: screen.type || "SCREEN" }
-            : { x1: anchor.x - 24, y1: anchor.y, x2: anchor.x + 24, y2: anchor.y, label: screen.type || "SCREEN" };
+            ? { x1: anchor.x, y1: anchor.y - 24, x2: anchor.x, y2: anchor.y + 24, label: formatDiagramLabel(screen.type, "Screen") }
+            : { x1: anchor.x - 24, y1: anchor.y, x2: anchor.x + 24, y2: anchor.y, label: formatDiagramLabel(screen.type, "Screen") };
         })
         .filter(Boolean);
 
@@ -2087,10 +2088,37 @@
       `;
     }
 
+
+    function formatDiagramLabel(value, fallback = "") {
+      if (value === undefined || value === null || value === "") return fallback;
+      const labels = {
+        ballScreen: "Ball Screen",
+        backScreen: "Back Screen",
+        downScreen: "Down Screen",
+        pinDown: "Pin-Down",
+        ramScreen: "Ram Screen",
+        ghostScreen: "Ghost Screen",
+        flareScreen: "Flare Screen",
+        handoff: "Handoff",
+        skipPass: "Skip Pass",
+        rollPass: "Roll Pass",
+        entryPass: "Entry Pass",
+        screen: "Screen"
+      };
+
+      if (labels[value]) return labels[value];
+
+      return String(value)
+        .replace(/([a-z])([A-Z])/g, "$1 $2")
+        .replace(/\b\w/g, char => char.toUpperCase());
+    }
+
+
     function playerSvg(p) {
+      const label = formatDiagramLabel(p.n ?? p.label, "Player");
       return `<g>
-        <circle cx="${p.x}" cy="${p.y}" r="20" fill="#111827" stroke="#ffffff" stroke-width="3"/>
-        <text x="${p.x}" y="${p.y + 6}" text-anchor="middle" font-size="17" font-weight="900" fill="#ffffff">${p.n}</text>
+        <circle cx="${p.x}" cy="${p.y}" r="18" fill="#111827" stroke="#fff" stroke-width="3"></circle>
+        <text x="${p.x}" y="${p.y + 6}" text-anchor="middle" fill="#fff" font-size="15" font-weight="900">${escapeSvg(label)}</text>
       </g>`;
     }
 
@@ -2103,9 +2131,10 @@
     }
 
     function screenSvg(s) {
+      const label = formatDiagramLabel(s.label, "Screen");
       return `<g>
-        <line x1="${s.x1}" y1="${s.y1}" x2="${s.x2}" y2="${s.y2}" stroke="#7c2d12" stroke-width="8" stroke-linecap="round"/>
-        <text x="${(s.x1+s.x2)/2}" y="${(s.y1+s.y2)/2 - 10}" text-anchor="middle" font-size="13" font-weight="900" fill="#7c2d12">SCREEN</text>
+        <line x1="${s.x1}" y1="${s.y1}" x2="${s.x2}" y2="${s.y2}" stroke="#7c2d12" stroke-width="8" stroke-linecap="round"></line>
+        <text x="${(s.x1 + s.x2) / 2}" y="${Math.min(s.y1, s.y2) - 10}" text-anchor="middle" fill="#7c2d12" font-size="12" font-weight="900">${escapeSvg(label)}</text>
       </g>`;
     }
 
