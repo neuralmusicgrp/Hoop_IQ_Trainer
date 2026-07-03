@@ -2016,11 +2016,32 @@
       if (oldValue && TERMS.find(t => t.id === oldValue)) select.value = oldValue;
     }
 
+    function renderOptionList(select, options, value) {
+      if (!select) return;
+      select.innerHTML = "";
+      options.forEach(item => {
+        const option = document.createElement("option");
+        option.value = item;
+        option.textContent = item;
+        select.appendChild(option);
+      });
+      if (value && options.includes(value)) select.value = value;
+    }
+
+    function renderEditMetadataOptions(term) {
+      const diagramTypes = Array.from(new Set(["generic", ...DEFAULT_TERMS.map(t => t.diagramType).filter(Boolean), ...TERMS.map(t => t.diagramType).filter(Boolean)])).sort();
+      const difficulties = Array.from(new Set(["Beginner", "Intermediate", "Advanced", "Coach Specific", ...TERMS.map(t => t.difficulty).filter(Boolean)]));
+      renderOptionList(document.getElementById("editCategory"), CATEGORIES, term.category);
+      renderOptionList(document.getElementById("editDiagramType"), diagramTypes, term.diagramType || "generic");
+      renderOptionList(document.getElementById("editDifficulty"), difficulties, term.difficulty);
+    }
+
     function loadEditForm() {
       const select = document.getElementById("editSelect");
       if (!select || !TERMS.length) return;
       const term = TERMS.find(t => t.id === select.value) || TERMS[0];
       select.value = term.id;
+      renderEditMetadataOptions(term);
       document.getElementById("editTerm").value = term.term;
       document.getElementById("editCategory").value = term.category;
       document.getElementById("editDefinition").value = term.definition;
