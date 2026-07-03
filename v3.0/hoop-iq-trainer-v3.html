@@ -1619,6 +1619,7 @@
       state.score = 0;
       state.answered = false;
       state.missedThisRound = [];
+      state.quizMotionStepIndex = 0;
       showScreen("quiz");
       document.getElementById("quizModeTitle").textContent = isDaily ? "Daily 10" : modeTitle(mode);
       document.getElementById("quizCategoryPill").textContent = category === "All" ? "All Terms" : category;
@@ -1644,6 +1645,7 @@
       state.score = 0;
       state.answered = false;
       state.missedThisRound = [];
+      state.quizMotionStepIndex = 0;
       showScreen("quiz");
       document.getElementById("quizModeTitle").textContent = "Name This Action";
       document.getElementById("quizCategoryPill").textContent = "Diagram Quiz";
@@ -1725,6 +1727,34 @@
       return { type:"diagram", term, question:"Name this action, screen, cut, or screener movement.", clue:diagramQuizClue(term), answer:term.term, options:shuffle([term.term, ...wrong]), explanation:`${term.term}: ${term.diagramNote}` };
     }
 
+    function getQuizMotionStep(term) {
+      const steps = Array.isArray(term.motionSteps) ? term.motionSteps : [];
+      if (!steps.length) return null;
+      const safeIndex = Math.max(0, Math.min(state.quizMotionStepIndex || 0, steps.length - 1));
+      state.quizMotionStepIndex = safeIndex;
+      return steps[safeIndex];
+    }
+
+    function selectQuizMotionStep(index) {
+      if (state.answered) return;
+      state.quizMotionStepIndex = index;
+      renderQuestion();
+    }
+
+    function renderQuizMotionStepButtons(term) {
+      const steps = Array.isArray(term.motionSteps) ? term.motionSteps : [];
+      if (steps.length <= 1) return "";
+
+      const activeIndex = state.quizMotionStepIndex || 0;
+      const buttons = steps.map((step, index) => {
+        const activeClass = index === activeIndex ? " primary" : "";
+        const label = safeMotionText(step.title, `Step ${index + 1}`);
+        return `<button class="small${activeClass}" onclick="selectQuizMotionStep(${index})">${escapeHtml(label)}</button>`;
+      }).join("");
+
+      return `<div class="motion-step-buttons" style="margin-top:12px;">${buttons}</div>`;
+    }
+
     function renderQuestion() {
       const q = state.quizQuestions[state.currentQuestionIndex];
       state.answered = false;
@@ -1740,8 +1770,8 @@
       const diagramWrap = document.getElementById("quizDiagramWrap");
       if (q.type === "diagram") {
         diagramWrap.style.display = "block";
-        const firstMotionStep = Array.isArray(q.term.motionSteps) && q.term.motionSteps.length ? q.term.motionSteps[0] : null;
-        diagramWrap.innerHTML = courtSvg(q.term, true, firstMotionStep);
+        const quizMotionStep = getQuizMotionStep(q.term);
+        diagramWrap.innerHTML = courtSvg(q.term, true, quizMotionStep) + renderQuizMotionStepButtons(q.term);
 
         const clueBox = document.createElement("div");
         clueBox.className = "checkpoint-box";
@@ -1808,6 +1838,7 @@
     function nextQuestion() {
       if (state.currentQuestionIndex < state.quizQuestions.length - 1) {
         state.currentQuestionIndex += 1;
+        state.quizMotionStepIndex = 0;
         renderQuestion();
       } else finishQuiz();
     }
