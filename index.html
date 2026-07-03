@@ -926,11 +926,11 @@
       { id:"bulldog-motion", term:"Bulldog Motion", category:"Action", definition:"A team-specific term. It may describe a physical motion offense built around hard cuts, strong screens, downhill handoffs, and contact-based advantage creation, but the exact meaning must come from the coach.", coachDefinition:"Coach-specific version pending. This should be updated from the coach’s language.", cue:"Play physical, screen hard, cut hard, and attack downhill if this is how coach teaches it.", commonMistake:"Treating a team-specific call like a universal basketball term.", diagramNote:"Team-specific. Update this once coach gives the exact player movement.", diagramType:"generic", difficulty:"Coach Specific" },
       { id:"slash", term:"Slash", category:"Action", definition:"A pick-and-pop action that flows into a dribble handoff on the opposite side of the floor. The screener pops after the ball screen, catches, then hands off to a weak-side teammate.", coachDefinition:"Coach-specific version pending.", cue:"Screen, pop, catch, and hand off to the opposite-side guard.", commonMistake:"Thinking Slash only means a random hard cut through the paint.", diagramNote:"5 screens and pops. The ball moves to 5, then 5 hands off to a weak-side teammate coming with momentum.", diagramType:"slash", difficulty:"Advanced" },
 
-      { id:"step-up", term:"Step-Up Screen", category:"Screen", definition:"A side ball screen set with the screener’s back parallel to the baseline. It is used to change the ball handler’s driving angle and create a lane.", coachDefinition:"Coach-specific version pending.", cue:"Step up into the angle and give the ball handler a clean driving lane.", commonMistake:"Setting it too flat, too high, or too far away to affect the defender.", diagramNote:"5 steps up from below or beside the ball and sets an angled side ball screen for 1.", diagramType:"roll", difficulty:"Advanced" },
+      { id:"step-up", term:"Step-Up Screen", category:"Screen", definition:"A side ball screen set with the screener’s back parallel to the baseline. It is used to change the ball handler’s driving angle and create a lane.", coachDefinition:"Coach-specific version pending.", cue:"Step up into the angle and give the ball handler a clean driving lane.", commonMistake:"Setting it too flat, too high, or too far away to affect the defender.", diagramNote:"5 steps up from below or beside the ball and sets an angled side ball screen for 1.", diagramType:"step-up", difficulty:"Advanced" },
       { id:"veer", term:"Veer Screen", category:"Screen", definition:"A ball-screen-into-off-ball-screen action. Instead of rolling after the ball screen, the screener turns and screens for another teammate, often a shooter.", coachDefinition:"Coach-specific version pending.", cue:"Screen the ball, then immediately veer into the next screen.", commonMistake:"Rolling by habit instead of turning into the second screen.", diagramNote:"5 appears in ball-screen action, then turns and sets an off-ball screen for a teammate.", diagramType:"generic", difficulty:"Advanced" },
       { id:"ghost", term:"Ghost Screen", category:"Screen", definition:"A fake ball screen. The would-be screener sprints toward the ball like they are setting a screen, then slips or pops to open space before contact.", coachDefinition:"Coach-specific version pending.", cue:"Sell the screen, then sprint away into space.", commonMistake:"Making heavy contact and turning the ghost into a normal ball screen.", diagramNote:"5 approaches as if screening, then exits early to space before contact.", diagramType:"ghost", difficulty:"Intermediate" },
       { id:"brush", term:"Brush Screen", category:"Screen", definition:"A brush is off-ball movement that functions like a screen without heavy contact. It briefly delays a defender while keeping the action flowing.", coachDefinition:"Coach-specific version pending.", cue:"Brush the defender’s path without stopping the flow.", commonMistake:"Creating illegal moving contact instead of using body path and timing.", diagramNote:"A player cuts close enough to delay the defender without setting a full stationary screen.", diagramType:"generic", difficulty:"Advanced" },
-      { id:"flip", term:"Flip Screen", category:"Screen", definition:"A ball screen where the screener quickly changes or flips the screen angle at the last second to attack the defender from a new side.", coachDefinition:"Coach-specific version pending.", cue:"Re-angle your body and flip the screen before the defense adjusts.", commonMistake:"Flipping too early so the defender can see it and recover.", diagramNote:"5 changes the screen angle late so 1 can attack the opposite lane.", diagramType:"roll", difficulty:"Advanced" },
+      { id:"flip", term:"Flip Screen", category:"Screen", definition:"A ball screen where the screener quickly changes or flips the screen angle at the last second to attack the defender from a new side.", coachDefinition:"Coach-specific version pending.", cue:"Re-angle your body and flip the screen before the defense adjusts.", commonMistake:"Flipping too early so the defender can see it and recover.", diagramNote:"5 changes the screen angle late so 1 can attack the opposite lane.", diagramType:"flip", difficulty:"Advanced" },
       { id:"ram", term:"Ram Screen", category:"Screen", definition:"An off-ball screen set for the player who is about to set the main ball screen. It helps the ball screener arrive with speed, separation, and advantage.", coachDefinition:"Coach-specific version pending.", cue:"Screen the screener before they set the ball screen.", commonMistake:"Setting a soft ram screen that gives the ball screener no advantage.", diagramNote:"4 screens 5 before 5 comes up to set the ball screen for 1.", diagramType:"ram", difficulty:"Intermediate", motionSteps:[
         {
           label:"Step 1",
@@ -2319,6 +2319,37 @@
           screens = [{x1:280,y1:330,x2:320,y2:330}];
           playerMoves = [{d:"M300 430 C340 390, 340 350, 320 330"}, {d:"M300 330 C300 280, 300 215, 300 145"}];
           passes = [{d:"M335 335 C325 260, 315 190, 300 145"}];
+          break;
+        case "step-up":
+          players = [{n:1,x:205,y:365},{n:2,x:505,y:365},{n:3,x:430,y:165},{n:4,x:95,y:155},{n:5,x:205,y:438}];
+          screens = [{x1:184,y1:392,x2:226,y2:420,label:"Step-Up"}];
+          playerMoves = [
+            {d:"M205 365 C238 342, 282 314, 330 282"},
+            {d:"M205 438 C205 418, 203 398, 198 380"},
+            {d:"M198 380 C236 330, 270 245, 300 150"}
+          ];
+          passes = [{d:"M330 282 C322 232, 310 188, 300 150"}];
+          extra = [
+            {type:"space",x:202,y:345,text:"angle changes drive"},
+            {type:"space",x:232,y:420,text:"from below"}
+          ];
+          break;
+        case "flip":
+          players = [{n:1,x:300,y:430},{n:2,x:95,y:365},{n:3,x:505,y:365},{n:4,x:120,y:150},{n:5,x:300,y:330}];
+          screens = [
+            {x1:280,y1:330,x2:320,y2:330,label:"old angle"},
+            {x1:318,y1:310,x2:342,y2:348,label:"Flip"}
+          ];
+          playerMoves = [
+            {d:"M300 430 C315 392, 326 362, 342 348"},
+            {d:"M300 330 C316 326, 328 322, 340 314"},
+            {d:"M342 348 C304 304, 270 238, 245 150"}
+          ];
+          passes = [{d:"M342 348 C315 280, 282 208, 245 150"}];
+          extra = [
+            {type:"space",x:352,y:300,text:"late re-angle"},
+            {type:"space",x:255,y:188,text:"opposite lane"}
+          ];
           break;
         case "pop":
           players = [{n:1,x:300,y:430},{n:2,x:95,y:365},{n:3,x:505,y:365},{n:4,x:120,y:150},{n:5,x:300,y:330}];
