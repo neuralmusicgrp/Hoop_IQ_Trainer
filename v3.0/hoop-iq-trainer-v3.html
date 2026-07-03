@@ -1616,12 +1616,21 @@
       renderQuestion();
     }
 
+
+    function hasDistinctQuizDiagram(term) {
+      if (!term) return false;
+      if (Array.isArray(term.motionSteps) && term.motionSteps.length) return true;
+      return Boolean(term.diagramType && term.diagramType !== "generic");
+    }
+
+
     function startDiagramQuiz() {
       state.lastMode = "diagram";
       state.lastCategory = "Visual";
       state.isDaily = false;
-      const visualTerms = TERMS.filter(t => t.diagramType);
-      state.quizQuestions = sample(visualTerms, QUIZ_LENGTH).map(makeDiagramQuestion);
+      const visualTerms = TERMS.filter(hasDistinctQuizDiagram);
+      if (!visualTerms.length) return alert("No distinct diagrams found yet.");
+      state.quizQuestions = sample(visualTerms, Math.min(QUIZ_LENGTH, visualTerms.length)).map(makeDiagramQuestion);
       state.currentQuestionIndex = 0;
       state.score = 0;
       state.answered = false;
@@ -1718,7 +1727,8 @@
       const diagramWrap = document.getElementById("quizDiagramWrap");
       if (q.type === "diagram") {
         diagramWrap.style.display = "block";
-        diagramWrap.innerHTML = courtSvg(q.term, true);
+        const firstMotionStep = Array.isArray(q.term.motionSteps) && q.term.motionSteps.length ? q.term.motionSteps[0] : null;
+        diagramWrap.innerHTML = courtSvg(q.term, true, firstMotionStep);
       } else {
         diagramWrap.style.display = "none";
         diagramWrap.innerHTML = "";
