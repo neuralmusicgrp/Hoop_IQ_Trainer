@@ -2131,6 +2131,19 @@
     }
 
 
+    function svgMoveArrow(d, options = {}) {
+      const stroke = options.stroke || "#111827";
+      const width = options.width || 5;
+      return `<path d="${d}" fill="none" stroke="${stroke}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>`;
+    }
+
+    function svgPassArrow(d, options = {}) {
+      const stroke = options.stroke || "#2563eb";
+      const width = options.width || 5;
+      return `<path d="${d}" fill="none" stroke="${stroke}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="12 10" marker-end="url(#passArrow)"/>`;
+    }
+
+
     function playerSvg(p) {
       const label = formatDiagramLabel(p.n ?? p.label, "Player");
       return `<g>
