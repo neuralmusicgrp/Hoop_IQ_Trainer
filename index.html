@@ -1163,8 +1163,8 @@
       { id:"low-drop", term:"Low Drop", category:"Defensive Coverage", definition:"A deeper drop coverage where the screener's defender stays closer to the rim, inviting pull-ups and short-roll decisions.", coachDefinition:"Coach-specific version pending.", cue:"If the big is low, use space for pull-up, floater, or pocket pass.", commonMistake:"Missing the open middle because the big is sitting too deep.", diagramNote:"The big defender stays low near the paint while the guard fights through the screen.", diagramType:"generic", difficulty:"Advanced", tags:["defense","ball screen coverage"], role:["ball handler","roller"], motionSteps:[] },
       { id:"ice-down", term:"Ice / Down", category:"Defensive Coverage", definition:"A side ball-screen coverage where the defense tries to force the ball handler away from the screen and toward the sideline or baseline.", coachDefinition:"Coach-specific version pending.", cue:"Reject, split, or move the ball before the sideline trap forms.", commonMistake:"Dribbling directly into the sideline where the defense wants you to go.", diagramNote:"The on-ball defender jumps to deny the screen and push the ball toward the sideline or baseline.", diagramType:"generic", difficulty:"Advanced", tags:["defense","ball screen coverage","side pick and roll"], role:["ball handler"], motionSteps:[] },
       { id:"blitz-trap", term:"Blitz / Trap", category:"Defensive Coverage", definition:"A coverage where two defenders aggressively attack the ball handler after the screen to force a quick pass, turnover, or retreat.", coachDefinition:"Coach-specific version pending.", cue:"Get off the ball quickly and punish the numbers advantage.", commonMistake:"Holding the ball too long against two defenders.", diagramNote:"The on-ball defender and screener's defender both attack the ball handler.", diagramType:"generic", difficulty:"Advanced", tags:["defense","pressure","ball screen coverage"], role:["ball handler","screener"], motionSteps:[] },
-      { id:"weak", term:"Weak", category:"Defensive Coverage", definition:"A coverage concept where the defense influences the ball handler toward their weaker hand or toward a less dangerous side of the floor.", coachDefinition:"Coach-specific version pending.", cue:"Recognize the force direction and counter with spacing or a change of angle.", commonMistake:"Letting the defense dictate the entire possession.", diagramNote:"The defender shades the ball handler toward the weak hand or preferred help area.", diagramType:"generic", difficulty:"Advanced", tags:["defense","force","coverage"], role:["ball handler","defender"], motionSteps:[] },
-      { id:"low-man", term:"Low Man", category:"Defensive Concept", definition:"The weak-side help defender closest to the rim. The low man is often responsible for tagging the roller or protecting the basket.", coachDefinition:"Coach-specific version pending.", cue:"On offense, read the low man. If they help, pass to the open shooter.", commonMistake:"Driving without seeing the help defender at the rim.", diagramNote:"The low man is the weak-side defender nearest the basket who must choose between tagging the roller and staying with a shooter.", diagramType:"generic", difficulty:"Advanced", tags:["defense","help defense","read"], role:["ball handler","roller","weak-side shooter"], motionSteps:[] }
+      { id:"weak", term:"Weak", category:"Defensive Coverage", definition:"A coverage concept where the defense influences the ball handler toward their weaker hand or toward a less dangerous side of the floor.", coachDefinition:"Coach-specific version pending.", cue:"Recognize the force direction and counter with spacing or a change of angle.", commonMistake:"Letting the defense dictate the entire possession.", diagramNote:"The defender shades the ball handler toward the weak hand or preferred help area.", diagramType:"weak", difficulty:"Advanced", tags:["defense","force","coverage"], role:["ball handler","defender"], motionSteps:[] },
+      { id:"low-man", term:"Low Man", category:"Defensive Concept", definition:"The weak-side help defender closest to the rim. The low man is often responsible for tagging the roller or protecting the basket.", coachDefinition:"Coach-specific version pending.", cue:"On offense, read the low man. If they help, pass to the open shooter.", commonMistake:"Driving without seeing the help defender at the rim.", diagramNote:"The low man is the weak-side defender nearest the basket who must choose between tagging the roller and staying with a shooter.", diagramType:"low-man", difficulty:"Advanced", tags:["defense","help defense","read"], role:["ball handler","roller","weak-side shooter"], motionSteps:[] }
     ];
 
     const CATEGORIES = [...new Set(DEFAULT_TERMS.map(t => t.category))];
@@ -2410,6 +2410,33 @@
           extra = [
             {type:"space",x:352,y:300,text:"late re-angle"},
             {type:"space",x:255,y:188,text:"opposite lane"}
+          ];
+          break;
+        case "weak":
+          players = [{n:1,x:390,y:405},{n:"X1",x:365,y:382},{n:2,x:505,y:365},{n:3,x:95,y:365},{n:"X3",x:178,y:270},{n:5,x:300,y:245}];
+          playerMoves = [
+            {d:"M390 405 C420 360, 430 315, 420 265"},
+            {d:"M178 270 C220 250, 252 230, 285 205"}
+          ];
+          extra = [
+            {type:"space",x:178,y:248,text:"weak side"},
+            {type:"space",x:260,y:210,text:"help"},
+            {type:"space",x:320,y:195,text:"tag roller"}
+          ];
+          break;
+        case "low-man":
+          players = [{n:1,x:390,y:405},{n:5,x:300,y:330},{n:"X5",x:300,y:252},{n:2,x:505,y:365},{n:3,x:95,y:365},{n:"X3",x:170,y:235}];
+          screens = [{x1:280,y1:330,x2:320,y2:330,label:"Screen"}];
+          playerMoves = [
+            {d:"M390 405 C365 365, 335 338, 300 330"},
+            {d:"M300 330 C300 290, 300 238, 300 170"},
+            {d:"M170 235 C205 210, 245 190, 300 170"}
+          ];
+          passes = [{d:"M390 405 C340 330, 315 240, 300 170"}];
+          extra = [
+            {type:"space",x:174,y:214,text:"low man"},
+            {type:"space",x:254,y:182,text:"tag roller"},
+            {type:"space",x:320,y:142,text:"protect rim"}
           ];
           break;
         case "pop":
