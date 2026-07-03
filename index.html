@@ -922,7 +922,7 @@
       ] },
       { id:"flex", term:"Flex", category:"Action", definition:"A continuity action built around a baseline cross-screen followed by a down screen. It creates layups, post touches, and jump shots through constant screening and cutting.", coachDefinition:"Coach-specific version pending.", cue:"Screen across, then screen down. Cut hard and keep spacing.", commonMistake:"Drifting off the screen instead of cutting shoulder-to-shoulder.", diagramNote:"A player uses a baseline cross-screen, then the screener or another player receives a down screen.", diagramType:"flex", difficulty:"Beginner" },
       { id:"circle-motion", term:"Circle Motion", category:"Action", definition:"A motion concept where players pass, cut, and rotate to fill open spots around the perimeter so the floor stays balanced and nobody stands still.", coachDefinition:"Coach-specific version pending.", cue:"Pass, cut, fill, and keep the circle moving.", commonMistake:"Watching the ball and failing to replace open spots.", diagramNote:"Players rotate around the perimeter and replace each other to maintain spacing and rhythm.", diagramType:"generic", difficulty:"Advanced" },
-      { id:"euro-ball-screen-action", term:"Euro Ball Screen", category:"Action", definition:"A team-specific or non-universal ball-screen term. It often refers to an empty-side, side, or angle ball-screen variation designed to change the ball handler’s driving angle and force defensive rotation.", coachDefinition:"Coach-specific version pending. Use the coach’s definition first because this term is not universal.", cue:"Read the screen angle, attack the open side, and punish the help.", commonMistake:"Assuming this term means the same thing in every system.", diagramNote:"Side or angle ball screen with spacing that changes the driving angle. Update once coach confirms the team version.", diagramType:"roll", difficulty:"Coach Specific" },
+      { id:"euro-ball-screen-action", term:"Euro Ball Screen", category:"Action", definition:"A team-specific or non-universal ball-screen term. It often refers to an empty-side, side, or angle ball-screen variation designed to change the ball handler’s driving angle and force defensive rotation.", coachDefinition:"Coach-specific version pending. Use the coach’s definition first because this term is not universal.", cue:"Read the screen angle, attack the open side, and punish the help.", commonMistake:"Assuming this term means the same thing in every system.", diagramNote:"Side or angle ball screen with spacing that changes the driving angle. Update once coach confirms the team version.", diagramType:"euro-ball-screen", difficulty:"Coach Specific" },
       { id:"bulldog-motion", term:"Bulldog Motion", category:"Action", definition:"A team-specific term. It may describe a physical motion offense built around hard cuts, strong screens, downhill handoffs, and contact-based advantage creation, but the exact meaning must come from the coach.", coachDefinition:"Coach-specific version pending. This should be updated from the coach’s language.", cue:"Play physical, screen hard, cut hard, and attack downhill if this is how coach teaches it.", commonMistake:"Treating a team-specific call like a universal basketball term.", diagramNote:"Team-specific. Update this once coach gives the exact player movement.", diagramType:"generic", difficulty:"Coach Specific" },
       { id:"slash", term:"Slash", category:"Action", definition:"A pick-and-pop action that flows into a dribble handoff on the opposite side of the floor. The screener pops after the ball screen, catches, then hands off to a weak-side teammate.", coachDefinition:"Coach-specific version pending.", cue:"Screen, pop, catch, and hand off to the opposite-side guard.", commonMistake:"Thinking Slash only means a random hard cut through the paint.", diagramNote:"5 screens and pops. The ball moves to 5, then 5 hands off to a weak-side teammate coming with momentum.", diagramType:"slash", difficulty:"Advanced" },
 
@@ -2349,6 +2349,21 @@
             {type:"space",x:300,y:226,text:"middle pocket"},
             {type:"space",x:182,y:190,text:"left read"},
             {type:"space",x:452,y:190,text:"right read"}
+          ];
+          break;
+        case "euro-ball-screen":
+          players = [{n:1,x:145,y:360},{n:2,x:505,y:365},{n:3,x:410,y:150},{n:4,x:95,y:150},{n:5,x:235,y:325}];
+          screens = [{x1:218,y1:338,x2:252,y2:306,label:"Angle"}];
+          playerMoves = [
+            {d:"M145 360 C190 330, 245 300, 310 250"},
+            {d:"M235 325 C252 300, 270 272, 292 230"},
+            {d:"M292 230 C295 195, 298 160, 300 125"}
+          ];
+          passes = [{d:"M310 250 C305 205, 302 162, 300 125"}];
+          extra = [
+            {type:"space",x:154,y:332,text:"side angle"},
+            {type:"space",x:256,y:322,text:"angled screen"},
+            {type:"space",x:318,y:275,text:"attack middle"}
           ];
           break;
         case "step-up":
