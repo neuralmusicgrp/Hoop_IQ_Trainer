@@ -2144,6 +2144,19 @@
     }
 
 
+    function svgPlayerCircle(x, y, label, options = {}) {
+      const fill = options.fill || "#111827";
+      const stroke = options.stroke || "#fff";
+      const textFill = options.textFill || "#fff";
+      const radius = options.radius || 18;
+      const safeLabel = formatDiagramLabel(label, "Player");
+      return `<g>
+        <circle cx="${x}" cy="${y}" r="${radius}" fill="${fill}" stroke="${stroke}" stroke-width="3"></circle>
+        <text x="${x}" y="${y + 6}" text-anchor="middle" fill="${textFill}" font-size="15" font-weight="900">${escapeSvg(safeLabel)}</text>
+      </g>`;
+    }
+
+
     function playerSvg(p) {
       const label = formatDiagramLabel(p.n ?? p.label, "Player");
       return `<g>
