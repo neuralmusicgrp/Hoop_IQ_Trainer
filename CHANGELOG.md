@@ -1,3 +1,9 @@
+## v0.8.5 - Home Card Color Polish
+
+### Changed
+
+- Updated the How to Use and Quick Start onboarding accents to teal so they read as help/guidance instead of a core workout mode.
+
 ## v0.8.4 - How to Use Quick Start Guide
 
 ### Added

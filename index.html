@@ -164,6 +164,7 @@
     button:active { transform: scale(.985); }
     button.primary { background: linear-gradient(135deg, var(--accent), #ffd166); color: #171717; border: 0; }
     button.secondary { background: linear-gradient(135deg, var(--accent2), #7dd3fc); color: #061313; border: 0; }
+    button.guide { background: linear-gradient(135deg, #3EC7C2, #8be7e1); color: #052322; border: 0; }
     button.blue { background: linear-gradient(135deg, #60a5fa, #a78bfa); color: #06101d; border: 0; }
     button.purple { background: linear-gradient(135deg, #a78bfa, #f0abfc); color: #13091d; border: 0; }
     button.ghost { background: rgba(255,255,255,.055); color: var(--muted); }
@@ -202,6 +203,7 @@
 
     .pill.hot { color: #111; background: var(--accent); border-color: transparent; }
     .pill.cool { color: #061313; background: var(--accent2); border-color: transparent; }
+    .pill.guide { color: #052322; background: #3EC7C2; border-color: transparent; }
 
     .mode-title {
       display: flex;
@@ -568,7 +570,7 @@
         </div>
 
         <div class="grid home-grid">
-          <button class="primary" onclick="showScreen('howToUse')">How to Use<br><span class="micro">Quick start for players, parents, and coaches.</span></button>
+          <button class="guide" onclick="showScreen('howToUse')">How to Use<br><span class="micro">Quick start for players, parents, and coaches.</span></button>
           <button class="primary" onclick="chooseStudy()">Study Flashcards<br><span class="micro">Pick all terms or one category.</span></button>
           <button class="secondary" onclick="chooseQuiz()">Take Quiz<br><span class="micro">Mixed, category, or missed-term training.</span></button>
           <button class="purple" onclick="chooseDiagramStudy()">Diagram Study<br><span class="micro">See half-court visual notes.</span></button>
@@ -585,11 +587,11 @@
       <div class="panel">
         <div class="mode-title">
           <h2>First Time Here?</h2>
-          <span class="pill cool">Quick Start</span>
+          <span class="pill guide">Quick Start</span>
         </div>
         <p class="definition">Start with Study, connect terms to diagrams, then quiz yourself. Coaches and parents can use Team Feedback to help improve team language.</p>
         <div class="row" style="margin-top:14px;">
-          <button class="secondary" onclick="showScreen('howToUse')">Open How to Use Guide</button>
+          <button class="guide" onclick="showScreen('howToUse')">Open How to Use Guide</button>
           <button class="ghost" onclick="chooseStudy()">Start in Study</button>
         </div>
       </div>
@@ -637,7 +639,7 @@
       <div class="panel">
         <div class="mode-title">
           <h2>How to Use Hoop IQ Trainer</h2>
-          <span class="pill cool">Quick Start</span>
+          <span class="pill guide">Quick Start</span>
         </div>
         <p class="definition">Use this flow when you are new to the app, helping a player study, or checking whether the language matches how your team teaches.</p>
         <ol class="quick-start-list">
