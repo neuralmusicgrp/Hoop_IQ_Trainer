@@ -2314,6 +2314,7 @@ Page/app note: Hoop IQ Trainer Team Feedback`
     function courtSvg(term, compact = false, motionStep = null) {
       const moves = motionStep ? motionStepMoves(motionStep) : diagramMoves(term.diagramType || "generic");
       const label = compact ? "" : `<text x="300" y="35" text-anchor="middle" font-size="20" font-weight="900" fill="#2b1606">${escapeSvg(term.term)}</text>`;
+      const placedLabels = [];
       return `
         <svg class="court" viewBox="0 0 600 520" role="img" aria-label="Half court diagram for ${escapeSvg(term.term)}">
           <defs>
@@ -2340,8 +2341,8 @@ Page/app note: Hoop IQ Trainer Team Feedback`
           ${moves.playerMoves.map(moveSvg).join("")}
           ${moves.passes.map(passSvg).join("")}
           ${moves.players.map(playerSvg).join("")}
-          ${moves.screens.map(s => screenLabelSvg(s, moves.players)).join("")}
-          ${moves.extra.map(e => extraSvg(e, moves.players)).join("")}
+          ${moves.screens.map(s => screenLabelSvg(s, moves.players, placedLabels)).join("")}
+          ${moves.extra.map(e => extraSvg(e, moves.players, placedLabels)).join("")}
         </svg>
       `;
     }
@@ -2377,10 +2378,28 @@ Page/app note: Hoop IQ Trainer Team Feedback`
     }
 
     function labelOverlapsPlayer(x, y, width, height, player) {
-      const radius = 26;
+      const radius = 34;
       const dx = Math.max(Math.abs(x - player.x) - width / 2, 0);
       const dy = Math.max(Math.abs(y - player.y) - height / 2, 0);
       return (dx * dx + dy * dy) < (radius * radius);
+    }
+
+    function labelBox(x, y, width, height, size) {
+      return {
+        x: x - width / 2,
+        y: y - size - 6,
+        width,
+        height
+      };
+    }
+
+    function labelBoxesOverlap(a, b, padding = 5) {
+      return !(
+        a.x + a.width + padding < b.x ||
+        b.x + b.width + padding < a.x ||
+        a.y + a.height + padding < b.y ||
+        b.y + b.height + padding < a.y
+      );
     }
 
     function labelPosition(x, y, text, options = {}) {
@@ -2388,32 +2407,59 @@ Page/app note: Hoop IQ Trainer Team Feedback`
       const width = estimateSvgTextWidth(text, size) + 14;
       const height = size + 10;
       const obstacles = options.obstacles || [];
+      const placedLabels = options.placedLabels || [];
       const left = width / 2 + 8;
       const right = 600 - width / 2 - 8;
       const top = compactLabelTop(options);
       const bottom = 478;
       const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
       const candidates = [
+        [0, -34],
+        [46, -30],
+        [-46, -30],
+        [0, 34],
+        [52, 0],
+        [-52, 0],
+        [54, 30],
+        [-54, 30],
         [0, 0],
-        [0, -30],
-        [0, 30],
-        [42, 0],
-        [-42, 0],
-        [42, -26],
-        [-42, -26],
-        [42, 26],
-        [-42, 26]
+        [88, -34],
+        [-88, -34],
+        [88, 34],
+        [-88, 34],
+        [0, -64],
+        [0, 64],
+        [112, 0],
+        [-112, 0]
       ];
 
       for (const [dx, dy] of candidates) {
         const nextX = clamp(x + dx, left, right);
         const nextY = clamp(y + dy, top, bottom);
-        if (!obstacles.some(player => labelOverlapsPlayer(nextX, nextY - size / 3, width, height, player))) {
-          return { x: nextX, y: nextY, width, height };
+        const box = labelBox(nextX, nextY, width, height, size);
+        const clearsPlayers = !obstacles.some(player => labelOverlapsPlayer(nextX, nextY - size / 3, width, height, player));
+        const clearsLabels = !placedLabels.some(placed => labelBoxesOverlap(box, placed));
+        if (clearsPlayers && clearsLabels) {
+          return { x: nextX, y: nextY, width, height, box };
         }
       }
 
-      return { x: clamp(x, left, right), y: clamp(y, top, bottom), width, height };
+      for (let row = 0; row < 5; row++) {
+        for (let col = 0; col < 7; col++) {
+          const nextX = clamp(x + (col - 3) * 58, left, right);
+          const nextY = clamp(y + (row - 2) * 34, top, bottom);
+          const box = labelBox(nextX, nextY, width, height, size);
+          const clearsPlayers = !obstacles.some(player => labelOverlapsPlayer(nextX, nextY - size / 3, width, height, player));
+          const clearsLabels = !placedLabels.some(placed => labelBoxesOverlap(box, placed, 3));
+          if (clearsPlayers && clearsLabels) {
+            return { x: nextX, y: nextY, width, height, box };
+          }
+        }
+      }
+
+      const fallbackX = clamp(x, left, right);
+      const fallbackY = clamp(y, top, bottom);
+      return { x: fallbackX, y: fallbackY, width, height, box: labelBox(fallbackX, fallbackY, width, height, size) };
     }
 
     function compactLabelTop(options) {
@@ -2432,8 +2478,9 @@ Page/app note: Hoop IQ Trainer Team Feedback`
       const bgStroke = options.bgStroke || "#111827";
       const bgOpacity = options.bgOpacity || ".92";
       const bgStrokeOpacity = options.bgStrokeOpacity || ".18";
+      if (options.placedLabels && pos.box) options.placedLabels.push(pos.box);
       return `<g class="diagram-label">
-        <rect x="${pos.x - pos.width / 2}" y="${pos.y - size - 6}" width="${pos.width}" height="${pos.height}" rx="7" fill="${bgFill}" fill-opacity="${bgOpacity}" stroke="${bgStroke}" stroke-opacity="${bgStrokeOpacity}" stroke-width="1"></rect>
+        <rect x="${pos.box.x}" y="${pos.box.y}" width="${pos.width}" height="${pos.height}" rx="7" fill="${bgFill}" fill-opacity="${bgOpacity}" stroke="${bgStroke}" stroke-opacity="${bgStrokeOpacity}" stroke-width="1"></rect>
         <text x="${pos.x}" y="${pos.y}" text-anchor="${anchor}" fill="${fill}" font-size="${size}" font-weight="${weight}">${escapeSvg(label)}</text>
       </g>`;
     }
@@ -2485,17 +2532,17 @@ Page/app note: Hoop IQ Trainer Team Feedback`
       return `<line x1="${s.x1}" y1="${s.y1}" x2="${s.x2}" y2="${s.y2}" stroke="#7c2d12" stroke-width="8" stroke-linecap="round"></line>`;
     }
 
-    function screenLabelSvg(s, players = []) {
+    function screenLabelSvg(s, players = [], placedLabels = []) {
       const label = formatDiagramLabel(s.label, "Screen");
-      return svgText((s.x1 + s.x2) / 2, Math.min(s.y1, s.y2) - 10, label, { size: 12, fill: "#7c2d12", obstacles: players });
+      return svgText((s.x1 + s.x2) / 2, Math.min(s.y1, s.y2) - 10, label, { size: 12, fill: "#7c2d12", obstacles: players, placedLabels });
     }
 
-    function extraSvg(e, players = []) {
+    function extraSvg(e, players = [], placedLabels = []) {
       if (e.type === "seal") {
-        return `<path d="${e.d}" fill="none" stroke="#7c2d12" stroke-width="8" stroke-linecap="round"/>${svgText(e.x, e.y, "SEAL", { size: 13, fill: "#7c2d12", obstacles: players, allowTitleArea: true })}`;
+        return `<path d="${e.d}" fill="none" stroke="#7c2d12" stroke-width="8" stroke-linecap="round"/>${svgText(e.x, e.y, "SEAL", { size: 13, fill: "#7c2d12", obstacles: players, placedLabels, allowTitleArea: true })}`;
       }
       if (e.type === "space") {
-        return svgText(e.x, e.y, e.text, { size: 13, fill: "#111827", obstacles: players, allowTitleArea: true });
+        return svgText(e.x, e.y, e.text, { size: 13, fill: "#111827", obstacles: players, placedLabels, allowTitleArea: true });
       }
       return "";
     }
