@@ -1,3 +1,10 @@
+## v0.8.6 - Social Preview Metadata
+
+### Added
+
+- Added Open Graph and Twitter/X card metadata for public link sharing.
+- Added social preview and app icon assets for GitHub Pages previews.
+
 ## v0.8.5 - Home Card Color Polish
 
 ### Changed
