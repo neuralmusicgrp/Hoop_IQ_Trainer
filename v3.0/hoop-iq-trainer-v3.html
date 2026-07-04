@@ -364,6 +364,18 @@
     .feedback.good { border-color: rgba(74,222,128,.62); }
     .feedback.bad { border-color: rgba(251,113,133,.62); }
 
+    .team-feedback-list {
+      margin: 10px 0 0;
+      padding-left: 20px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .copy-fallback {
+      display: none;
+      margin-top: 12px;
+    }
+
     input, textarea, select {
       width: 100%;
       border: 1px solid var(--border);
@@ -549,6 +561,27 @@
       <div class="panel">
         <h2>v3 Adds Visual Basketball IQ</h2>
         <p class="tiny">This version adds a half-court diagram viewer, player circles, arrows, screen markers, cut paths, diagram notes, and a “Name This Action” quiz. Some diagrams are general teaching diagrams until coach gives exact team rules.</p>
+      </div>
+
+      <div class="panel">
+        <div class="mode-title">
+          <h2>Team Feedback</h2>
+          <span class="pill cool">Team Review</span>
+        </div>
+        <p class="definition">This app is being improved for the team. Share what feels confusing, what does not match how we run it, and what would help you study faster.</p>
+        <div class="row" style="margin-top:14px;">
+          <button class="primary" onclick="copyTeamFeedbackMessage()">Copy feedback message</button>
+          <button class="blue" onclick="copyCoachReviewChecklist()">Copy coach review checklist</button>
+        </div>
+        <textarea id="teamFeedbackFallback" class="copy-fallback" readonly aria-label="Copied team feedback text"></textarea>
+        <h3 style="margin-top:16px;">Coming Improvements</h3>
+        <ul class="team-feedback-list">
+          <li>more coach-specific definitions</li>
+          <li>better team terminology</li>
+          <li>more motion-step diagrams</li>
+          <li>player study tracking</li>
+          <li>optional future private/team version</li>
+        </ul>
       </div>
     </section>
 
@@ -847,6 +880,14 @@
 
   <script>
     const COPYRIGHT_NOTICE = "© 2026 Anthony Boyd / Worldmedia Publishing & Consulting LLC. All rights reserved.";
+    const TEAM_FEEDBACK_MESSAGE = "Team, I'm testing Hoop IQ Trainer to help us learn actions, screens, cuts, coverages, and coach terminology. Please try it and send feedback: 1) what term confused you, 2) what diagram did not match how we run it, 3) what definition should sound more like coach, and 4) what feature would help you study faster.";
+    const COACH_REVIEW_CHECKLIST = `Coach Review Checklist:
+1. Which terms are wrong or not how we teach them?
+2. Which terms need our team-specific definition?
+3. Which diagrams need adjustment?
+4. Which actions need Step 1 / Step 2 / Step 3 teaching?
+5. Which terms should be added or removed?
+6. What should players know before practice?`;
     const DEFAULT_TERMS = [
       { id:"pistol", term:"Pistol", category:"Action", definition:"An early-offense sideline action involving a ball handler, a wing, and a nearby screener or connector. It commonly flows into a dribble handoff, keep, or ball screen before the defense is fully set.", coachDefinition:"Coach-specific version pending.", cue:"Attack early. Connect with the wing, then flow into handoff, keep, or ball screen.", commonMistake:"Jogging into it or treating Pistol like a slow half-court set instead of an early advantage action.", diagramNote:"1 pushes the ball toward the wing. 2 rises or receives, while 5 is nearby to connect with a handoff or ball screen.", diagramType:"pistol", difficulty:"Intermediate", motionSteps:[
         {
@@ -2145,6 +2186,36 @@
         document.getElementById("importText").value = JSON.stringify(payload, null, 2);
         alert("Clipboard blocked. JSON has been placed in the paste box.");
       }
+    }
+
+    function showTeamFeedbackFallback(text) {
+      const fallback = document.getElementById("teamFeedbackFallback");
+      if (!fallback) return;
+      fallback.value = text;
+      fallback.style.display = "block";
+      if (typeof fallback.focus === "function") fallback.focus();
+      if (typeof fallback.select === "function") fallback.select();
+    }
+
+    async function copyTeamFeedbackText(text, successMessage) {
+      try {
+        if (!navigator.clipboard || typeof navigator.clipboard.writeText !== "function") throw new Error("Clipboard unavailable");
+        await navigator.clipboard.writeText(text);
+        const fallback = document.getElementById("teamFeedbackFallback");
+        if (fallback) fallback.style.display = "none";
+        alert(successMessage);
+      } catch {
+        showTeamFeedbackFallback(text);
+        alert("Clipboard blocked. The text is ready in the feedback box.");
+      }
+    }
+
+    function copyTeamFeedbackMessage() {
+      return copyTeamFeedbackText(TEAM_FEEDBACK_MESSAGE, "Team feedback message copied.");
+    }
+
+    function copyCoachReviewChecklist() {
+      return copyTeamFeedbackText(COACH_REVIEW_CHECKLIST, "Coach review checklist copied.");
     }
 
     function importTermsObject(obj) {
