@@ -573,6 +573,18 @@
           <button class="primary" onclick="copyTeamFeedbackMessage()">Copy feedback message</button>
           <button class="blue" onclick="copyCoachReviewChecklist()">Copy coach review checklist</button>
         </div>
+        <label for="teamFeedbackName">Name (optional)</label>
+        <input id="teamFeedbackName" placeholder="Your name" />
+        <label for="teamFeedbackTerm">Term/action (optional)</label>
+        <input id="teamFeedbackTerm" placeholder="Example: Spain pick-and-roll" />
+        <label for="teamFeedbackText">Feedback</label>
+        <textarea id="teamFeedbackText" placeholder="What confused you, what should match coach language, or what would help you study faster?"></textarea>
+        <p class="tiny">Email feedback opens your email app. You still need to press Send.</p>
+        <div class="row" style="margin-top:14px;">
+          <button class="secondary" onclick="emailTypedTeamFeedback()">Email feedback</button>
+          <button class="ghost" onclick="copyTypedTeamFeedback()">Copy my feedback</button>
+        </div>
+        <p id="teamFeedbackStatus" class="tiny" aria-live="polite"></p>
         <textarea id="teamFeedbackFallback" class="copy-fallback" readonly aria-label="Copied team feedback text"></textarea>
         <h3 style="margin-top:16px;">Coming Improvements</h3>
         <ul class="team-feedback-list">
@@ -880,6 +892,7 @@
 
   <script>
     const COPYRIGHT_NOTICE = "© 2026 Anthony Boyd / Worldmedia Publishing & Consulting LLC. All rights reserved.";
+    const TEAM_FEEDBACK_EMAIL = "advisor.worldmedia@gmail.com";
     const TEAM_FEEDBACK_MESSAGE = "Team, I'm testing Hoop IQ Trainer to help us learn actions, screens, cuts, coverages, and coach terminology. Please try it and send feedback: 1) what term confused you, 2) what diagram did not match how we run it, 3) what definition should sound more like coach, and 4) what feature would help you study faster.";
     const COACH_REVIEW_CHECKLIST = `Coach Review Checklist:
 1. Which terms are wrong or not how we teach them?
@@ -2216,6 +2229,57 @@
 
     function copyCoachReviewChecklist() {
       return copyTeamFeedbackText(COACH_REVIEW_CHECKLIST, "Coach review checklist copied.");
+    }
+
+    function getTypedTeamFeedback() {
+      const nameField = document.getElementById("teamFeedbackName");
+      const termField = document.getElementById("teamFeedbackTerm");
+      const feedbackField = document.getElementById("teamFeedbackText");
+      const name = nameField ? nameField.value.trim() : "";
+      const term = termField ? termField.value.trim() : "";
+      const feedback = feedbackField ? feedbackField.value.trim() : "";
+      return {
+        name,
+        term,
+        feedback,
+        message: `Name: ${name || "(not provided)"}
+Term/action: ${term || "(not provided)"}
+Feedback: ${feedback}
+
+Page/app note: Hoop IQ Trainer Team Feedback`
+      };
+    }
+
+    function setTeamFeedbackStatus(message) {
+      const status = document.getElementById("teamFeedbackStatus");
+      if (status) status.textContent = message;
+    }
+
+    function requireTypedTeamFeedback() {
+      const data = getTypedTeamFeedback();
+      if (data.feedback) return data;
+      setTeamFeedbackStatus("Type feedback first, then choose email or copy.");
+      const feedbackField = document.getElementById("teamFeedbackText");
+      if (feedbackField && typeof feedbackField.focus === "function") feedbackField.focus();
+      return null;
+    }
+
+    function emailTypedTeamFeedback() {
+      const data = requireTypedTeamFeedback();
+      if (!data) return "";
+      const subject = encodeURIComponent("Hoop IQ Trainer Feedback");
+      const body = encodeURIComponent(data.message);
+      const href = `mailto:${TEAM_FEEDBACK_EMAIL}?subject=${subject}&body=${body}`;
+      setTeamFeedbackStatus("Email feedback opens your email app. You still need to press Send.");
+      if (window.location) window.location.href = href;
+      return href;
+    }
+
+    function copyTypedTeamFeedback() {
+      const data = requireTypedTeamFeedback();
+      if (!data) return Promise.resolve("");
+      setTeamFeedbackStatus("Feedback copied or ready below.");
+      return copyTeamFeedbackText(data.message, "Your feedback message copied.");
     }
 
     function importTermsObject(obj) {
