@@ -1,3 +1,11 @@
+## v0.8.4 - How to Use Quick Start Guide
+
+### Added
+
+- Added a focused How to Use guide for players, parents, and coaches.
+- Added a First Time Here quick-start card on the Home screen.
+- Added guide steps for Study, Diagram Study, Quiz, Name This Action, weakness review, Team Feedback, and Coach Edit Mode.
+
 ## v0.4.0 - Expanded IQ Pack + Motion Steps
 
 Released: 2026-06-27

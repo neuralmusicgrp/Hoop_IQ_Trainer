@@ -371,6 +371,29 @@
       line-height: 1.45;
     }
 
+    .quick-start-list {
+      display: grid;
+      gap: 10px;
+      margin: 12px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .quick-start-list li {
+      border: 1px solid var(--border);
+      background: var(--soft);
+      border-radius: 16px;
+      padding: 12px;
+      line-height: 1.38;
+      color: var(--muted);
+    }
+
+    .quick-start-list strong {
+      display: block;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
     .copy-fallback {
       display: none;
       margin-top: 12px;
@@ -545,6 +568,7 @@
         </div>
 
         <div class="grid home-grid">
+          <button class="primary" onclick="showScreen('howToUse')">How to Use<br><span class="micro">Quick start for players, parents, and coaches.</span></button>
           <button class="primary" onclick="chooseStudy()">Study Flashcards<br><span class="micro">Pick all terms or one category.</span></button>
           <button class="secondary" onclick="chooseQuiz()">Take Quiz<br><span class="micro">Mixed, category, or missed-term training.</span></button>
           <button class="purple" onclick="chooseDiagramStudy()">Diagram Study<br><span class="micro">See half-court visual notes.</span></button>
@@ -555,6 +579,18 @@
           <button onclick="showScreen('edit')">Coach Edit Mode<br><span class="micro">Update definitions and diagram notes.</span></button>
           <button onclick="showScreen('data')">Import / Export<br><span class="micro">Save or load team terminology JSON.</span></button>
           <button class="ghost" onclick="showScreen('settings')">Player / Settings<br><span class="micro">Name, reset progress, and app notes.</span></button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="mode-title">
+          <h2>First Time Here?</h2>
+          <span class="pill cool">Quick Start</span>
+        </div>
+        <p class="definition">Start with Study, connect terms to diagrams, then quiz yourself. Coaches and parents can use Team Feedback to help improve team language.</p>
+        <div class="row" style="margin-top:14px;">
+          <button class="secondary" onclick="showScreen('howToUse')">Open How to Use Guide</button>
+          <button class="ghost" onclick="chooseStudy()">Start in Study</button>
         </div>
       </div>
 
@@ -594,6 +630,31 @@
           <li>player study tracking</li>
           <li>optional future private/team version</li>
         </ul>
+      </div>
+    </section>
+
+    <section id="howToUse" class="screen">
+      <div class="panel">
+        <div class="mode-title">
+          <h2>How to Use Hoop IQ Trainer</h2>
+          <span class="pill cool">Quick Start</span>
+        </div>
+        <p class="definition">Use this flow when you are new to the app, helping a player study, or checking whether the language matches how your team teaches.</p>
+        <ol class="quick-start-list">
+          <li><strong>1. Start in Study</strong>Read each basketball term, teaching cue, common mistake, and diagram explanation.</li>
+          <li><strong>2. Use Diagram Study</strong>Look at the court diagram and connect the player movement to the definition.</li>
+          <li><strong>3. Take the Quiz</strong>Test yourself on the terms. Missed answers show what you need to study more.</li>
+          <li><strong>4. Use Name This Action</strong>Look at the diagram first, then choose the correct basketball action.</li>
+          <li><strong>5. Review Weaknesses</strong>Go back to the terms you missed and study them again.</li>
+          <li><strong>6. Use Team Feedback</strong>Players, coaches, or parents can send feedback, corrections, or suggestions for better team language from the Team Feedback section on Home.</li>
+          <li><strong>7. Coach Edit Mode</strong>Coaches can adjust wording so the app matches how the team teaches each action on this device.</li>
+        </ol>
+        <div class="row" style="margin-top:16px;">
+          <button class="primary" onclick="chooseStudy()">Start Study</button>
+          <button class="purple" onclick="chooseDiagramStudy()">Open Diagram Study</button>
+          <button class="blue" onclick="startDiagramQuiz()">Name This Action</button>
+          <button class="ghost" onclick="showScreen('home')">Back Home</button>
+        </div>
       </div>
     </section>
 
