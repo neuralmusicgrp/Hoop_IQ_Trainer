@@ -2336,11 +2336,12 @@ Page/app note: Hoop IQ Trainer Team Feedback`
           <line x1="270" y1="82" x2="330" y2="82" stroke="#fff8e8" stroke-width="4"/>
           ${label}
 
-          ${moves.screens.map(screenSvg).join("")}
+          ${moves.screens.map(screenLineSvg).join("")}
           ${moves.playerMoves.map(moveSvg).join("")}
           ${moves.passes.map(passSvg).join("")}
           ${moves.players.map(playerSvg).join("")}
-          ${moves.extra.map(extraSvg).join("")}
+          ${moves.screens.map(s => screenLabelSvg(s, moves.players)).join("")}
+          ${moves.extra.map(e => extraSvg(e, moves.players)).join("")}
         </svg>
       `;
     }
@@ -2371,12 +2372,70 @@ Page/app note: Hoop IQ Trainer Team Feedback`
     }
 
 
+    function estimateSvgTextWidth(text, size) {
+      return Math.max(26, String(text).length * size * 0.58);
+    }
+
+    function labelOverlapsPlayer(x, y, width, height, player) {
+      const radius = 26;
+      const dx = Math.max(Math.abs(x - player.x) - width / 2, 0);
+      const dy = Math.max(Math.abs(y - player.y) - height / 2, 0);
+      return (dx * dx + dy * dy) < (radius * radius);
+    }
+
+    function labelPosition(x, y, text, options = {}) {
+      const size = options.size || 13;
+      const width = estimateSvgTextWidth(text, size) + 14;
+      const height = size + 10;
+      const obstacles = options.obstacles || [];
+      const left = width / 2 + 8;
+      const right = 600 - width / 2 - 8;
+      const top = compactLabelTop(options);
+      const bottom = 478;
+      const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+      const candidates = [
+        [0, 0],
+        [0, -30],
+        [0, 30],
+        [42, 0],
+        [-42, 0],
+        [42, -26],
+        [-42, -26],
+        [42, 26],
+        [-42, 26]
+      ];
+
+      for (const [dx, dy] of candidates) {
+        const nextX = clamp(x + dx, left, right);
+        const nextY = clamp(y + dy, top, bottom);
+        if (!obstacles.some(player => labelOverlapsPlayer(nextX, nextY - size / 3, width, height, player))) {
+          return { x: nextX, y: nextY, width, height };
+        }
+      }
+
+      return { x: clamp(x, left, right), y: clamp(y, top, bottom), width, height };
+    }
+
+    function compactLabelTop(options) {
+      return options.allowTitleArea ? 42 : 56;
+    }
+
     function svgText(x, y, text, options = {}) {
       const size = options.size || 13;
       const weight = options.weight || 800;
       const fill = options.fill || "#111827";
       const anchor = options.anchor || "middle";
-      return `<text x="${x}" y="${y}" text-anchor="${anchor}" fill="${fill}" font-size="${size}" font-weight="${weight}">${escapeSvg(formatDiagramLabel(text, ""))}</text>`;
+      const label = formatDiagramLabel(text, "");
+      if (!label) return "";
+      const pos = labelPosition(x, y, label, options);
+      const bgFill = options.bgFill || "#fff8e8";
+      const bgStroke = options.bgStroke || "#111827";
+      const bgOpacity = options.bgOpacity || ".92";
+      const bgStrokeOpacity = options.bgStrokeOpacity || ".18";
+      return `<g class="diagram-label">
+        <rect x="${pos.x - pos.width / 2}" y="${pos.y - size - 6}" width="${pos.width}" height="${pos.height}" rx="7" fill="${bgFill}" fill-opacity="${bgOpacity}" stroke="${bgStroke}" stroke-opacity="${bgStrokeOpacity}" stroke-width="1"></rect>
+        <text x="${pos.x}" y="${pos.y}" text-anchor="${anchor}" fill="${fill}" font-size="${size}" font-weight="${weight}">${escapeSvg(label)}</text>
+      </g>`;
     }
 
 
@@ -2422,20 +2481,21 @@ Page/app note: Hoop IQ Trainer Team Feedback`
       return svgPassArrow(m.d);
     }
 
-    function screenSvg(s) {
-      const label = formatDiagramLabel(s.label, "Screen");
-      return `<g>
-        <line x1="${s.x1}" y1="${s.y1}" x2="${s.x2}" y2="${s.y2}" stroke="#7c2d12" stroke-width="8" stroke-linecap="round"></line>
-        ${svgText((s.x1 + s.x2) / 2, Math.min(s.y1, s.y2) - 10, label, { size: 12, fill: "#7c2d12" })}
-      </g>`;
+    function screenLineSvg(s) {
+      return `<line x1="${s.x1}" y1="${s.y1}" x2="${s.x2}" y2="${s.y2}" stroke="#7c2d12" stroke-width="8" stroke-linecap="round"></line>`;
     }
 
-    function extraSvg(e) {
+    function screenLabelSvg(s, players = []) {
+      const label = formatDiagramLabel(s.label, "Screen");
+      return svgText((s.x1 + s.x2) / 2, Math.min(s.y1, s.y2) - 10, label, { size: 12, fill: "#7c2d12", obstacles: players });
+    }
+
+    function extraSvg(e, players = []) {
       if (e.type === "seal") {
-        return `<path d="${e.d}" fill="none" stroke="#7c2d12" stroke-width="8" stroke-linecap="round"/><text x="${e.x}" y="${e.y}" text-anchor="middle" font-size="13" font-weight="900" fill="#7c2d12">SEAL</text>`;
+        return `<path d="${e.d}" fill="none" stroke="#7c2d12" stroke-width="8" stroke-linecap="round"/>${svgText(e.x, e.y, "SEAL", { size: 13, fill: "#7c2d12", obstacles: players, allowTitleArea: true })}`;
       }
       if (e.type === "space") {
-        return `<text x="${e.x}" y="${e.y}" text-anchor="middle" font-size="13" font-weight="900" fill="#111827">${escapeSvg(e.text)}</text>`;
+        return svgText(e.x, e.y, e.text, { size: 13, fill: "#111827", obstacles: players, allowTitleArea: true });
       }
       return "";
     }
