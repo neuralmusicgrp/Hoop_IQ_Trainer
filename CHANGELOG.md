@@ -1,3 +1,15 @@
+## v0.9.3 - Mojibake Logo Cleanup
+
+### Fixed
+
+- Fixed remaining mojibake in live and archived app text.
+- Replaced the unsafe header basketball emoji/logo with an encoding-safe inline SVG mark.
+- Corrected copyright/footer rendering to use safe entities where needed.
+
+### Notes
+
+- No Supabase, authentication, database, schema, SQL, SDK, environment variable, or backend changes were added.
+
 ## v0.9.2 - Supabase Schema Planning
 
 ### Added

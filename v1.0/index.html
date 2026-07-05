@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -66,6 +66,12 @@
       font-size: 28px;
       font-weight: 900;
       box-shadow: 0 10px 28px rgba(255,159,28,.22);
+    }
+
+    .logo svg {
+      width: 38px;
+      height: 38px;
+      display: block;
     }
 
     h1 {
@@ -486,7 +492,13 @@
   <main class="app">
     <header>
       <div class="brand">
-        <div class="logo">🏀</div>
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 64 64" focusable="false">
+            <circle cx="32" cy="32" r="27" fill="#ff9f1c" stroke="#101114" stroke-width="4" />
+            <path d="M32 5v54M5 32h54" fill="none" stroke="#101114" stroke-width="4" stroke-linecap="round" />
+            <path d="M14 13c12 8 24 8 36 0M14 51c12-8 24-8 36 0" fill="none" stroke="#101114" stroke-width="4" stroke-linecap="round" />
+          </svg>
+        </div>
         <div>
           <h1>Hoop IQ Trainer</h1>
           <p class="subtitle">Study the language. See the action. React faster when coach calls it.</p>
@@ -808,7 +820,7 @@
       return {
         type: "category",
         term,
-        question: `What category is “${term.term}”?`,
+        question: `What category is "${term.term}"?`,
         answer: term.category,
         options: shuffle(CATEGORIES),
         explanation: `${term.term} belongs to: ${term.category}. ${term.cue}`
@@ -832,7 +844,7 @@
       return {
         type: "cue",
         term,
-        question: `Which term uses this player cue?\n\n“${term.cue}”`,
+        question: `Which term uses this player cue?\n\n"${term.cue}"`,
         answer: term.term,
         options: shuffle([term.term, ...wrong]),
         explanation: `${term.term} is a ${term.category}. ${term.definition}`
@@ -971,7 +983,7 @@
         const terms = TERMS.filter(t => t.category === category);
         const detail = document.createElement("details");
         detail.open = true;
-        detail.innerHTML = `<summary>${category} · ${terms.length}</summary>`;
+        detail.innerHTML = `<summary>${category} - ${terms.length}</summary>`;
 
         terms.forEach(term => {
           const row = document.createElement("div");
