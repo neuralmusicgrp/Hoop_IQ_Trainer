@@ -1,3 +1,14 @@
+## v0.9.1 - Supabase Auth Provider Selection
+
+### Added
+
+- Added an architecture decision record selecting Supabase as the planned future auth/backend provider.
+- Started RLS and privacy planning for future coach, player, and team data.
+
+### Notes
+
+- No Supabase SDK, auth UI, API keys, environment variables, database migrations, live database, backend code, or synced player progress was added.
+
 ## v0.9.0 - Team Model and Invite-Code Planning
 
 ### Added
