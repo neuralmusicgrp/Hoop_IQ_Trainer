@@ -1,4 +1,4 @@
-﻿# Hoop IQ Trainer
+# Hoop IQ Trainer
 
 A mobile-friendly basketball terminology trainer for youth players.
 

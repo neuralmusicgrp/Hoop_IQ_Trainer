@@ -1,3 +1,18 @@
+## v0.8.10 - App-Wide Audit and Encoding Cleanup
+
+### Fixed
+
+- Cleaned encoding corruption in the live app HTML, including footer/copyright text, smart punctuation, separator dots, and the basketball logo glyph.
+- Restored the Settings/App Notes closing HTML structure.
+- Confirmed `index.html` and `v3.0/hoop-iq-trainer-v3.html` are aligned.
+
+### Audited
+
+- Verified local role selection defaults, save/reset behavior, display updates, and progress reset role preservation.
+- Verified sign-in mockups remain disabled planning UI with no real authentication logic.
+- Added a v0.8.10 planning audit note.
+- No new features were added.
+
 ## v0.8.6 - Social Preview Metadata
 
 ### Added
@@ -46,7 +61,7 @@ Released: 2026-06-27
 - Motion Steps are step-by-step diagrams, not full animation yet.
 
 
-﻿# Changelog
+# Changelog
 
 ## v0.3.0 - Visual Basketball IQ
 
