@@ -167,6 +167,8 @@
 
     .grid { display: grid; gap: 12px; }
     .home-grid { grid-template-columns: repeat(2, 1fr); }
+    .learning-grid { grid-template-columns: repeat(2, 1fr); }
+    .tools-grid { grid-template-columns: repeat(3, 1fr); }
     .three-grid { grid-template-columns: repeat(3, 1fr); }
 
     button, .button {
@@ -389,6 +391,13 @@
     .feedback.good { border-color: rgba(74,222,128,.62); }
     .feedback.bad { border-color: rgba(251,113,133,.62); }
 
+    .helper-text {
+      color: var(--muted);
+      line-height: 1.4;
+      margin: 8px 0 14px;
+      font-size: .95rem;
+    }
+
     .team-feedback-list {
       margin: 10px 0 0;
       padding-left: 20px;
@@ -572,10 +581,18 @@
 
     .footer-nav button {
       min-height: 49px;
-      padding: 8px 5px;
+      padding: 8px 6px;
       border-radius: 14px;
-      font-size: .7rem;
+      font-size: .76rem;
       text-align: center;
+      line-height: 1.05;
+    }
+
+    .footer-nav button.active {
+      background: rgba(255,159,28,.20);
+      border-color: rgba(255,159,28,.78);
+      color: #fff;
+      box-shadow: inset 0 0 0 1px rgba(255,159,28,.18);
     }
 
     .copyright {
@@ -596,14 +613,15 @@
 
     @media (max-width: 780px) {
       .stats { grid-template-columns: repeat(2, 1fr); }
-      .home-grid, .three-grid, .mockup-grid { grid-template-columns: 1fr; }
+      .home-grid, .learning-grid, .three-grid, .mockup-grid { grid-template-columns: 1fr; }
+      .tools-grid { grid-template-columns: repeat(2, 1fr); }
       .filters { grid-template-columns: repeat(2, 1fr); }
       .filters button:first-child { grid-column: span 2; }
       .legend { grid-template-columns: repeat(2, 1fr); }
       .panel { padding: 14px; }
       button { min-height: 62px; }
       .footer-nav { grid-template-columns: repeat(6, 1fr); }
-      .footer-nav button { font-size: .64rem; }
+      .footer-nav button { font-size: .72rem; padding: 8px 4px; }
     }
   </style>
 </head>
@@ -620,7 +638,7 @@
         </div>
         <div>
           <h1>Hoop IQ Trainer <span style="color:var(--accent);">v3</span></h1>
-          <p class="subtitle">Visual Basketball IQ: study terms, edit coach language, train weaknesses, and learn actions with half-court diagrams.</p>
+          <p class="subtitle">Visual Basketball IQ: study terms, review coach language, train weaknesses, and learn actions with half-court diagrams.</p>
         </div>
       </div>
 
@@ -640,19 +658,28 @@
           <span class="pill hot" id="termCount">31 terms</span>
         </div>
 
-        <div class="grid home-grid">
-          <button class="guide" onclick="showScreen('howToUse')">How to Use<br><span class="micro">Quick start for players, parents, and coaches.</span></button>
-          <button class="secondary" onclick="showScreen('signInMockups')">Coach / Player Sign-In Preview<br><span class="micro">See the planned team account flow.</span></button>
+        <div class="grid learning-grid">
           <button class="primary" onclick="chooseStudy()">Study Flashcards<br><span class="micro">Pick all terms or one category.</span></button>
           <button class="secondary" onclick="chooseQuiz()">Take Quiz<br><span class="micro">Mixed, category, or missed-term training.</span></button>
           <button class="purple" onclick="chooseDiagramStudy()">Diagram Study<br><span class="micro">See half-court visual notes.</span></button>
-          <button class="blue" onclick="startDiagramQuiz()">Name This Action<br><span class="micro">Diagram quiz with visual recognition.</span></button>
           <button onclick="startDailyWorkout()">Daily 10<br><span class="micro">Weighted toward missed terms.</span></button>
           <button onclick="showScreen('dashboard')">Progress Dashboard<br><span class="micro">Strengths, misses, and category accuracy.</span></button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="mode-title">
+          <h2>Coach &amp; App Tools</h2>
+          <span class="pill cool">More</span>
+        </div>
+        <div class="grid tools-grid">
+          <button class="guide" onclick="showScreen('howToUse')">How to Use<br><span class="micro">Quick start for players, parents, and coaches.</span></button>
+          <button class="blue" onclick="startDiagramQuiz()">Name This Action<br><span class="micro">Look at the diagram, then choose the action.</span></button>
           <button onclick="showScreen('library')">Term Library<br><span class="micro">Browse coach homework terms.</span></button>
-          <button onclick="showScreen('edit')">Coach Edit Mode<br><span class="micro">Update definitions and diagram notes.</span></button>
+          <button onclick="showScreen('edit')">Coach Tools<br><span class="micro">Update definitions and diagram notes.</span></button>
           <button onclick="showScreen('data')">Import / Export<br><span class="micro">Save or load team terminology JSON.</span></button>
           <button class="ghost" onclick="showScreen('settings')">Player / Settings<br><span class="micro">Name, reset progress, and app notes.</span></button>
+          <button class="secondary" onclick="showScreen('signInMockups')">Team Setup Notes<br><span class="micro">Review account-flow notes without enabling sign-in.</span></button>
         </div>
       </div>
 
@@ -661,7 +688,7 @@
           <h2>First Time Here?</h2>
           <span class="pill guide">Quick Start</span>
         </div>
-        <p class="definition">Start with Study, connect terms to diagrams, then quiz yourself. Coaches and parents can use Team Feedback to help improve team language.</p>
+        <p class="definition">Start with Study, connect terms to diagrams, then quiz yourself. Coaches and parents can send Team Feedback from Coach &amp; App Tools.</p>
         <div class="row" style="margin-top:14px;">
           <button class="guide" onclick="showScreen('howToUse')">Open How to Use Guide</button>
           <button class="ghost" onclick="chooseStudy()">Start in Study</button>
@@ -669,16 +696,11 @@
       </div>
 
       <div class="panel">
-        <h2>v3 Adds Visual Basketball IQ</h2>
-        <p class="tiny">This version adds a half-court diagram viewer, player circles, arrows, screen markers, cut paths, diagram notes, and a &quot;Name This Action&quot; quiz. Some diagrams are general teaching diagrams until coach gives exact team rules.</p>
-      </div>
-
-      <div class="panel">
         <div class="mode-title">
           <h2>Team Feedback</h2>
           <span class="pill cool">Team Review</span>
         </div>
-        <p class="definition">This app is being improved for the team. Share what feels confusing, what does not match how we run it, and what would help you study faster.</p>
+        <p class="definition">Share what feels confusing, what does not match your team's language, and what would help players study faster.</p>
         <div class="row" style="margin-top:14px;">
           <button class="primary" onclick="copyTeamFeedbackMessage()">Copy feedback message</button>
           <button class="blue" onclick="copyCoachReviewChecklist()">Copy coach review checklist</button>
@@ -689,72 +711,70 @@
         <input id="teamFeedbackTerm" placeholder="Example: Spain pick-and-roll" />
         <label for="teamFeedbackText">Feedback</label>
         <textarea id="teamFeedbackText" placeholder="What confused you, what should match coach language, or what would help you study faster?"></textarea>
-        <p class="tiny">Email feedback opens your email app. You still need to press Send.</p>
+        <p class="tiny">Email feedback opens a draft in your email app. You still need to press Send.</p>
         <div class="row" style="margin-top:14px;">
           <button class="secondary" onclick="emailTypedTeamFeedback()">Email feedback</button>
           <button class="ghost" onclick="copyTypedTeamFeedback()">Copy my feedback</button>
         </div>
         <p id="teamFeedbackStatus" class="tiny" aria-live="polite"></p>
         <textarea id="teamFeedbackFallback" class="copy-fallback" readonly aria-label="Copied team feedback text"></textarea>
-        <h3 style="margin-top:16px;">Coming Improvements</h3>
+        <h3 style="margin-top:16px;">Helpful Review Topics</h3>
         <ul class="team-feedback-list">
-          <li>more coach-specific definitions</li>
-          <li>better team terminology</li>
-          <li>more motion-step diagrams</li>
-          <li>player study tracking</li>
-          <li>coach and player sign-in previews</li>
-          <li>optional future private/team version</li>
+          <li>coach-specific definitions</li>
+          <li>team terminology</li>
+          <li>diagram clarity</li>
+          <li>study flow</li>
         </ul>
       </div>
     </section>
     <section id="signInMockups" class="screen">
       <div class="panel">
         <div class="mode-title">
-          <h2>Coach / Player Sign-In Preview</h2>
-          <span class="pill hot">v0.8.8 Mockup</span>
+          <h2>Team Setup Notes</h2>
+          <span class="pill hot">Offline App</span>
         </div>
-        <p class="definition">These are non-functional planning screens for the future private/team version. No live login, password handling, database, or player data syncing is active in this release.</p>
+        <p class="definition">These notes show where coach and player accounts may fit later. This release has no live login, password handling, database, or player data syncing.</p>
 
         <div class="mockup-grid">
           <div class="mockup-card">
-            <h3>Coach Sign In</h3>
-            <p class="tiny">Future coach accounts will manage teams, invite players, assign study sets, and review progress.</p>
+            <h3>Coach Account</h3>
+            <p class="tiny">Coach accounts may eventually manage teams, invite players, assign study sets, and review progress.</p>
             <label class="mockup-field" for="mockCoachEmail">Coach email</label>
             <input id="mockCoachEmail" placeholder="coach@example.com" disabled />
             <label class="mockup-field" for="mockCoachPassword">Password</label>
-            <input id="mockCoachPassword" placeholder="Future secure sign-in" disabled />
+            <input id="mockCoachPassword" placeholder="Account sign-in not active" disabled />
             <div class="row" style="margin-top:12px;">
-              <button class="primary mockup-disabled" disabled>Sign In Later</button>
-              <button class="ghost mockup-disabled" disabled>Create Coach Account Later</button>
+              <button class="primary mockup-disabled" disabled>Sign In Not Active</button>
+              <button class="ghost mockup-disabled" disabled>Create Account Not Active</button>
             </div>
           </div>
 
           <div class="mockup-card">
-            <h3>Player Sign In</h3>
-            <p class="tiny">Future player accounts will join a team, study assigned concepts, complete quizzes, and review missed terms.</p>
+            <h3>Player Account</h3>
+            <p class="tiny">Player accounts may eventually join a team, study assigned concepts, complete quizzes, and review missed terms.</p>
             <label class="mockup-field" for="mockPlayerEmail">Player email</label>
             <input id="mockPlayerEmail" placeholder="player@example.com" disabled />
             <label class="mockup-field" for="mockPlayerPassword">Password</label>
-            <input id="mockPlayerPassword" placeholder="Future secure sign-in" disabled />
+            <input id="mockPlayerPassword" placeholder="Account sign-in not active" disabled />
             <div class="row" style="margin-top:12px;">
-              <button class="secondary mockup-disabled" disabled>Sign In Later</button>
-              <button class="ghost mockup-disabled" disabled>Create Player Account Later</button>
+              <button class="secondary mockup-disabled" disabled>Sign In Not Active</button>
+              <button class="ghost mockup-disabled" disabled>Create Account Not Active</button>
             </div>
           </div>
 
           <div class="mockup-card">
             <h3>Join Team Code</h3>
-            <p class="tiny">Players will eventually join a private team using a coach-provided invite code.</p>
+            <p class="tiny">A team code can later help players join a coach-managed team.</p>
             <label class="mockup-field" for="mockTeamCode">Team code</label>
             <input id="mockTeamCode" placeholder="Example: HOOP-2026" disabled />
             <div class="row" style="margin-top:12px;">
-              <button class="blue mockup-disabled" disabled>Join Team Later</button>
+              <button class="blue mockup-disabled" disabled>Join Team Not Active</button>
             </div>
           </div>
 
           <div class="mockup-card">
             <h3>Create Team</h3>
-            <p class="tiny">Coaches will eventually create a team workspace and share a private invite code with players.</p>
+            <p class="tiny">Coaches may later create a team workspace and share a private invite code with players.</p>
             <label class="mockup-field" for="mockTeamName">Team name</label>
             <input id="mockTeamName" placeholder="Example: Hampton Tigers 7th Grade" disabled />
             <ul>
@@ -767,7 +787,7 @@
         </div>
 
         <div class="coach-note">
-          <strong>Planning note:</strong> This preview keeps the app moving toward coach/player accounts while protecting the current public study experience.
+          <strong>App note:</strong> Hoop IQ Trainer remains an offline study tool in this release.
         </div>
 
         <div class="row" style="margin-top:16px;">
@@ -789,10 +809,10 @@
           <li><strong>1. Start in Study</strong>Read each basketball term, teaching cue, common mistake, and diagram explanation.</li>
           <li><strong>2. Use Diagram Study</strong>Look at the court diagram and connect the player movement to the definition.</li>
           <li><strong>3. Take the Quiz</strong>Test yourself on the terms. Missed answers show what you need to study more.</li>
-          <li><strong>4. Use Name This Action</strong>Look at the diagram first, then choose the correct basketball action.</li>
+          <li><strong>4. Use Name This Action</strong>Look at the diagram, then choose the basketball action.</li>
           <li><strong>5. Review Weaknesses</strong>Go back to the terms you missed and study them again.</li>
-          <li><strong>6. Use Team Feedback</strong>Players, coaches, or parents can send feedback, corrections, or suggestions for better team language from the Team Feedback section on Home.</li>
-          <li><strong>7. Coach Edit Mode</strong>Coaches can adjust wording so the app matches how the team teaches each action on this device.</li>
+          <li><strong>6. Use Team Feedback</strong>Players, coaches, or parents can send feedback, corrections, or suggestions for better team language from Coach &amp; App Tools.</li>
+          <li><strong>7. Coach Tools</strong>Coaches can adjust wording so the app matches how the team teaches each action on this device.</li>
         </ol>
         <div class="row" style="margin-top:16px;">
           <button class="primary" onclick="chooseStudy()">Start Study</button>
@@ -896,6 +916,7 @@
           <h2 id="quizModeTitle">Quiz</h2>
           <span class="pill" id="quizProgress">1 / 10</span>
         </div>
+        <p class="helper-text" id="quizHelper" style="display:none;">Look at the diagram, then choose the basketball action.</p>
         <div class="bar"><div id="quizBar" class="bar-fill"></div></div>
         <div class="row">
           <span class="pill" id="quizScore">Score: 0</span>
@@ -974,17 +995,17 @@
     <section id="edit" class="screen">
       <div class="panel">
         <div class="mode-title">
-          <h2>Coach Edit Mode</h2>
+          <h2>Coach Tools</h2>
           <span class="pill">Saved on this device</span>
         </div>
-        <p class="tiny">When coach replies, update the term here. Diagram notes and diagram style can also be changed.</p>
+        <p class="tiny">Use these local tools to match terms and diagram notes to your team's language.</p>
         <label for="editSelect">Choose Term</label>
         <select id="editSelect" onchange="loadEditForm()"></select>
 
-        <label>Term</label>
+        <label for="editTerm">Term</label>
         <input id="editTerm" />
 
-        <label>Category</label>
+        <label for="editCategory">Category</label>
         <select id="editCategory">
           <option>Action</option>
           <option>Screen</option>
@@ -992,22 +1013,22 @@
           <option>Cut</option>
         </select>
 
-        <label>General Definition</label>
+        <label for="editDefinition">General Definition</label>
         <textarea id="editDefinition"></textarea>
 
-        <label>Coach Definition</label>
+        <label for="editCoach">Coach Definition</label>
         <textarea id="editCoach"></textarea>
 
-        <label>Player Cue</label>
+        <label for="editCue">Player Cue</label>
         <textarea id="editCue"></textarea>
 
-        <label>Common Mistake</label>
+        <label for="editMistake">Common Mistake</label>
         <textarea id="editMistake"></textarea>
 
-        <label>Diagram Note</label>
+        <label for="editDiagramNote">Diagram Note</label>
         <textarea id="editDiagramNote"></textarea>
 
-        <label>Diagram Type</label>
+        <label for="editDiagramType">Diagram Type</label>
         <select id="editDiagramType">
           <option>generic</option>
           <option>pistol</option>
@@ -1026,7 +1047,7 @@
           <option>zipper</option>
         </select>
 
-        <label>Difficulty</label>
+        <label for="editDifficulty">Difficulty</label>
         <select id="editDifficulty">
           <option>Beginner</option>
           <option>Intermediate</option>
@@ -1069,7 +1090,7 @@
     <section id="settings" class="screen">
       <div class="panel">
         <h2>Player / Settings</h2>
-        <label>Player Name</label>
+        <label for="playerName">Player Name</label>
         <input id="playerName" placeholder="Enter player name" />
         <div class="row">
           <button class="primary" onclick="savePlayerName()">Save Player Name</button>
@@ -1077,7 +1098,7 @@
         </div>
 
         <div class="coach-note">
-          <strong>Local Role Mode:</strong> Choose how this device should treat the current user. This is not a real account login yet.
+          <strong>Local Role Mode:</strong> Choose how this device should treat the current user. This is saved only on this device.
           <p id="localRoleStatus" class="tiny">Current local mode: Guest</p>
           <div class="row" style="margin-top:12px;">
             <button class="primary" onclick="saveLocalRole('coach')">Coach Mode</button>
@@ -1098,12 +1119,12 @@
   </main>
 
   <nav class="footer-nav">
-    <button onclick="showScreen('home')">Home</button>
-    <button onclick="chooseStudy()">Study</button>
-    <button onclick="chooseQuiz()">Quiz</button>
-    <button onclick="chooseDiagramStudy()">Diagram</button>
-    <button onclick="showScreen('dashboard')">Stats</button>
-    <button onclick="showScreen('edit')">Edit</button>
+    <button data-nav="home" onclick="showScreen('home')">Home</button>
+    <button data-nav="study" onclick="chooseStudy()">Study</button>
+    <button data-nav="quiz" onclick="chooseQuiz()">Quiz</button>
+    <button data-nav="diagram" onclick="chooseDiagramStudy()">Diagram</button>
+    <button data-nav="stats" onclick="showScreen('dashboard')">Stats</button>
+    <button data-nav="coach" onclick="showScreen('edit')">Coach</button>
   </nav>
 
   <script>
@@ -1669,12 +1690,32 @@
       alert("Local role reset to Guest.");
     }
 
+    function navKeyForScreen(id) {
+      if (["home", "howToUse"].includes(id)) return "home";
+      if (["flashcards"].includes(id)) return "study";
+      if (["quiz", "results"].includes(id)) return "quiz";
+      if (id === "diagramStudy") return "diagram";
+      if (id === "dashboard") return "stats";
+      if (["edit", "data", "settings", "library", "signInMockups"].includes(id)) return "coach";
+      return "";
+    }
+
+    function setActiveNav(key) {
+      document.querySelectorAll(".footer-nav button").forEach(button => {
+        const active = button.dataset.nav === key;
+        button.classList.toggle("active", active);
+        if (active) button.setAttribute("aria-current", "page");
+        else button.removeAttribute("aria-current");
+      });
+    }
+
     function showScreen(id) {
       document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
       document.getElementById(id).classList.add("active");
       if (id === "dashboard") renderDashboard();
       if (id === "library") renderLibrary("All");
       if (id === "edit") { renderEditSelect(); loadEditForm(); }
+      setActiveNav(navKeyForScreen(id));
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -1708,22 +1749,23 @@
     }
 
     function chooseStudy() {
-      showPicker("Study Flashcards", "Study", "Choose all terms or focus on one category.", category => startFlashcards(category));
+      showPicker("Study Flashcards", "Study", "Choose all terms or focus on one category.", category => startFlashcards(category), false, "study");
     }
 
     function chooseQuiz() {
       showPicker("Take Quiz", "Quiz", "Choose all terms, one category, or missed-term training.", category => {
         if (category === "Missed") startMissedQuiz();
         else startQuiz("mixed", category);
-      }, true);
+      }, true, "quiz");
     }
 
     function chooseDiagramStudy() {
-      showPicker("Diagram Study", "Visual", "Choose all diagrams or focus on one category.", category => startDiagramStudy(category));
+      showPicker("Diagram Study", "Visual", "Choose all diagrams or focus on one category.", category => startDiagramStudy(category), false, "diagram");
     }
 
-    function showPicker(title, mode, help, callback, includeMissed = false) {
+    function showPicker(title, mode, help, callback, includeMissed = false, navKey = "") {
       showScreen("picker");
+      setActiveNav(navKey);
       document.getElementById("pickerTitle").textContent = title;
       document.getElementById("pickerMode").textContent = mode;
       document.getElementById("pickerHelp").textContent = help;
@@ -1944,6 +1986,7 @@
       state.missedThisRound = [];
       showScreen("quiz");
       document.getElementById("quizModeTitle").textContent = isDaily ? "Daily 10" : modeTitle(mode);
+      document.getElementById("quizHelper").style.display = "none";
       document.getElementById("quizCategoryPill").textContent = category === "All" ? "All Terms" : category;
       renderQuestion();
     }
@@ -1969,6 +2012,7 @@
       state.missedThisRound = [];
       showScreen("quiz");
       document.getElementById("quizModeTitle").textContent = "Name This Action";
+      document.getElementById("quizHelper").style.display = "block";
       document.getElementById("quizCategoryPill").textContent = "Diagram Quiz";
       renderQuestion();
     }
@@ -2526,7 +2570,7 @@ Page/app note: Hoop IQ Trainer Team Feedback`
       const subject = encodeURIComponent("Hoop IQ Trainer Feedback");
       const body = encodeURIComponent(data.message);
       const href = `mailto:${TEAM_FEEDBACK_EMAIL}?subject=${subject}&body=${body}`;
-      setTeamFeedbackStatus("Email feedback opens your email app. You still need to press Send.");
+      setTeamFeedbackStatus("Email feedback opens a draft in your email app. You still need to press Send.");
       if (window.location) window.location.href = href;
       return href;
     }
@@ -3428,6 +3472,7 @@ Page/app note: Hoop IQ Trainer Team Feedback`
 
     updateStats();
     renderEditSelect();
+    setActiveNav("home");
   </script>
 </body>
 </html>

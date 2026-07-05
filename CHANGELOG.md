@@ -1,3 +1,22 @@
+## v0.9.5 - Mobile UX Polish and Home Flow Cleanup
+
+### Changed
+
+- Simplified the Home screen so the main workout choices focus on Study, Quiz, Diagram Study, Daily 10, and Progress.
+- Moved secondary actions into a clearer Coach & App Tools area.
+- Renamed the fixed bottom nav item from Edit to Coach.
+- Added an active state for the fixed bottom nav across Home, Study, Quiz, Diagram, Stats, and Coach flows.
+- Improved mobile bottom-nav readability while preserving touch targets and footer spacing.
+- Softened public-facing roadmap language around account setup notes.
+- Added a concise helper cue for the Name This Action diagram quiz.
+- Improved straightforward form label associations in Coach Tools and Player / Settings.
+- Updated README status for the current offline v0.9.5-era app.
+
+### Notes
+
+- No Supabase, authentication, database, backend, schema, SDK, environment variable, or synced-account work was added.
+- Basketball term definitions, quiz scoring, localStorage keys, and core app flow were not redesigned.
+
 ## v0.9.4 - Visible Global Copyright Footer
 
 ### Fixed
