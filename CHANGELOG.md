@@ -1,3 +1,14 @@
+## v0.9.7 - Team Colors Future Idea
+
+### Added
+
+- Added Team Colors / Team Themes to the public team setup future ideas.
+
+### Notes
+
+- No working theme customization was added.
+- No Supabase, authentication, database, backend, or team-color settings code was added.
+
 ## v0.9.5 - Mobile UX Polish and Home Flow Cleanup
 
 ### Changed
