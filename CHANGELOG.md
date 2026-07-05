@@ -1,3 +1,13 @@
+## v0.9.9 - Card Subtitle High-Contrast Fix
+
+### Changed
+
+- Strengthened bright card subtitle contrast after the v0.9.8 adjustment was too subtle.
+
+### Notes
+
+- No feature, Supabase, authentication, database, backend, diagram logic, or basketball terminology changes were added.
+
 ## v0.9.8 - Card Subtitle Contrast Polish
 
 ### Changed
