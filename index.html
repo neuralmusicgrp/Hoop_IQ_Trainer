@@ -238,6 +238,34 @@
       margin-bottom: 12px;
     }
 
+    .diagram-panel {
+      padding-top: 18px;
+    }
+
+    .diagram-heading {
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .diagram-summary {
+      display: grid;
+      gap: 6px;
+      margin: 12px 0 16px;
+    }
+
+    .diagram-summary .pill {
+      justify-self: start;
+    }
+
+    .diagram-play-title {
+      font-size: clamp(2.05rem, 9vw, 4.8rem);
+      line-height: .96;
+      letter-spacing: -.045em;
+      margin: 2px 0 0;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+
     .filters {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -619,6 +647,11 @@
       .filters button:first-child { grid-column: span 2; }
       .legend { grid-template-columns: repeat(2, 1fr); }
       .panel { padding: 14px; }
+      .diagram-panel { padding-top: 18px; }
+      .diagram-heading { display: grid; gap: 8px; }
+      .diagram-heading .pill { justify-self: start; }
+      .diagram-summary { margin-top: 14px; }
+      .diagram-play-title { font-size: clamp(2rem, 11vw, 3.6rem); line-height: 1; letter-spacing: -.035em; }
       button { min-height: 62px; }
       .footer-nav { grid-template-columns: repeat(6, 1fr); }
       .footer-nav button { font-size: .72rem; padding: 8px 4px; }
@@ -863,17 +896,15 @@
     </section>
 
     <section id="diagramStudy" class="screen">
-      <div class="panel">
-        <div class="mode-title">
+      <div class="panel diagram-panel">
+        <div class="mode-title diagram-heading">
           <h2>Diagram Study</h2>
           <span class="pill" id="diagramProgress">1 / 31</span>
         </div>
         <div class="bar"><div class="bar-fill" id="diagramBar"></div></div>
-        <div class="mode-title">
-          <div>
-            <div class="category" id="diagramCategory"></div>
-            <div class="big-term" id="diagramTerm"></div>
-          </div>
+        <div class="diagram-summary" aria-live="polite">
+          <div class="category" id="diagramCategory"></div>
+          <div class="big-term diagram-play-title" id="diagramTerm"></div>
           <span class="pill" id="diagramDifficulty"></span>
         </div>
 
@@ -2613,7 +2644,6 @@ Page/app note: Hoop IQ Trainer Team Feedback`
 
     function courtSvg(term, compact = false, motionStep = null) {
       const moves = motionStep ? motionStepMoves(motionStep) : diagramMoves(term.diagramType || "generic");
-      const label = compact ? "" : `<text x="300" y="35" text-anchor="middle" font-size="20" font-weight="900" fill="#2b1606">${escapeSvg(term.term)}</text>`;
       const placedLabels = [];
       return `
         <svg class="court" viewBox="0 0 600 520" role="img" aria-label="Half court diagram for ${escapeSvg(term.term)}">
@@ -2635,7 +2665,6 @@ Page/app note: Hoop IQ Trainer Team Feedback`
           <path d="M 210 300 A 90 90 0 0 0 390 300" fill="none" stroke="#fff8e8" stroke-width="4"/>
           <circle cx="300" cy="96" r="14" fill="none" stroke="#fff8e8" stroke-width="4"/>
           <line x1="270" y1="82" x2="330" y2="82" stroke="#fff8e8" stroke-width="4"/>
-          ${label}
 
           ${moves.screens.map(screenLineSvg).join("")}
           ${moves.playerMoves.map(moveSvg).join("")}
