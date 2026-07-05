@@ -1,3 +1,13 @@
+## v0.9.8 - Card Subtitle Contrast Polish
+
+### Changed
+
+- Improved subtitle contrast on bright gradient cards and buttons.
+
+### Notes
+
+- No feature, Supabase, authentication, database, backend, diagram logic, or basketball terminology changes were added.
+
 ## v0.9.7 - Team Colors Future Idea
 
 ### Added
