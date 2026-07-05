@@ -442,6 +442,41 @@
 
     input:focus, textarea:focus, select:focus { border-color: rgba(255,159,28,.85); }
     option { color: #111; }
+    .mockup-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .mockup-card {
+      border: 1px solid var(--border);
+      background: var(--soft);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .mockup-card h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+
+    .mockup-card ul {
+      margin: 10px 0 0;
+      padding-left: 20px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .mockup-field {
+      margin-top: 10px;
+    }
+
+    .mockup-disabled {
+      opacity: .72;
+      cursor: not-allowed;
+    }
+
 
     .list { display: grid; gap: 10px; }
 
@@ -549,7 +584,7 @@
 
     @media (max-width: 780px) {
       .stats { grid-template-columns: repeat(2, 1fr); }
-      .home-grid, .three-grid { grid-template-columns: 1fr; }
+      .home-grid, .three-grid, .mockup-grid { grid-template-columns: 1fr; }
       .filters { grid-template-columns: repeat(2, 1fr); }
       .filters button:first-child { grid-column: span 2; }
       .legend { grid-template-columns: repeat(2, 1fr); }
@@ -564,7 +599,7 @@
   <main class="app">
     <header>
       <div class="brand">
-        <div class="logo">🏀</div>
+        <div class="logo">ðŸ€</div>
         <div>
           <h1>Hoop IQ Trainer <span style="color:var(--accent);">v3</span></h1>
           <p class="subtitle">Visual Basketball IQ: study terms, edit coach language, train weaknesses, and learn actions with half-court diagrams.</p>
@@ -588,7 +623,8 @@
 
         <div class="grid home-grid">
           <button class="guide" onclick="showScreen('howToUse')">How to Use<br><span class="micro">Quick start for players, parents, and coaches.</span></button>
-          <button class="primary" onclick="chooseStudy()">Study Flashcards<br><span class="micro">Pick all terms or one category.</span></button>
+                    <button class="secondary" onclick="showScreen('signInMockups')">Coach / Player Sign-In Preview<br><span class="micro">See the planned team account flow.</span></button>
+<button class="primary" onclick="chooseStudy()">Study Flashcards<br><span class="micro">Pick all terms or one category.</span></button>
           <button class="secondary" onclick="chooseQuiz()">Take Quiz<br><span class="micro">Mixed, category, or missed-term training.</span></button>
           <button class="purple" onclick="chooseDiagramStudy()">Diagram Study<br><span class="micro">See half-court visual notes.</span></button>
           <button class="blue" onclick="startDiagramQuiz()">Name This Action<br><span class="micro">Diagram quiz with visual recognition.</span></button>
@@ -615,7 +651,7 @@
 
       <div class="panel">
         <h2>v3 Adds Visual Basketball IQ</h2>
-        <p class="tiny">This version adds a half-court diagram viewer, player circles, arrows, screen markers, cut paths, diagram notes, and a “Name This Action” quiz. Some diagrams are general teaching diagrams until coach gives exact team rules.</p>
+        <p class="tiny">This version adds a half-court diagram viewer, player circles, arrows, screen markers, cut paths, diagram notes, and a â€œName This Actionâ€ quiz. Some diagrams are general teaching diagrams until coach gives exact team rules.</p>
       </div>
 
       <div class="panel">
@@ -647,10 +683,81 @@
           <li>better team terminology</li>
           <li>more motion-step diagrams</li>
           <li>player study tracking</li>
-          <li>optional future private/team version</li>
+                    <li>coach and player sign-in previews</li>
+<li>optional future private/team version</li>
         </ul>
       </div>
     </section>
+    <section id="signInMockups" class="screen">
+      <div class="panel">
+        <div class="mode-title">
+          <h2>Coach / Player Sign-In Preview</h2>
+          <span class="pill hot">v0.8.8 Mockup</span>
+        </div>
+        <p class="definition">These are non-functional planning screens for the future private/team version. No live login, password handling, database, or player data syncing is active in this release.</p>
+
+        <div class="mockup-grid">
+          <div class="mockup-card">
+            <h3>Coach Sign In</h3>
+            <p class="tiny">Future coach accounts will manage teams, invite players, assign study sets, and review progress.</p>
+            <label class="mockup-field" for="mockCoachEmail">Coach email</label>
+            <input id="mockCoachEmail" placeholder="coach@example.com" disabled />
+            <label class="mockup-field" for="mockCoachPassword">Password</label>
+            <input id="mockCoachPassword" placeholder="Future secure sign-in" disabled />
+            <div class="row" style="margin-top:12px;">
+              <button class="primary mockup-disabled" disabled>Sign In Later</button>
+              <button class="ghost mockup-disabled" disabled>Create Coach Account Later</button>
+            </div>
+          </div>
+
+          <div class="mockup-card">
+            <h3>Player Sign In</h3>
+            <p class="tiny">Future player accounts will join a team, study assigned concepts, complete quizzes, and review missed terms.</p>
+            <label class="mockup-field" for="mockPlayerEmail">Player email</label>
+            <input id="mockPlayerEmail" placeholder="player@example.com" disabled />
+            <label class="mockup-field" for="mockPlayerPassword">Password</label>
+            <input id="mockPlayerPassword" placeholder="Future secure sign-in" disabled />
+            <div class="row" style="margin-top:12px;">
+              <button class="secondary mockup-disabled" disabled>Sign In Later</button>
+              <button class="ghost mockup-disabled" disabled>Create Player Account Later</button>
+            </div>
+          </div>
+
+          <div class="mockup-card">
+            <h3>Join Team Code</h3>
+            <p class="tiny">Players will eventually join a private team using a coach-provided invite code.</p>
+            <label class="mockup-field" for="mockTeamCode">Team code</label>
+            <input id="mockTeamCode" placeholder="Example: HOOP-2026" disabled />
+            <div class="row" style="margin-top:12px;">
+              <button class="blue mockup-disabled" disabled>Join Team Later</button>
+            </div>
+          </div>
+
+          <div class="mockup-card">
+            <h3>Create Team</h3>
+            <p class="tiny">Coaches will eventually create a team workspace and share a private invite code with players.</p>
+            <label class="mockup-field" for="mockTeamName">Team name</label>
+            <input id="mockTeamName" placeholder="Example: Hampton Tigers 7th Grade" disabled />
+            <ul>
+              <li>private team roster</li>
+              <li>assigned study sets</li>
+              <li>player progress dashboard</li>
+              <li>coach terminology review</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="coach-note">
+          <strong>Planning note:</strong> This preview keeps the app moving toward coach/player accounts while protecting the current public study experience.
+        </div>
+
+        <div class="row" style="margin-top:16px;">
+          <button class="primary" onclick="showScreen('home')">Back Home</button>
+          <button class="guide" onclick="showScreen('howToUse')">How to Use</button>
+        </div>
+      </div>
+    </section>
+
 
     <section id="howToUse" class="screen">
       <div class="panel">
@@ -748,7 +855,7 @@
           <div class="legend-item"><strong>Solid Arrow:</strong><br>player cut/movement</div>
           <div class="legend-item"><strong>Dashed Arrow:</strong><br>ball pass/hand off</div>
           <div class="legend-item"><strong>Zigzag / Bar:</strong><br>screen or seal</div>
-          <div class="legend-item"><strong>1–5:</strong><br>standard player spots</div>
+          <div class="legend-item"><strong>1â€“5:</strong><br>standard player spots</div>
         </div>
 
         <p class="definition" id="diagramDefinition"></p>
@@ -954,11 +1061,11 @@
       <div class="panel">
         <h2>App Notes</h2>
         <p class="tiny">This app works offline. It stores progress and coach edits in this browser only using localStorage. Export JSON before moving to another phone or computer.</p>
-        <p class="copyright">© 2026 Anthony Boyd / Worldmedia Publishing & Consulting LLC. All rights reserved.<br>Hoop IQ Trainer is an educational basketball terminology training tool.</p>
+        <p class="copyright">Â© 2026 Anthony Boyd / Worldmedia Publishing & Consulting LLC. All rights reserved.<br>Hoop IQ Trainer is an educational basketball terminology training tool.</p>
       </div>
     </section>
 
-    <p class="copyright">© 2026 Anthony Boyd / Worldmedia Publishing & Consulting LLC. All rights reserved.</p>
+    <p class="copyright">Â© 2026 Anthony Boyd / Worldmedia Publishing & Consulting LLC. All rights reserved.</p>
   </main>
 
   <nav class="footer-nav">
@@ -971,7 +1078,7 @@
   </nav>
 
   <script>
-    const COPYRIGHT_NOTICE = "© 2026 Anthony Boyd / Worldmedia Publishing & Consulting LLC. All rights reserved.";
+    const COPYRIGHT_NOTICE = "Â© 2026 Anthony Boyd / Worldmedia Publishing & Consulting LLC. All rights reserved.";
     const TEAM_FEEDBACK_EMAIL = "advisor.worldmedia@gmail.com";
     const TEAM_FEEDBACK_MESSAGE = "Team, I'm testing Hoop IQ Trainer to help us learn actions, screens, cuts, coverages, and coach terminology. Please try it and send feedback: 1) what term confused you, 2) what diagram did not match how we run it, 3) what definition should sound more like coach, and 4) what feature would help you study faster.";
     const COACH_REVIEW_CHECKLIST = `Coach Review Checklist:
@@ -1041,7 +1148,7 @@
           checkpoint:"Do not drift wide. Take the handoff downhill."
         }
       ] },
-      { id:"spain", term:"Spain / Stack Pick-and-Roll", category:"Action", definition:"A pick-and-roll where a third offensive player sets a back screen on the rolling screener’s defender. The back screener often pops or spaces after screening.", coachDefinition:"Coach-specific version pending.", cue:"Ball handler attacks, screener rolls, third player back-screens the roller’s defender then spaces.", commonMistake:"The back screen arrives late, or the roller does not roll hard enough to create confusion.", diagramNote:"5 sets a ball screen for 1. 2 back-screens 5’s defender as 5 rolls, then 2 pops or spaces.", diagramType:"spain", difficulty:"Advanced", motionSteps:[
+      { id:"spain", term:"Spain / Stack Pick-and-Roll", category:"Action", definition:"A pick-and-roll where a third offensive player sets a back screen on the rolling screenerâ€™s defender. The back screener often pops or spaces after screening.", coachDefinition:"Coach-specific version pending.", cue:"Ball handler attacks, screener rolls, third player back-screens the rollerâ€™s defender then spaces.", commonMistake:"The back screen arrives late, or the roller does not roll hard enough to create confusion.", diagramNote:"5 sets a ball screen for 1. 2 back-screens 5â€™s defender as 5 rolls, then 2 pops or spaces.", diagramType:"spain", difficulty:"Advanced", motionSteps:[
         {
           label:"Step 1",
           description:"5 sets a ball screen for 1.",
@@ -1072,14 +1179,14 @@
       ] },
       { id:"flex", term:"Flex", category:"Action", definition:"A continuity action built around a baseline cross-screen followed by a down screen. It creates layups, post touches, and jump shots through constant screening and cutting.", coachDefinition:"Coach-specific version pending.", cue:"Screen across, then screen down. Cut hard and keep spacing.", commonMistake:"Drifting off the screen instead of cutting shoulder-to-shoulder.", diagramNote:"A player uses a baseline cross-screen, then the screener or another player receives a down screen.", diagramType:"flex", difficulty:"Beginner" },
       { id:"circle-motion", term:"Circle Motion", category:"Action", definition:"A motion concept where players pass, cut, and rotate to fill open spots around the perimeter so the floor stays balanced and nobody stands still.", coachDefinition:"Coach-specific version pending.", cue:"Pass, cut, fill, and keep the circle moving.", commonMistake:"Watching the ball and failing to replace open spots.", diagramNote:"Players rotate around the perimeter and replace each other to maintain spacing and rhythm.", diagramType:"circle-motion", difficulty:"Advanced" },
-      { id:"euro-ball-screen-action", term:"Euro Ball Screen", category:"Action", definition:"A team-specific or non-universal ball-screen term. It often refers to an empty-side, side, or angle ball-screen variation designed to change the ball handler’s driving angle and force defensive rotation.", coachDefinition:"Coach-specific version pending. Use the coach’s definition first because this term is not universal.", cue:"Read the screen angle, attack the open side, and punish the help.", commonMistake:"Assuming this term means the same thing in every system.", diagramNote:"Side or angle ball screen with spacing that changes the driving angle. Update once coach confirms the team version.", diagramType:"euro-ball-screen", difficulty:"Coach Specific" },
-      { id:"bulldog-motion", term:"Bulldog Motion", category:"Action", definition:"A team-specific term. It may describe a physical motion offense built around hard cuts, strong screens, downhill handoffs, and contact-based advantage creation, but the exact meaning must come from the coach.", coachDefinition:"Coach-specific version pending. This should be updated from the coach’s language.", cue:"Play physical, screen hard, cut hard, and attack downhill if this is how coach teaches it.", commonMistake:"Treating a team-specific call like a universal basketball term.", diagramNote:"Team-specific. Update this once coach gives the exact player movement.", diagramType:"bulldog-motion", difficulty:"Coach Specific" },
+      { id:"euro-ball-screen-action", term:"Euro Ball Screen", category:"Action", definition:"A team-specific or non-universal ball-screen term. It often refers to an empty-side, side, or angle ball-screen variation designed to change the ball handlerâ€™s driving angle and force defensive rotation.", coachDefinition:"Coach-specific version pending. Use the coachâ€™s definition first because this term is not universal.", cue:"Read the screen angle, attack the open side, and punish the help.", commonMistake:"Assuming this term means the same thing in every system.", diagramNote:"Side or angle ball screen with spacing that changes the driving angle. Update once coach confirms the team version.", diagramType:"euro-ball-screen", difficulty:"Coach Specific" },
+      { id:"bulldog-motion", term:"Bulldog Motion", category:"Action", definition:"A team-specific term. It may describe a physical motion offense built around hard cuts, strong screens, downhill handoffs, and contact-based advantage creation, but the exact meaning must come from the coach.", coachDefinition:"Coach-specific version pending. This should be updated from the coachâ€™s language.", cue:"Play physical, screen hard, cut hard, and attack downhill if this is how coach teaches it.", commonMistake:"Treating a team-specific call like a universal basketball term.", diagramNote:"Team-specific. Update this once coach gives the exact player movement.", diagramType:"bulldog-motion", difficulty:"Coach Specific" },
       { id:"slash", term:"Slash", category:"Action", definition:"A pick-and-pop action that flows into a dribble handoff on the opposite side of the floor. The screener pops after the ball screen, catches, then hands off to a weak-side teammate.", coachDefinition:"Coach-specific version pending.", cue:"Screen, pop, catch, and hand off to the opposite-side guard.", commonMistake:"Thinking Slash only means a random hard cut through the paint.", diagramNote:"5 screens and pops. The ball moves to 5, then 5 hands off to a weak-side teammate coming with momentum.", diagramType:"slash", difficulty:"Advanced" },
 
-      { id:"step-up", term:"Step-Up Screen", category:"Screen", definition:"A side ball screen set with the screener’s back parallel to the baseline. It is used to change the ball handler’s driving angle and create a lane.", coachDefinition:"Coach-specific version pending.", cue:"Step up into the angle and give the ball handler a clean driving lane.", commonMistake:"Setting it too flat, too high, or too far away to affect the defender.", diagramNote:"5 steps up from below or beside the ball and sets an angled side ball screen for 1.", diagramType:"step-up", difficulty:"Advanced" },
+      { id:"step-up", term:"Step-Up Screen", category:"Screen", definition:"A side ball screen set with the screenerâ€™s back parallel to the baseline. It is used to change the ball handlerâ€™s driving angle and create a lane.", coachDefinition:"Coach-specific version pending.", cue:"Step up into the angle and give the ball handler a clean driving lane.", commonMistake:"Setting it too flat, too high, or too far away to affect the defender.", diagramNote:"5 steps up from below or beside the ball and sets an angled side ball screen for 1.", diagramType:"step-up", difficulty:"Advanced" },
       { id:"veer", term:"Veer Screen", category:"Screen", definition:"A ball-screen-into-off-ball-screen action. Instead of rolling after the ball screen, the screener turns and screens for another teammate, often a shooter.", coachDefinition:"Coach-specific version pending.", cue:"Screen the ball, then immediately veer into the next screen.", commonMistake:"Rolling by habit instead of turning into the second screen.", diagramNote:"5 appears in ball-screen action, then turns and sets an off-ball screen for a teammate.", diagramType:"veer", difficulty:"Advanced" },
       { id:"ghost", term:"Ghost Screen", category:"Screen", definition:"A fake ball screen. The would-be screener sprints toward the ball like they are setting a screen, then slips or pops to open space before contact.", coachDefinition:"Coach-specific version pending.", cue:"Sell the screen, then sprint away into space.", commonMistake:"Making heavy contact and turning the ghost into a normal ball screen.", diagramNote:"5 approaches as if screening, then exits early to space before contact.", diagramType:"ghost", difficulty:"Intermediate" },
-      { id:"brush", term:"Brush Screen", category:"Screen", definition:"A brush is off-ball movement that functions like a screen without heavy contact. It briefly delays a defender while keeping the action flowing.", coachDefinition:"Coach-specific version pending.", cue:"Brush the defender’s path without stopping the flow.", commonMistake:"Creating illegal moving contact instead of using body path and timing.", diagramNote:"A player cuts close enough to delay the defender without setting a full stationary screen.", diagramType:"brush", difficulty:"Advanced" },
+      { id:"brush", term:"Brush Screen", category:"Screen", definition:"A brush is off-ball movement that functions like a screen without heavy contact. It briefly delays a defender while keeping the action flowing.", coachDefinition:"Coach-specific version pending.", cue:"Brush the defenderâ€™s path without stopping the flow.", commonMistake:"Creating illegal moving contact instead of using body path and timing.", diagramNote:"A player cuts close enough to delay the defender without setting a full stationary screen.", diagramType:"brush", difficulty:"Advanced" },
       { id:"flip", term:"Flip Screen", category:"Screen", definition:"A ball screen where the screener quickly changes or flips the screen angle at the last second to attack the defender from a new side.", coachDefinition:"Coach-specific version pending.", cue:"Re-angle your body and flip the screen before the defense adjusts.", commonMistake:"Flipping too early so the defender can see it and recover.", diagramNote:"5 changes the screen angle late so 1 can attack the opposite lane.", diagramType:"flip", difficulty:"Advanced" },
       { id:"ram", term:"Ram Screen", category:"Screen", definition:"An off-ball screen set for the player who is about to set the main ball screen. It helps the ball screener arrive with speed, separation, and advantage.", coachDefinition:"Coach-specific version pending.", cue:"Screen the screener before they set the ball screen.", commonMistake:"Setting a soft ram screen that gives the ball screener no advantage.", diagramNote:"4 screens 5 before 5 comes up to set the ball screen for 1.", diagramType:"ram", difficulty:"Intermediate", motionSteps:[
         {
@@ -1139,16 +1246,16 @@
           checkpoint:"The pass must arrive before the defense recovers."
         }
       ] },
-      { id:"flare", term:"Flare Screen", category:"Screen", definition:"An off-ball screen that lets a teammate fade away from the ball toward open perimeter space.", coachDefinition:"Coach-specific version pending.", cue:"Screen the defender’s back side so the shooter can drift to space.", commonMistake:"The cutter comes toward the ball instead of fading to open space.", diagramNote:"A player uses a screen to fade away from the ball toward the wing or corner.", diagramType:"flare", difficulty:"Beginner" },
+      { id:"flare", term:"Flare Screen", category:"Screen", definition:"An off-ball screen that lets a teammate fade away from the ball toward open perimeter space.", coachDefinition:"Coach-specific version pending.", cue:"Screen the defenderâ€™s back side so the shooter can drift to space.", commonMistake:"The cutter comes toward the ball instead of fading to open space.", diagramNote:"A player uses a screen to fade away from the ball toward the wing or corner.", diagramType:"flare", difficulty:"Beginner" },
       { id:"gortat", term:"Gortat Screen", category:"Screen", definition:"A seal by the rolling big near the rim to block or pin the help defender and clear a driving lane for the ball handler. It must be done legally.", coachDefinition:"Coach-specific version pending.", cue:"Seal the rim protector legally. Do not shove or move into the defender.", commonMistake:"Turning the seal into an offensive foul by moving or extending into the defender.", diagramNote:"5 seals the rim protector while 1 drives to finish.", diagramType:"gortat", difficulty:"Advanced" },
-      { id:"rip", term:"Rip Screen", category:"Screen", definition:"A back screen that frees a teammate to cut toward the rim. Traditionally, it is often a guard screening for a big or a cutter near the lane.", coachDefinition:"Coach-specific version pending.", cue:"Screen the defender’s back and send the cutter to the basket.", commonMistake:"Poor timing between the screen and the cutter’s basket cut.", diagramNote:"A back screen frees a teammate cutting hard toward the rim.", diagramType:"rip", difficulty:"Intermediate" },
+      { id:"rip", term:"Rip Screen", category:"Screen", definition:"A back screen that frees a teammate to cut toward the rim. Traditionally, it is often a guard screening for a big or a cutter near the lane.", coachDefinition:"Coach-specific version pending.", cue:"Screen the defenderâ€™s back and send the cutter to the basket.", commonMistake:"Poor timing between the screen and the cutterâ€™s basket cut.", diagramNote:"A back screen frees a teammate cutting hard toward the rim.", diagramType:"rip", difficulty:"Intermediate" },
 
       { id:"dive", term:"Dive", category:"Screener Post-Screen Action", definition:"A hard sprint directly to the rim after screening or slipping. The screener looks for a quick pass at the front of the basket.", coachDefinition:"Coach-specific version pending.", cue:"Sprint to the front of the rim and show your hands.", commonMistake:"Floating after the screen instead of putting pressure on the rim.", diagramNote:"After screening, 5 dives straight to the front of the rim.", diagramType:"dive", difficulty:"Beginner" },
       { id:"roll", term:"Roll", category:"Screener Post-Screen Action", definition:"After setting a ball screen, the screener turns toward the basket and moves downhill to receive the ball.", coachDefinition:"Coach-specific version pending.", cue:"Make contact, open to the ball, and roll hard.", commonMistake:"Opening the wrong direction or rolling without seeing the ball.", diagramNote:"5 screens for 1, opens to the ball, and rolls to the rim.", diagramType:"roll", difficulty:"Beginner" },
       { id:"short-roll", term:"Short Roll", category:"Screener Post-Screen Action", definition:"A controlled roll where the screener stops around the free-throw line, elbow, or middle pocket area to catch and make the next read.", coachDefinition:"Coach-specific version pending.", cue:"Catch in the middle and decide: pass, shoot, or drive.", commonMistake:"Catching in the middle and panicking instead of reading the floor.", diagramNote:"5 rolls into the middle pocket area, catches, and becomes a passer, shooter, or driver.", diagramType:"short-roll", difficulty:"Intermediate" },
       { id:"pop", term:"Pop", category:"Screener Post-Screen Action", definition:"After setting a screen, the screener moves away from the basket to open shooting space, usually beyond the arc or in the mid-range.", coachDefinition:"Coach-specific version pending.", cue:"Screen, separate, and be ready to shoot or move it.", commonMistake:"Popping to a crowded area or without a clear passing angle.", diagramNote:"5 screens, then pops away from the rim to open space.", diagramType:"pop", difficulty:"Beginner" },
 
-      { id:"ucla", term:"UCLA Cut", category:"Cut", definition:"A cut where the ball handler passes to the wing, then uses a high-post back screen near the elbow to cut toward the basket.", coachDefinition:"Coach-specific version pending.", cue:"Pass to the wing, use the back screen, and cut hard to the rim.", commonMistake:"Cutting around the screen instead of tight off the screener.", diagramNote:"1 passes to the wing, then cuts off 5’s high-post back screen toward the rim.", diagramType:"ucla", difficulty:"Intermediate", motionSteps:[
+      { id:"ucla", term:"UCLA Cut", category:"Cut", definition:"A cut where the ball handler passes to the wing, then uses a high-post back screen near the elbow to cut toward the basket.", coachDefinition:"Coach-specific version pending.", cue:"Pass to the wing, use the back screen, and cut hard to the rim.", commonMistake:"Cutting around the screen instead of tight off the screener.", diagramNote:"1 passes to the wing, then cuts off 5â€™s high-post back screen toward the rim.", diagramType:"ucla", difficulty:"Intermediate", motionSteps:[
         {
           label:"Step 1",
           description:"1 passes to 2 on the wing.",
@@ -1846,7 +1953,7 @@
     }
 
     function makeCategoryQuestion(term) {
-      return { type:"category", term, question:`What category is “${term.term}”?`, answer:term.category, options:shuffle(CATEGORIES), explanation:`${term.term} belongs to ${term.category}. Cue: ${term.cue}` };
+      return { type:"category", term, question:`What category is â€œ${term.term}â€?`, answer:term.category, options:shuffle(CATEGORIES), explanation:`${term.term} belongs to ${term.category}. Cue: ${term.cue}` };
     }
 
     function makeDefinitionQuestion(term) {
@@ -1856,12 +1963,12 @@
 
     function makeCueQuestion(term) {
       const wrong = sample(TERMS.filter(t => t.id !== term.id), 3).map(t => t.term);
-      return { type:"cue", term, question:`Which term uses this player cue?\n\n“${term.cue}”`, answer:term.term, options:shuffle([term.term, ...wrong]), explanation:`${term.term} is a ${term.category}. ${term.definition}` };
+      return { type:"cue", term, question:`Which term uses this player cue?\n\nâ€œ${term.cue}â€`, answer:term.term, options:shuffle([term.term, ...wrong]), explanation:`${term.term} is a ${term.category}. ${term.definition}` };
     }
 
     function makeMistakeQuestion(term) {
       const wrong = sample(TERMS.filter(t => t.id !== term.id), 3).map(t => t.term);
-      return { type:"mistake", term, question:`Which term has this common mistake?\n\n“${term.commonMistake}”`, answer:term.term, options:shuffle([term.term, ...wrong]), explanation:`${term.term}: ${term.definition}` };
+      return { type:"mistake", term, question:`Which term has this common mistake?\n\nâ€œ${term.commonMistake}â€`, answer:term.term, options:shuffle([term.term, ...wrong]), explanation:`${term.term}: ${term.definition}` };
     }
 
     function diagramQuizClue(term) {
@@ -2054,7 +2161,7 @@
       missed.forEach(t => {
         const div = document.createElement("div");
         div.className = "missed-item";
-        div.innerHTML = `<strong>${t.term}</strong><p class="tiny">${t.category} · ${t.cue}</p>`;
+        div.innerHTML = `<strong>${t.term}</strong><p class="tiny">${t.category} Â· ${t.cue}</p>`;
         wrap.appendChild(div);
       });
     }
@@ -2073,7 +2180,7 @@
         const pct = stats.total ? Math.round((stats.correct / stats.total) * 100) : 0;
         const div = document.createElement("div");
         div.className = "catbar";
-        div.innerHTML = `<div class="catbar-head"><span>${cat}</span><span>${pct}% · ${stats.correct}/${stats.total}</span></div><div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div>`;
+        div.innerHTML = `<div class="catbar-head"><span>${cat}</span><span>${pct}% Â· ${stats.correct}/${stats.total}</span></div><div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div>`;
         catWrap.appendChild(div);
       });
 
@@ -2145,7 +2252,7 @@
       TERMS.forEach(t => {
         const option = document.createElement("option");
         option.value = t.id;
-        option.textContent = `${t.term} · ${t.category}`;
+        option.textContent = `${t.term} Â· ${t.category}`;
         select.appendChild(option);
       });
       if (oldValue && TERMS.find(t => t.id === oldValue)) select.value = oldValue;
