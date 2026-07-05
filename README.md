@@ -27,7 +27,7 @@ v0.3.0 - Visual Basketball IQ
 
 ## Ownership
 
-© 2026 Anthony Boyd / Worldmedia Publishing & Consulting LLC. All rights reserved.
+&copy; 2026 Anthony Boyd / Worldmedia Publishing & Consulting LLC. All rights reserved.
 
 Hoop IQ Trainer is an educational basketball terminology training tool.
 
