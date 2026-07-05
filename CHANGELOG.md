@@ -1,3 +1,16 @@
+## v0.9.0 - Team Model and Invite-Code Planning
+
+### Added
+
+- Added planning documentation for the future team data model.
+- Added invite-code flow planning for future coach-created teams.
+- Added privacy and youth-safety planning notes.
+- Added role and permissions planning for Coach, Player, Guest, and future Admin roles.
+
+### Notes
+
+- No live authentication, backend code, database tables, invite-code logic, roster management, assignment UI, progress syncing, or permissions enforcement was added.
+
 ## v0.8.10 - App-Wide Audit and Encoding Cleanup
 
 ### Fixed
