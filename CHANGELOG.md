@@ -1,3 +1,15 @@
+## v0.9.4 - Visible Global Copyright Footer
+
+### Fixed
+
+- Restored the copyright footer as a global element above the fixed bottom navigation.
+- Added bottom spacing so content, copyright text, and footer navigation do not overlap.
+- Kept the footer text encoding-safe with HTML entities.
+
+### Notes
+
+- No Supabase, authentication, database, schema, SQL, SDK, environment variable, or backend changes were added.
+
 ## v0.9.3 - Mojibake Logo Cleanup
 
 ### Fixed
