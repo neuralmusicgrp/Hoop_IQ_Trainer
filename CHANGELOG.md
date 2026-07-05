@@ -1,3 +1,14 @@
+## v0.9.2 - Supabase Schema Planning
+
+### Added
+
+- Added a planning document for the future Supabase database schema.
+- Documented planned tables, relationships, indexes, constraints, and plain-language RLS/privacy notes for coach, player, and team features.
+
+### Notes
+
+- No Supabase SDK, environment variables, API keys, SQL, migrations, database tables, backend code, app UI changes, or live Supabase integration was added.
+
 ## v0.9.1 - Supabase Auth Provider Selection
 
 ### Added
