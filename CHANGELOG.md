@@ -1,3 +1,13 @@
+## v0.9.11 - Brand Heading Spacing Hotfix
+
+### Fixed
+
+- Adjusted desktop brand heading letter spacing so "Hoop IQ Trainer v3" does not crowd or touch while keeping the compact brand feel.
+
+### Notes
+
+- No app logic, content, terms, diagrams, Supabase, authentication, database, or backend changes were added.
+
 ## v0.9.10 - Local Data Safety and Accessibility Fixes
 
 ### Fixed
