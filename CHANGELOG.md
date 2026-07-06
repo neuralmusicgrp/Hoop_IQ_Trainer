@@ -1,3 +1,13 @@
+## v0.9.12 - Brand Subtitle Spacing Hotfix
+
+### Fixed
+
+- Increased brand subtitle spacing so the desktop header has more breathing room between "Hoop IQ Trainer v3" and the subtitle text.
+
+### Notes
+
+- No app logic, content, terms, diagrams, Supabase, authentication, database, or backend changes were added.
+
 ## v0.9.11 - Brand Heading Spacing Hotfix
 
 ### Fixed
