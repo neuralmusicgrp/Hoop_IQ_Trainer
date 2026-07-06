@@ -1684,6 +1684,13 @@
       }));
     }
 
+    function isTermLikeObject(value) {
+      if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+      return ["id", "term", "category", "definition", "coachDefinition", "cue", "commonMistake", "diagramNote"].some(key => {
+        return typeof value[key] === "string" && value[key].trim();
+      });
+    }
+
     function slugify(value) {
       return String(value).toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || `term-${Date.now()}`;
     }
@@ -1756,12 +1763,18 @@
 
     function showScreen(id) {
       document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-      document.getElementById(id).classList.add("active");
+      const activeScreen = document.getElementById(id);
+      activeScreen.classList.add("active");
       if (id === "dashboard") renderDashboard();
       if (id === "library") renderLibrary("All");
       if (id === "edit") { renderEditSelect(); loadEditForm(); }
       setActiveNav(navKeyForScreen(id));
       window.scrollTo({ top: 0, behavior: "smooth" });
+      const heading = activeScreen.querySelector("h2, h1");
+      if (heading) {
+        if (!heading.hasAttribute("tabindex")) heading.setAttribute("tabindex", "-1");
+        heading.focus({ preventScroll: true });
+      }
     }
 
     function savePlayerName() {
@@ -2259,9 +2272,9 @@
 
       if (correct) {
         state.score += 1;
-        feedback.innerHTML = `<strong>Correct.</strong><br>${q.explanation}`;
+        feedback.innerHTML = `<strong>Correct.</strong><br>${escapeHtml(q.explanation)}`;
       } else {
-        feedback.innerHTML = `<strong>Not quite.</strong><br>Correct answer: <strong>${q.answer}</strong><br>${q.explanation}`;
+        feedback.innerHTML = `<strong>Not quite.</strong><br>Correct answer: <strong>${escapeHtml(q.answer)}</strong><br>${escapeHtml(q.explanation)}`;
         state.missedThisRound.push(q.term.id);
       }
 
@@ -2316,7 +2329,7 @@
       missed.forEach(t => {
         const div = document.createElement("div");
         div.className = "missed-item";
-        div.innerHTML = `<strong>${t.term}</strong><p class="tiny">${t.category} &middot; ${t.cue}</p>`;
+        div.innerHTML = `<strong>${escapeHtml(t.term)}</strong><p class="tiny">${escapeHtml(t.category)} &middot; ${escapeHtml(t.cue)}</p>`;
         wrap.appendChild(div);
       });
     }
@@ -2350,7 +2363,7 @@
         missed.forEach(t => {
           const div = document.createElement("div");
           div.className = "missed-item";
-          div.innerHTML = `<strong>${t.term}</strong><p class="tiny">${t.category}</p><p class="tiny">${t.definition}</p><p class="tiny"><strong>Cue:</strong> ${t.cue}</p>`;
+          div.innerHTML = `<strong>${escapeHtml(t.term)}</strong><p class="tiny">${escapeHtml(t.category)}</p><p class="tiny">${escapeHtml(t.definition)}</p><p class="tiny"><strong>Cue:</strong> ${escapeHtml(t.cue)}</p>`;
           list.appendChild(div);
         });
       }
@@ -2384,16 +2397,16 @@
         div.className = "missed-item";
         div.innerHTML = `
           <div class="mode-title" style="margin:0 0 4px;">
-            <strong>${t.term}</strong>
-            <span class="pill">${t.category}</span>
+            <strong>${escapeHtml(t.term)}</strong>
+            <span class="pill">${escapeHtml(t.category)}</span>
           </div>
           <div class="court-wrap">${courtSvg(t, true)}</div>
-          <p class="tiny">${t.definition}</p>
-          <p class="tiny"><strong>Coach:</strong> ${t.coachDefinition}</p>
-          <p class="tiny"><strong>Cue:</strong> ${t.cue}</p>
-          <p class="tiny"><strong>Mistake:</strong> ${t.commonMistake}</p>
-          <p class="tiny"><strong>Diagram:</strong> ${t.diagramNote}</p>
-          <p><span class="pill">${t.difficulty}</span></p>
+          <p class="tiny">${escapeHtml(t.definition)}</p>
+          <p class="tiny"><strong>Coach:</strong> ${escapeHtml(t.coachDefinition)}</p>
+          <p class="tiny"><strong>Cue:</strong> ${escapeHtml(t.cue)}</p>
+          <p class="tiny"><strong>Mistake:</strong> ${escapeHtml(t.commonMistake)}</p>
+          <p class="tiny"><strong>Diagram:</strong> ${escapeHtml(t.diagramNote)}</p>
+          <p><span class="pill">${escapeHtml(t.difficulty)}</span></p>
         `;
         list.appendChild(div);
       });
@@ -2455,6 +2468,7 @@
       const index = TERMS.findIndex(t => t.id === id);
       if (index < 0) return;
       TERMS[index] = {
+        ...TERMS[index],
         id,
         term: document.getElementById("editTerm").value.trim() || "Untitled Term",
         category: document.getElementById("editCategory").value,
@@ -2630,7 +2644,8 @@ Page/app note: Hoop IQ Trainer Team Feedback`
     function importTermsObject(obj) {
       const incoming = Array.isArray(obj) ? obj : obj.terms;
       if (!Array.isArray(incoming) || !incoming.length) return alert("Import failed. JSON must include a terms array.");
-      TERMS = sanitizeTerms(incoming);
+      if (!incoming.every(isTermLikeObject)) return alert("Import failed. Each term must be an object with term data.");
+      TERMS = mergeWithDefaultTerms(incoming);
       saveTerms();
       alert(`Imported ${TERMS.length} terms.`);
       renderLibrary("All");
@@ -3511,6 +3526,10 @@ Page/app note: Hoop IQ Trainer Team Feedback`
 
     function escapeSvg(value) {
       return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    function escapeHtml(value) {
+      return escapeSvg(value);
     }
 
     updateStats();

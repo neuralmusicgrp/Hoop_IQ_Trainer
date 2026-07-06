@@ -1,3 +1,16 @@
+## v0.9.10 - Local Data Safety and Accessibility Fixes
+
+### Fixed
+
+- Preserved motionSteps, tags, role, and future optional term metadata when saving coach edits.
+- Made term import merge with the default term list so partial or older exports do not remove missing default terms.
+- Escaped editable and imported term text in innerHTML render paths for quiz feedback, missed-term previews, dashboard lists, and library cards.
+- Improved screen-change focus management by moving focus to the active screen heading.
+
+### Notes
+
+- No Supabase, authentication, database, backend, diagram content, or basketball terminology changes were added.
+
 ## v0.9.9 - Card Subtitle High-Contrast Fix
 
 ### Changed
