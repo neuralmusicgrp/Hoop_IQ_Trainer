@@ -1,3 +1,13 @@
+## v0.9.13 - Category Quiz Option Polish
+
+### Changed
+
+- Category quiz questions now use 4-option answer sets for more consistent quiz difficulty.
+
+### Notes
+
+- No basketball terms, diagrams, motion steps, Coach Tools, localStorage keys, import/export behavior, Supabase, authentication, database, backend, planning, or visual styling changes were added.
+
 ## v0.9.12 - Brand Subtitle Spacing Hotfix
 
 ### Fixed

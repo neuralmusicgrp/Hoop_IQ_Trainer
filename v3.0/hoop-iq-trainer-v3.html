@@ -2121,7 +2121,8 @@
     }
 
     function makeCategoryQuestion(term) {
-      return { type:"category", term, question:`What category is "${term.term}"?`, answer:term.category, options:shuffle(CATEGORIES), explanation:`${term.term} belongs to ${term.category}. Cue: ${term.cue}` };
+      const wrong = sample(CATEGORIES.filter(category => category !== term.category), 3);
+      return { type:"category", term, question:`What category is "${term.term}"?`, answer:term.category, options:shuffle([term.category, ...wrong]), explanation:`${term.term} belongs to ${term.category}. Cue: ${term.cue}` };
     }
 
     function makeDefinitionQuestion(term) {
