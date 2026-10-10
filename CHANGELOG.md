@@ -1,3 +1,17 @@
+## v0.9.14 - Import Safety and Quiz Reliability
+
+### Fixed
+
+- Validate imported term fields and nested motion-step coordinates before accepting JSON; reject malformed imports.
+- Validate saved motion-step data before rendering, including older data stored in the browser.
+- Keep category quizzes within the selected category even when fewer than ten terms are available.
+- Restore the correct Daily 10 workout pool when selecting Run It Back.
+- Count quiz sessions and Daily 10 completions only after all questions are answered; distinguish unfinished workouts from no-miss completions.
+
+### Notes
+
+- No sign-in, accounts, animation, new content, backend, or unrelated visual changes were added.
+
 ## v0.9.13 - Category Quiz Option Polish
 
 ### Changed
