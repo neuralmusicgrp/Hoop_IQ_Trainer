@@ -980,7 +980,7 @@
 
     <section id="results" class="screen">
       <div class="panel">
-        <h2 style="text-align:center;">Workout Complete</h2>
+        <h2 id="workoutResultTitle" style="text-align:center;">Workout Complete</h2>
         <div class="score-big" id="finalScore">0%</div>
         <p style="text-align:center;" id="resultMessage"></p>
         <div id="roundMissedPreview" class="list"></div>
@@ -2363,7 +2363,8 @@
       progress.missedTerms = Array.from(new Set([...(progress.missedTerms || []), ...state.missedThisRound]));
       saveProgress(progress);
 
-      document.getElementById("finalScore").textContent = completed ? `${percent}%` : "Incomplete";
+      document.getElementById("workoutResultTitle").textContent = completed ? "Workout Complete" : "Workout Ended Early";
+      document.getElementById("finalScore").textContent = completed ? `${percent}%` : "--";
       document.getElementById("resultMessage").textContent = !completed
         ? `Answered ${answeredCount} of ${total} questions. Finish all questions to record a completed workout.`
         : percent >= 90 ? "Elite work. You are seeing the floor and speaking coach's language." :
