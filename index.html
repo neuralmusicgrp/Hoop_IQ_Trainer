@@ -1577,6 +1577,56 @@
 
 
 
+
+    function isPlainDataObject(value) {
+      return value !== null && typeof value === "object" && !Array.isArray(value);
+    }
+
+    function isSafeCourtPoint(point) {
+      return isPlainDataObject(point) &&
+        typeof point.x === "number" && Number.isFinite(point.x) && point.x >= 0 && point.x <= 600 &&
+        typeof point.y === "number" && Number.isFinite(point.y) && point.y >= 0 && point.y <= 520;
+    }
+
+    function isValidMotionSteps(steps) {
+      if (!Array.isArray(steps) || steps.length > 30) return false;
+      const screenTypes = ["ballScreen", "backScreen", "downScreen", "pinDown", "ramScreen", "ghostScreen", "flareScreen", "screen"];
+      const passTypes = ["handoff", "skipPass", "rollPass", "entryPass"];
+      const playerId = value => (typeof value === "string" || typeof value === "number") &&
+        /^[a-zA-Z0-9_-]{1,16}$/.test(String(value));
+      return steps.every(step => {
+        if (!isPlainDataObject(step)) return false;
+        if (!["label", "description", "checkpoint"].every(key =>
+          step[key] === undefined || (typeof step[key] === "string" && step[key].length <= 2000))) return false;
+        if (step.players !== undefined && (!isPlainDataObject(step.players) ||
+          Object.keys(step.players).length > 20 ||
+          !Object.entries(step.players).every(([name, point]) => playerId(name) && isSafeCourtPoint(point)))) return false;
+        if (step.movements !== undefined && (!Array.isArray(step.movements) || step.movements.length > 100 ||
+          !step.movements.every(move => isPlainDataObject(move) && isSafeCourtPoint(move.from) &&
+            isSafeCourtPoint(move.to) && (move.player === undefined || playerId(move.player))))) return false;
+        if (step.passes !== undefined && (!Array.isArray(step.passes) || step.passes.length > 100 ||
+          !step.passes.every(pass => isPlainDataObject(pass) && playerId(pass.from) && playerId(pass.to) &&
+            (pass.type === undefined || passTypes.includes(pass.type))))) return false;
+        if (step.screens !== undefined && (!Array.isArray(step.screens) || step.screens.length > 100 ||
+          !step.screens.every(screen => isPlainDataObject(screen) && screenTypes.includes(screen.type) &&
+            ["screener", "cutter", "defenderOf"].every(key =>
+              screen[key] === undefined || playerId(screen[key]))))) return false;
+        return true;
+      });
+    }
+
+    function isValidImportedTerm(term) {
+      const textFields = ["id", "term", "category", "definition", "coachDefinition", "cue",
+        "commonMistake", "diagramNote", "diagramType", "difficulty"];
+      return isTermLikeObject(term) &&
+        textFields.every(key => term[key] === undefined ||
+          (typeof term[key] === "string" && term[key].length <= 10000)) &&
+        ["tags", "role"].every(key => term[key] === undefined ||
+          (Array.isArray(term[key]) && term[key].length <= 100 &&
+            term[key].every(item => typeof item === "string" && item.length <= 200))) &&
+        (term.motionSteps === undefined || isValidMotionSteps(term.motionSteps));
+    }
+
     function normalizeTerms(list) {
       return (Array.isArray(list) ? list : []).map((term, index) => {
         const baseTerm = term && typeof term === "object" ? term : {};
@@ -1595,7 +1645,7 @@
           difficulty: baseTerm.difficulty || "Intermediate",
           tags: Array.isArray(baseTerm.tags) ? baseTerm.tags : [],
           role: Array.isArray(baseTerm.role) ? baseTerm.role : [],
-          motionSteps: Array.isArray(baseTerm.motionSteps) ? baseTerm.motionSteps : []
+          motionSteps: isValidMotionSteps(baseTerm.motionSteps) ? baseTerm.motionSteps : []
         };
       });
     }
@@ -2090,7 +2140,8 @@
     }
 
     function rerunLastQuiz() {
-      if (state.lastMode === "diagram") startDiagramQuiz();
+      if (state.isDaily) startDailyWorkout();
+      else if (state.lastMode === "diagram") startDiagramQuiz();
       else if (state.lastCategory === "Missed") startMissedQuiz();
       else startQuiz(state.lastMode, state.lastCategory, null, false);
     }
@@ -2109,7 +2160,7 @@
       shuffle(sourceTerms).forEach(t => {
         if (!seen.has(t.id)) { seen.add(t.id); unique.push(t); }
       });
-      const picked = sample(unique.length >= QUIZ_LENGTH ? unique : TERMS, QUIZ_LENGTH);
+      const picked = sample(unique, Math.min(QUIZ_LENGTH, unique.length));
       return picked.map(term => {
         const actual = mode === "mixed" ? sample(["category", "definition", "cue", "mistake"], 1)[0] : mode;
         if (actual === "category") return makeCategoryQuestion(term);
@@ -2299,32 +2350,41 @@
 
     function finishQuiz() {
       const total = state.quizQuestions.length || 1;
+      const answeredCount = state.currentQuestionIndex + (state.answered ? 1 : 0);
+      const completed = answeredCount === state.quizQuestions.length && answeredCount > 0;
       const percent = Math.round((state.score / total) * 100);
       const progress = getProgress();
 
-      progress.sessions += 1;
-      if (state.isDaily) progress.dailyWorkouts += 1;
-      progress.bestScore = Math.max(progress.bestScore, percent);
+      if (completed) {
+        progress.sessions += 1;
+        if (state.isDaily) progress.dailyWorkouts += 1;
+        progress.bestScore = Math.max(progress.bestScore, percent);
+      }
       progress.missedTerms = Array.from(new Set([...(progress.missedTerms || []), ...state.missedThisRound]));
       saveProgress(progress);
 
-      document.getElementById("finalScore").textContent = `${percent}%`;
-      document.getElementById("resultMessage").textContent =
-        percent >= 90 ? "Elite work. You are seeing the floor and speaking coach's language." :
+      document.getElementById("finalScore").textContent = completed ? `${percent}%` : "Incomplete";
+      document.getElementById("resultMessage").textContent = !completed
+        ? `Answered ${answeredCount} of ${total} questions. Finish all questions to record a completed workout.`
+        : percent >= 90 ? "Elite work. You are seeing the floor and speaking coach's language." :
         percent >= 75 ? "Solid run. Review the misses and sharpen the reads." :
         percent >= 60 ? "You are building it. Stay with the reps." :
         "Back to the lab. Flashcards, diagrams, then run it again.";
 
-      renderRoundMissedPreview();
+      renderRoundMissedPreview(answeredCount, completed);
       showScreen("results");
     }
 
-    function renderRoundMissedPreview() {
+    function renderRoundMissedPreview(answeredCount, completed) {
       const wrap = document.getElementById("roundMissedPreview");
       wrap.innerHTML = "";
       const missed = Array.from(new Set(state.missedThisRound)).map(id => TERMS.find(t => t.id === id)).filter(Boolean);
       if (!missed.length) {
-        wrap.innerHTML = `<div class="missed-item"><strong>No misses this round.</strong><p class="tiny">Clean reps. Keep sharpening.</p></div>`;
+        wrap.innerHTML = answeredCount === 0
+          ? `<div class="missed-item"><strong>No questions answered.</strong><p class="tiny">This workout was not recorded as complete.</p></div>`
+          : completed
+            ? `<div class="missed-item"><strong>No misses this round.</strong><p class="tiny">Clean reps. Keep sharpening.</p></div>`
+            : `<div class="missed-item"><strong>No misses in answered questions.</strong><p class="tiny">This workout was not completed.</p></div>`;
         return;
       }
       missed.forEach(t => {
@@ -2645,7 +2705,7 @@ Page/app note: Hoop IQ Trainer Team Feedback`
     function importTermsObject(obj) {
       const incoming = Array.isArray(obj) ? obj : obj.terms;
       if (!Array.isArray(incoming) || !incoming.length) return alert("Import failed. JSON must include a terms array.");
-      if (!incoming.every(isTermLikeObject)) return alert("Import failed. Each term must be an object with term data.");
+      if (!incoming.every(isValidImportedTerm)) return alert("Import failed. Check term fields and motion steps; coordinates must be finite numbers within the court.");
       TERMS = mergeWithDefaultTerms(incoming);
       saveTerms();
       alert(`Imported ${TERMS.length} terms.`);
