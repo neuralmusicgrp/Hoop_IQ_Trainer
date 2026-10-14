@@ -6,7 +6,7 @@ Hoop IQ Trainer helps players study coach-assigned basketball terminology throug
 
 ## Current Version
 
-v0.9.5 - Mobile UX Polish and Home Flow Cleanup
+v0.9.14 - Import Safety and Quiz Reliability
 
 ## Current App Status
 
@@ -15,6 +15,7 @@ v0.9.5 - Mobile UX Polish and Home Flow Cleanup
 - Mobile-friendly study and quiz experience
 - Local progress saved with browser localStorage
 - Local coach tools for editing terminology on one device
+- Coach-edited and imported categories appear in local study, quiz, Coach Tools, and progress views
 - Static SVG half-court diagrams and diagram quiz mode
 - Team feedback helper that opens an email draft or copies feedback text
 - Future Supabase/auth/team features are planning-only and not live in the app

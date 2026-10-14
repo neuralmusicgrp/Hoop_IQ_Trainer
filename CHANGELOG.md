@@ -1,3 +1,21 @@
+## Unreleased - Custom Categories and Documentation Sync
+
+### Fixed
+
+- Refresh category choices from the active local terminology after loading, coach edits, and JSON imports, including custom categories.
+- Include imported custom categories in study and quiz pickers, Coach Tools selections, and category progress summaries.
+- Escape imported category labels in the picker and progress dashboard to keep rendered text safe.
+
+### Documentation
+
+- Update README to the latest published v0.9.14 baseline.
+- Replace historical branch and release-goal instructions in AGENTS.md with current maintenance guidance.
+
+### Notes
+
+- No changes to the default 50 basketball terms, SVG diagram cases, Motion Steps, localStorage keys, quiz scoring, accounts, backend, or copyright text.
+- Responsive 320px/375px browser validation remains a separate release QA item.
+
 ## v0.9.14 - Import Safety and Quiz Reliability
 
 ### Fixed
