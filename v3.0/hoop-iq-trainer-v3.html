@@ -1519,12 +1519,18 @@
       { id:"low-man", term:"Low Man", category:"Defensive Concept", definition:"The weak-side help defender closest to the rim. The low man is often responsible for tagging the roller or protecting the basket.", coachDefinition:"Coach-specific version pending.", cue:"On offense, read the low man. If they help, pass to the open shooter.", commonMistake:"Driving without seeing the help defender at the rim.", diagramNote:"The low man is the weak-side defender nearest the basket who must choose between tagging the roller and staying with a shooter.", diagramType:"low-man", difficulty:"Advanced", tags:["defense","help defense","read"], role:["ball handler","roller","weak-side shooter"], motionSteps:[] }
     ];
 
-    const CATEGORIES = [...new Set(DEFAULT_TERMS.map(t => t.category))];
+    let CATEGORIES = [...new Set(DEFAULT_TERMS.map(t => t.category))];
     const QUIZ_LENGTH = 10;
     const progressKey = "hoopIQTrainerV3Progress";
     const termsKey = "hoopIQTrainerV3Terms";
 
     let TERMS = loadTerms();
+
+    // Include coach-edited and imported categories in every local learning view.
+    function refreshCategories() {
+      CATEGORIES = [...new Set(TERMS.map(term => term.category).filter(Boolean))];
+    }
+    refreshCategories();
 
     let state = {
       cardDeck: [],
@@ -1711,6 +1717,7 @@
     }
 
     function saveTerms() {
+      refreshCategories();
       localStorage.setItem(termsKey, JSON.stringify(TERMS));
       updateStats();
       renderEditSelect();
@@ -1887,7 +1894,7 @@
         const count = category === "All" ? TERMS.length : category === "Missed" ? (getProgress().missedTerms || []).length : termsByCategory(category).length;
         const btn = document.createElement("button");
         btn.className = category === "All" ? "primary" : category === "Missed" ? "secondary" : "";
-        btn.innerHTML = `${category}<br><span class="micro">${count} term${count === 1 ? "" : "s"}</span>`;
+        btn.innerHTML = `${escapeHtml(category)}<br><span class="micro">${count} term${count === 1 ? "" : "s"}</span>`;
         btn.onclick = () => callback(category);
         wrap.appendChild(btn);
       });
@@ -2410,7 +2417,7 @@
         const pct = stats.total ? Math.round((stats.correct / stats.total) * 100) : 0;
         const div = document.createElement("div");
         div.className = "catbar";
-        div.innerHTML = `<div class="catbar-head"><span>${cat}</span><span>${pct}% &middot; ${stats.correct}/${stats.total}</span></div><div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div>`;
+        div.innerHTML = `<div class="catbar-head"><span>${escapeHtml(cat)}</span><span>${pct}% &middot; ${stats.correct}/${stats.total}</span></div><div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div>`;
         catWrap.appendChild(div);
       });
 

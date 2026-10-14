@@ -10,11 +10,11 @@ Primary files:
 
 Both files must stay in sync unless the task explicitly says otherwise.
 
-## Current Branch
+## Branching
 
-Use the active feature branch:
-
-feature/v0.5.0-action-dictionary-style-diagrams
+Start scoped work from the current `main` branch on a dedicated feature or fix branch.
+Do not treat the historical `feature/v0.5.0-action-dictionary-style-diagrams` branch as current.
+Use a reviewed pull request for integration; do not rewrite unrelated app behavior.
 
 ## Non-Negotiable Rules
 
@@ -50,7 +50,7 @@ The static diagram system is mainly controlled by:
 - playerSvg()
 - moveSvg()
 - passSvg()
-- screenSvg()
+- screenLineSvg() and screenLabelSvg()
 - extraSvg()
 
 Motion-step diagrams are controlled by:
@@ -70,26 +70,14 @@ The app currently includes helper functions such as:
 
 Prefer using existing helpers where practical, but do not over-refactor unless needed.
 
-## v0.5.0 Goal
+## Current Maintenance Scope
 
-Improve Phase 1 basketball action diagrams with clearer original SVG teaching diagrams.
-
-Priority diagrams:
-
-1. Zoom
-2. UCLA Cut
-3. Pistol
-4. Zipper Cut
-5. Miami
-6. Double Drag / 77
-7. Spain / Stack Pick-and-Roll
-8. Hammer Screen
-9. Ram Screen
-10. Slip
-11. 45 Cut
-12. Laker Cut
-
-Chicago already has a new diagram case.
+- Released baseline before this patch: `v0.9.14` (import safety and quiz reliability).
+- Keep coach-customized and imported categories available in study, quiz, Coach Tools, and category progress views.
+- Escape imported category labels rendered into HTML.
+- Preserve the default 50 basketball terms, existing diagrams and Motion Steps, quiz scoring, saved-data keys, copyright, and offline operation.
+- Coach/player sign-in, cloud data sync, animation, and new basketball terminology require separate authorization.
+- The v0.5.0 action-diagram milestone is historical; see `docs/` and `CHANGELOG.md` for release history.
 
 ## Testing Checklist
 
@@ -101,6 +89,9 @@ Before reporting completion:
 - Confirm no encoding corruption patterns appear.
 - Confirm the app still loads.
 - Confirm visual quiz diagrams remain distinct.
+- Check that imported custom categories appear in category pickers, Coach Tools, and progress after a refresh.
+- Reject malformed JSON and out-of-range motion-step coordinates without losing saved terms.
+- Verify imported category labels are HTML-escaped in the picker and dashboard.
 
 ## Reporting Format
 
