@@ -1,0 +1,66 @@
+name: Publish Hoop IQ Trainer v0.9.15
+
+on:
+  push:
+    branches:
+      - release/v0.9.15-publish
+    paths:
+      - .github/workflows/publish-v0.9.15.yml
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify target commit and publish v0.9.15
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_SHA: e6f506f7a2fd1f9d612e5bbabf37d9442f7458b9
+          RELEASE_NOTES: |
+            Hoop IQ Trainer v0.9.15 — Custom Categories and Documentation Sync
+
+            ### Fixed
+            - Custom coach-edited and imported basketball categories now appear in Study and Quiz pickers, Coach Tools, and Progress.
+            - Category choices refresh after loading, local edits, and JSON imports.
+            - Imported category names are safely escaped when displayed.
+
+            ### Documentation
+            - README and development guidance reflect the v0.9.14 baseline and the maintenance fixes.
+            - CHANGELOG records the new fixes.
+
+            ### Verification
+            - Both application HTML files are identical.
+            - 18 of 18 focused JavaScript regression checks passed on the merged code, including JSON export/import restoration and malformed JSON rejection.
+            - Six post-deployment live browser checks passed.
+            - Previously verified Daily 10 completion/Run It Back and Pistol, Zoom, and Spain motion steps were preserved.
+
+            ### Scope
+            - No new accounts, cloud sync, animations, or basketball terms.
+            - Default terms, diagram cases, copyright attribution, and local storage keys are unchanged.
+            - Narrow 320px/375px mobile viewport QA remains unverified.
+
+            © 2026 Anthony Boyd / Worldmedia Publishing & Consulting LLC.
+        run: |
+          set -euo pipefail
+          main_sha="$(gh api "repos/$GITHUB_REPOSITORY/branches/main" --jq '.commit.sha')"
+          if [ "$main_sha" != "$EXPECTED_SHA" ]; then
+            echo "::error::main changed since v0.9.15 QA; refusing to publish."
+            exit 1
+          fi
+          if gh release view v0.9.15 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "v0.9.15 release already exists; no changes made."
+            exit 0
+          fi
+          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/v0.9.15" >/dev/null 2>&1; then
+            echo "::error::v0.9.15 tag already exists without a release."
+            exit 1
+          fi
+          gh release create v0.9.15 \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$EXPECTED_SHA" \
+            --title "Hoop IQ Trainer v0.9.15 — Custom Categories & Documentation Sync" \
+            --notes "$RELEASE_NOTES" \
+            --latest
+          gh release view v0.9.15 --repo "$GITHUB_REPOSITORY" --json tagName,url,isDraft,isPrerelease,targetCommitish
