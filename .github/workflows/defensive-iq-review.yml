@@ -1,0 +1,28 @@
+name: Defensive IQ Pack Regression (Review Only)
+
+on:
+  push:
+    branches:
+      - feature/defensive-iq-pack-review
+  pull_request:
+    paths:
+      - index.html
+      - v3.0/hoop-iq-trainer-v3.html
+      - content/defensive-iq-*
+      - tests/defensive-iq-regression.cjs
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out review source
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check Defensive IQ Pack functionality
+        run: node tests/defensive-iq-regression.cjs
