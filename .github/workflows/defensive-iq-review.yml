@@ -10,6 +10,7 @@ on:
       - v3.0/hoop-iq-trainer-v3.html
       - content/defensive-iq-*
       - tests/defensive-iq-regression.cjs
+      - tests/mobile-viewport-qa.cjs
 
 permissions:
   contents: read
@@ -26,3 +27,19 @@ jobs:
           node-version: '22'
       - name: Check Defensive IQ Pack functionality
         run: node tests/defensive-iq-regression.cjs
+
+  mobile-viewport:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out candidate review branch
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated browser QA dependency
+        run: npm install --no-save --no-package-lock playwright@1.56.1
+      - name: Install Chromium test browser
+        run: npx playwright install --with-deps chromium
+      - name: Inspect desktop, 375px and 320px viewports
+        run: node tests/mobile-viewport-qa.cjs
