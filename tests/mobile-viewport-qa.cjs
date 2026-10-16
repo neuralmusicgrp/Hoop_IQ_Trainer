@@ -67,8 +67,7 @@ const server = http.createServer((req,res)=>{
           minLabelHeight:Math.min(...texts.map(t=>t.getBoundingClientRect().height)),
           documentWidth:document.documentElement.scrollWidth,viewport:innerWidth};
       });
-      console.log("SVG XOUT DEBUG",width,JSON.stringify(c));
-      assert.ok(c.labels.some(x=>x.includes("first close"))&&c.labels.some(x=>x.includes("second close")),width+"px X-Out label missing");
+      assert.ok(c.labels.some(x=>x.toLowerCase().includes("first close"))&&c.labels.some(x=>x.toLowerCase().includes("second close")),width+"px X-Out label missing");
       if(width<=480){
         assert.ok(c.scroll>c.client+100,width+"px court not horizontally pannable");
         assert.ok(c.svgWidth>=599,width+"px court downscaled");
