@@ -669,6 +669,55 @@
       .footer-nav { grid-template-columns: repeat(6, 1fr); }
       .footer-nav button { font-size: .72rem; padding: 8px 4px; }
     }
+
+    @media (max-width: 480px) {
+      /* Preserve original 13px diagram text instead of scaling it to ~6px. */
+      .court-wrap {
+        overflow-x: auto;
+        overflow-y: hidden;
+        overscroll-behavior-x: contain;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-x pan-y;
+      }
+      .court-wrap svg.court {
+        width: 600px;
+        min-width: 600px;
+        max-width: none;
+        max-height: none;
+      }
+      .court-wrap::after {
+        content: "← Swipe sideways to read full-size court labels →";
+        position: sticky;
+        left: 0;
+        display: block;
+        box-sizing: border-box;
+        width: max-content;
+        max-width: calc(100vw - 60px);
+        margin: 0 8px 8px;
+        padding: 6px 8px;
+        border-radius: 8px;
+        background: #1f2937;
+        color: #fff;
+        font-size: .79rem;
+        line-height: 1.35;
+        white-space: normal;
+      }
+      .court-wrap:focus-visible {outline: 3px solid var(--accent); outline-offset: 2px;}
+      /* Six shrinkable tracks keep Coach visible at 320px. */
+      .footer-nav {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 3px;
+        padding: 7px 4px calc(7px + env(safe-area-inset-bottom));
+      }
+      .footer-nav button {
+        min-width: 0;
+        padding: 8px 1px;
+        font-size: clamp(.64rem, 2.7vw, .72rem);
+        line-height: 1.12;
+        border-radius: 10px;
+        overflow-wrap: anywhere;
+      }
+    }
   </style>
 </head>
 <body>
@@ -935,7 +984,7 @@
           <span class="pill" id="diagramDifficulty"></span>
         </div>
 
-        <div class="court-wrap" id="diagramCourt"></div>
+        <div class="court-wrap" id="diagramCourt" tabindex="0" role="region" aria-label="Basketball court diagram. On phones swipe horizontally to read full-size labels."></div>
 
         <div class="motion-panel" id="motionPanel" style="display:none;">
           <div class="mode-title">
