@@ -49,6 +49,8 @@ const server = http.createServer((req,res)=>{
       assert.ok(buttons.every(b=>b.visible),width+"px clipped bottom nav "+JSON.stringify(buttons));
       await page.locator('.footer-nav button[data-nav="coach"]').click();
       await page.locator("#edit.active").waitFor();
+      await page.locator("#coachReviewJump").click();
+      assert.equal(await page.locator("#coachReviewJump").getAttribute("href"),"#coachReviewPanel");
       const invite=page.locator("#coachReviewInvitation");
       assert.ok(await invite.isEditable(),width+"px invitation must be editable in Coach Tools");
       assert.match(await invite.inputValue(),/27 defensive concepts/);
