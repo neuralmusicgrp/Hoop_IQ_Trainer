@@ -66,7 +66,7 @@ const server = http.createServer((req,res)=>{
       assert.equal(await page.locator("#coachReviewFrame").getAttribute("src"),"https://form.jotform.com/262882658690069");
       await page.frameLocator("#coachReviewFrame").getByText("Coach review test stub").waitFor();
       const frameBox=await page.locator("#coachReviewFrame").boundingBox();
-      assert.ok(frameBox&&frameBox.width>120&&frameBox.right<=width+1,width+"px embedded form frame is clipped");
+      assert.ok(frameBox&&frameBox.width>120&&frameBox.x+frameBox.width<=width+1,width+"px embedded form frame is clipped");
       await checkOverflow("coach review");
       await page.locator('.footer-nav button[data-nav="home"]').click();
       await page.locator("#home.active").waitFor();
