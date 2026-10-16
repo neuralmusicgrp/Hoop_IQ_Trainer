@@ -777,6 +777,10 @@
       line-height: 1.3;
     }
     @media (max-width: 480px) {
+      /* Existing draft-status pills must wrap instead of widening phones. */
+      .mode-title { flex-wrap: wrap; align-items: flex-start; }
+      .mode-title > h2 { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+      .mode-title > .pill { max-width: 100%; white-space: normal; min-width: 0; }
       .coach-review-embed { padding: 8px; }
       .coach-review-frame { height: 750px; }
       .coach-review-invitation { min-height: 360px; }
