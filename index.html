@@ -720,6 +720,21 @@
     }
 
     /* Dedicated coach-review handoff, separate from local terminology editing. */
+    /* Do not let the heading and approval pill widen a 320px viewport. */
+    #coachReviewPanel { min-width: 0; overflow-wrap: anywhere; }
+    #coachReviewPanel .mode-title {
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+    #coachReviewPanel .mode-title h2 {
+      min-width: 0;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+    #coachReviewPanel .mode-title .pill {
+      max-width: 100%;
+      white-space: normal;
+    }
     .coach-review-invitation {
       min-height: 300px;
       line-height: 1.5;
