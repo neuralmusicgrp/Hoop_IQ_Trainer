@@ -37,6 +37,7 @@ const server = http.createServer((req,res)=>{
       await page.locator("#home.active").waitFor();
       async function checkOverflow(label) {
         const m=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
+        assert.equal(m.width,width,width+"px "+label+": layout viewport unexpectedly expanded to "+m.width);
         assert.ok(m.scroll<=m.width+1,width+"px "+label+": document overflow "+m.scroll+">"+m.width);
       }
       await checkOverflow("home");
