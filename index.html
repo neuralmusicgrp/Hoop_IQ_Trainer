@@ -718,6 +718,54 @@
         overflow-wrap: anywhere;
       }
     }
+
+    /* Dedicated coach-review handoff, separate from local terminology editing. */
+    .coach-review-invitation {
+      min-height: 300px;
+      line-height: 1.5;
+      resize: vertical;
+    }
+    .coach-review-embed {
+      margin-top: 16px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      background: var(--soft);
+      min-width: 0;
+    }
+    .coach-review-embed summary {
+      cursor: pointer;
+      font-weight: 850;
+      padding: 6px 2px;
+      line-height: 1.4;
+    }
+    .coach-review-embed summary:focus-visible,
+    .coach-review-actions a:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 3px;
+    }
+    .coach-review-frame {
+      display: block;
+      width: 100%;
+      height: 860px;
+      max-width: 100%;
+      border: 0;
+      border-radius: 12px;
+      background: #ffffff;
+    }
+    .coach-review-actions a.button {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      overflow-wrap: anywhere;
+      line-height: 1.3;
+    }
+    @media (max-width: 480px) {
+      .coach-review-embed { padding: 8px; }
+      .coach-review-frame { height: 750px; }
+      .coach-review-invitation { min-height: 360px; }
+    }
   </style>
 </head>
 <body>
@@ -1167,6 +1215,46 @@
           <button onclick="duplicateTerm()">Duplicate as New Term</button>
           <button class="danger" onclick="resetTermsConfirm()">Reset All Terms to Default</button>
         </div>
+      </div>
+
+      <div class="panel" id="coachReviewPanel">
+        <div class="mode-title">
+          <h2>Defensive IQ Pack — Coach Review</h2>
+          <span class="pill cool">Coach approval pending</span>
+        </div>
+        <p class="definition">Review the 27 proposed defensive concepts, including 16 new static scenes, player cues and quiz explanations. The review form and ready-to-share invitation are below. These are proposals; the coach decides what matches the team's system.</p>
+        <label for="coachReviewInvitation">Message to send your coach (you can edit it before copying)</label>
+        <textarea id="coachReviewInvitation" class="coach-review-invitation" spellcheck="true">Coach, I've completed the latest development and testing updates for Hoop IQ Trainer.
+
+The Defensive IQ Pack now contains 27 defensive concepts, including 16 new static diagrams, along with quizzes and coaching instructions.
+
+Before I release these improvements, I'd appreciate your review to make sure the terminology, defensive rotations, assignments, and explanations align with how you teach the game.
+
+Coach Review Form:
+https://form.jotform.com/262882658690069
+
+App Preview:
+https://raw.githack.com/neuralmusicgrp/Hoop_IQ_Trainer/feature/defensive-iq-pack-review/index.html
+
+You can identify anything that needs correction, suggest team-specific wording, or recommend approval after reviewing the proposed teaching content.
+
+Thank you for helping make this a more useful learning tool for players.</textarea>
+        <div class="row coach-review-actions" style="margin-top:12px;">
+          <button class="primary" type="button" id="copyCoachInvitationBtn" onclick="copyCoachReviewInvitation()">Copy invitation message</button>
+          <a class="button secondary" href="https://form.jotform.com/262882658690069" target="_blank" rel="noopener noreferrer">Open Coach Review Form</a>
+          <a class="button guide" href="https://github.com/neuralmusicgrp/Hoop_IQ_Trainer/blob/feature/defensive-iq-pack-review/docs/defensive-iq-pack-coach-review.md" target="_blank" rel="noopener noreferrer">Review all 27 terms</a>
+        </div>
+        <p id="coachReviewInvitationStatus" class="tiny" role="status" aria-live="polite"></p>
+        <details class="coach-review-embed">
+          <summary>Complete the coach review form here in the app</summary>
+          <p class="tiny">This is a secure externally hosted form and needs an internet connection. If the form does not load below, use the Open Coach Review Form link above. No review is submitted merely by opening it.</p>
+          <iframe id="coachReviewFrame" class="coach-review-frame"
+            title="Hoop IQ Trainer Defensive IQ Pack Coach Review Form"
+            src="https://form.jotform.com/262882658690069"
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        </details>
+        <p class="tiny">Coach review does not publish the app or replace the owner's final release approval. This section is not a coach account or sign-in service.</p>
       </div>
     </section>
 
@@ -2767,6 +2855,31 @@
 
     function copyTeamFeedbackMessage() {
       return copyTeamFeedbackText(TEAM_FEEDBACK_MESSAGE, "Team feedback message copied.");
+    }
+
+
+    async function copyCoachReviewInvitation() {
+      const field = document.getElementById("coachReviewInvitation");
+      const status = document.getElementById("coachReviewInvitationStatus");
+      if (!field || !status) return false;
+      const message = field.value.trim();
+      if (!message) {
+        status.textContent = "Write an invitation before copying.";
+        return false;
+      }
+      try {
+        if (!navigator.clipboard || typeof navigator.clipboard.writeText !== "function") {
+          throw new Error("Clipboard unavailable");
+        }
+        await navigator.clipboard.writeText(message);
+        status.textContent = "Invitation copied. Paste it into your coach message; nothing has been sent.";
+        return true;
+      } catch {
+        field.focus();
+        field.select();
+        status.textContent = "Clipboard unavailable. The invitation is selected; copy it manually. Nothing has been sent.";
+        return false;
+      }
     }
 
     function copyCoachReviewChecklist() {
