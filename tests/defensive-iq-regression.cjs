@@ -197,4 +197,10 @@ assert.ok(coachSection.includes('loading="lazy"'),"External form must not load e
 assert.ok(coachSection.includes("Coach approval pending"),"Proposed content incorrectly presented as approved");
 assert.ok(html.includes("async function copyCoachReviewInvitation()"),"Copy handler missing");
 
+
+assert.ok(html.includes("Feedback welcome — team-specific"),"Pack release must invite feedback without claiming coach signoff");
+assert.ok(html.includes("Coach feedback welcome"),"Coach section cannot claim approval");
+assert.ok(!html.includes("Before I release these improvements"),"Coach message still incorrectly describes a pre-release gate");
+assert.ok(html.includes("https://neuralmusicgrp.github.io/Hoop_IQ_Trainer/"),"Coach invitation must reference live app");
+
 console.log("PASS: P2, P3, import and mobile CSS checks.");
