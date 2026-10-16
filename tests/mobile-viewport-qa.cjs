@@ -25,6 +25,12 @@ const server = http.createServer((req,res)=>{
     for(const width of [1280,375,320]){
       const ctx=await browser.newContext({viewport:{width,height:850},deviceScaleFactor:1,isMobile:width<500,hasTouch:width<500});
       const page=await ctx.newPage(),errors=[];
+      let googleTagRequests=0;
+      await page.route("https://www.googletagmanager.com/gtag/js**",route=>{
+        googleTagRequests++;
+        return route.fulfill({status:200,contentType:"application/javascript",
+          body:"window.__hoopGA4ScriptLoaded=true;"});
+      });
       // Isolated stub proves the embedded frame wiring without sending data
       // to Jotform or exposing local coaching information to a remote server.
       await page.route("https://form.jotform.com/**",route=>route.fulfill({
@@ -35,6 +41,24 @@ const server = http.createServer((req,res)=>{
       page.on("console",m=>{if(m.type()==="error")errors.push("console: "+m.text())});
       await page.goto("http://127.0.0.1:"+port+"/",{waitUntil:"load"});
       await page.locator("#home.active").waitFor();
+      assert.equal(googleTagRequests,0,width+"px GA4 must be off before consent");
+      assert.ok(await page.locator("#ga4ConsentPrompt").isVisible(),width+"px analytics prompt missing");
+      await page.locator("#ga4Decline").click();
+      assert.equal(await page.evaluate(()=>localStorage.getItem("hoopIQTrainerGA4ConsentV1")),"no");
+      assert.equal(googleTagRequests,0,width+"px Google script loaded after refusal");
+      await page.locator('#home button[onclick="showScreen(\'settings\')"]').click();
+      await page.locator("#settings.active").waitFor();
+      await page.locator("#ga4SettingsAllow").click();
+      await page.waitForFunction(()=>window.__hoopGA4ScriptLoaded===true);
+      assert.equal(googleTagRequests,1,width+"px GA tag not loaded exactly once");
+      const ga4=await page.evaluate(()=>window.dataLayer.map(args=>Array.from(args)));
+      assert.ok(ga4.some(x=>x[0]==="config"&&x[1]==="G-ETJG7F3CFD"),width+"px GA config missing");
+      assert.ok(ga4.some(x=>x[0]==="event"&&x[1]==="page_view"&&
+        x[2].page_location===new URL(page.url()).origin+new URL(page.url()).pathname),width+"px sanitized page view missing");
+      assert.ok(ga4.some(x=>x[0]==="consent"&&x[2].ad_storage==="denied"),width+"px ads consent must remain denied");
+      await page.locator('.footer-nav button[data-nav="home"]').click();
+      await page.locator("#home.active").waitFor();
+      assert.ok(await page.locator("#ga4ConsentPrompt").isHidden(),width+"px prompt should hide after choice");
       async function checkOverflow(label) {
         const m=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
         assert.equal(m.width,width,width+"px "+label+": layout viewport unexpectedly expanded to "+m.width);
@@ -75,6 +99,8 @@ const server = http.createServer((req,res)=>{
       await page.locator("#home.active").waitFor();
       await page.locator('#home button[onclick="startFlashcards(DEFENSIVE_IQ_PACK_KEY)"]').click();
       await page.locator("#flashcards.active").waitFor();
+      assert.ok(await page.evaluate(()=>window.dataLayer.some(a=>a[0]==="event"&&a[1]==="study_started")),
+        width+"px study started event missing");
       assert.match(await page.locator("#cardProgress").innerText(),/\/\s*27/);
       await checkOverflow("study");
       await page.locator('.footer-nav button[data-nav="home"]').click();
@@ -110,12 +136,38 @@ const server = http.createServer((req,res)=>{
       await page.locator('.footer-nav button[data-nav="home"]').click();
       await page.locator("#home button").filter({hasText:"Defensive IQ Quiz"}).first().click();
       await page.locator("#quiz.active").waitFor();
+      assert.ok(await page.evaluate(()=>window.dataLayer.some(a=>a[0]==="event"&&a[1]==="quiz_started")),
+        width+"px quiz started event missing");
       assert.match(await page.locator("#quizProgress").innerText(),/\/\s*10/);
       const answers=page.locator("#answers button");
       assert.equal(await answers.count(),4,width+"px quiz options");
       await answers.first().click();
       await page.locator("#feedback.show").waitFor();
       await checkOverflow("quiz");
+      for(let question=1;question<10;question++) {
+        await page.locator("#nextQuestionBtn").click();
+        await page.locator("#answers button").first().click();
+      }
+      await page.locator("#nextQuestionBtn").click();
+      await page.locator("#results.active").waitFor();
+      const completedEvents=await page.evaluate(()=>window.dataLayer
+        .filter(a=>a[0]==="event"&&a[1]==="quiz_completed").map(a=>a[2]));
+      assert.equal(completedEvents.length,1,width+"px quiz completion event should fire once");
+      assert.equal(completedEvents[0].question_count,10);
+      assert.ok(completedEvents[0].score_percent>=0&&completedEvents[0].score_percent<=100);
+      assert.deepEqual(Object.keys(completedEvents[0]).sort(),
+        ["content_group","question_count","score_percent"].sort(),
+        width+"px event must not include names, answers, or coach notes");
+      await page.evaluate(()=>showScreen("settings"));
+      await page.locator("#ga4SettingsDisable").click();
+      assert.equal(await page.evaluate(()=>window["ga-disable-G-ETJG7F3CFD"]),true);
+      const beforeOff=await page.evaluate(()=>window.dataLayer.length);
+      await page.evaluate(()=>trackAppEvent("study_started",{content_group:"general"}));
+      assert.equal(await page.evaluate(()=>window.dataLayer.length),beforeOff,
+        width+"px tracking after opt-out");
+      await page.reload({waitUntil:"load"});
+      assert.ok(await page.locator("#ga4ConsentPrompt").isHidden(),width+"px stored choice not respected");
+      assert.equal(googleTagRequests,1,width+"px Google script loaded on reload despite opt-out");
       assert.deepEqual(errors,[],width+"px console or page errors");
       report.push({width,svgWidth:c.svgWidth,minLabelHeight:c.minLabelHeight,pannable:c.scroll>c.client,nav:buttons.map(x=>x.name),quizOptions:4,status:"PASS"});
       await ctx.close();
