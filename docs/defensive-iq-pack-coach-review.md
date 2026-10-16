@@ -11,6 +11,7 @@ Original request: five existing and sixteen new concepts (21); six other already
 - Communication Calls remains an umbrella term unless the coach directs the creation of individual call terms.
 - Sixteen new static diagrams are distinct and their coordinates pass programmatic checks, but their basketball accuracy and readability require human sign-off.
 - Static defensive diagrams: numbered markers = offensive players; X-prefixed markers = defenders; black arrows = movement; dashed blue = passes.
+- Representative four-defender scenes (e.g., Communication Calls) are teaching snapshots, not complete 5-on-5 alignments. Where a responsibility is not depicted, the diagram instruction now calls that out explicitly.
 - Saved user customizations remain protected: only text identical to prior factory defaults migrates to revised teaching language.
 - Full review includes answer-key clarity, mobile readability, and visual consistency, not just syntax and term count.
 
@@ -65,7 +66,7 @@ Original request: five existing and sixteen new concepts (21); six other already
 **Coach proposal:** PROPOSED — coach review required: Call the show, get in the ball handler's path without fouling, and sprint back when the guard recovers; weak-side help protects the roller.
 **Defender cue:** Big: show high, slow the ball, and recover. Guard: fight over and reconnect.
 **Common mistake:** Showing without recovering, or leaving the roller unprotected after the hedge.
-**Diagram instruction:** X5 moves toward the dribble above the screen, then recovers to the rolling 5; X1 continues over.
+**Diagram instruction:** The static scene illustrates X5 showing toward the handler and recovering toward screener 5. X1 fighting over and weak-side roller coverage are essential coaching responsibilities but are not separately drawn.
 **Scenario:** What happens after a screener's defender hedges?
 **Intended answer:** Recover to their original matchup while the on-ball defender reconnects.
 **Other choices:** Stay with the ball handler for the rest of the possession. | Stop at the screen and wait for a timeout. | Abandon the roller and rotate to the opposite corner.
@@ -77,14 +78,14 @@ Original request: five existing and sixteen new concepts (21); six other already
 **Coach proposal:** PROPOSED — coach review required: X1 and X5 arrive together with active hands and legal spacing; the remaining three defenders rotate to cover the first pass and protect the rim.
 **Defender cue:** Call 'blitz'; trap together and rotate behind the pressure.
 **Common mistake:** One defender attacks early while the other stays back, leaving a clear escape and an uncovered roller.
-**Diagram instruction:** X1 and X5 converge on the ball after the screen, with the weak-side defenders covering the passing lanes and roll.
+**Diagram instruction:** The static scene shows X1 and X5 converging on the ball after the screen. Weak-side outlet coverage and roller rotations are coaching responsibilities, not illustrated defender movements in this scene.
 **Scenario:** When two defenders blitz the ball, what must the other defenders do?
 **Intended answer:** Rotate behind the trap to cover the roller and passing outlets.
 **Other choices:** Keep all five defenders on their original players without shifting. | Send a third defender to trap and leave the rim vacant. | Run back to half court before locating an outlet.
 **Approval:** [ ] wording  [ ] cue  [ ] diagram  [ ] quiz options  [ ] coach sign-off
 
 ### Over — Existing revision (`over`)
-**Category:** undefined
+**Category:** Defensive Coverage
 **Player definition:** A ball-screen coverage in which the on-ball defender fights over the top of the screen to stay attached to a shooting or driving ball handler.
 **Coach proposal:** PROPOSED — coach review required: Navigate tight over the screen, communicate to the big and reconnect to pressure the handler from behind.
 **Defender cue:** Call 'over', get skinny past the screen and rear contest without fouling.
@@ -96,7 +97,7 @@ Original request: five existing and sixteen new concepts (21); six other already
 **Approval:** [ ] wording  [ ] cue  [ ] diagram  [ ] quiz options  [ ] coach sign-off
 
 ### Under — Existing revision (`under`)
-**Category:** undefined
+**Category:** Defensive Coverage
 **Player definition:** A ball-screen coverage where the on-ball defender travels underneath the screen to protect the drive against a less threatening outside shooter.
 **Coach proposal:** PROPOSED — coach review required: Go under quickly, meet the handler on the other side, and contest if the handler becomes a shooting threat.
 **Defender cue:** Call 'under'; beat the ball to the far side and recover into a stance.
@@ -108,7 +109,7 @@ Original request: five existing and sixteen new concepts (21); six other already
 **Approval:** [ ] wording  [ ] cue  [ ] diagram  [ ] quiz options  [ ] coach sign-off
 
 ### High Drop — Existing revision (`high-drop`)
-**Category:** undefined
+**Category:** Defensive Coverage
 **Player definition:** A drop variation in which the screener's defender begins higher toward the ball-screen level before retreating to protect the rim and roller.
 **Coach proposal:** PROPOSED — coach review required: Start near the screen level, stay balanced between the ball and roller, then retreat on the drive while the guard reconnects.
 **Defender cue:** Big: show at the higher drop point, then retreat and contain the paint.
@@ -120,7 +121,7 @@ Original request: five existing and sixteen new concepts (21); six other already
 **Approval:** [ ] wording  [ ] cue  [ ] diagram  [ ] quiz options  [ ] coach sign-off
 
 ### Low Drop — Existing revision (`low-drop`)
-**Category:** undefined
+**Category:** Defensive Coverage
 **Player definition:** A deeper form of drop coverage in which the screener's defender stays closer to the basket to prioritize rim and rolling-lane protection.
 **Coach proposal:** PROPOSED — coach review required: Maintain a low but active stance to contain the drive and roller while the guard recovers to challenge open pull-ups.
 **Defender cue:** Big: stay low and protect the rim; guard: reconnect and contest the pull-up.
@@ -132,7 +133,7 @@ Original request: five existing and sixteen new concepts (21); six other already
 **Approval:** [ ] wording  [ ] cue  [ ] diagram  [ ] quiz options  [ ] coach sign-off
 
 ### Ice / Down — Existing revision (`ice-down`)
-**Category:** undefined
+**Category:** Defensive Coverage
 **Player definition:** A side ball-screen coverage that denies use of the screen by influencing the ball handler toward the sideline or baseline and away from the middle.
 **Coach proposal:** PROPOSED — coach review required: The guard denies the screen with the high-side angle; the big positions below it to contain the forced-side drive.
 **Defender cue:** Call 'ice'; deny the screen and send the ball into prepared baseline help.
@@ -144,7 +145,7 @@ Original request: five existing and sixteen new concepts (21); six other already
 **Approval:** [ ] wording  [ ] cue  [ ] diagram  [ ] quiz options  [ ] coach sign-off
 
 ### Weak — Existing revision (`weak`)
-**Category:** undefined
+**Category:** Defensive Coverage
 **Player definition:** A defensive influence or coverage call that steers the ball handler toward a less effective hand or predetermined help area according to the team's rules.
 **Coach proposal:** PROPOSED — coach review required: Know the scouting direction and help-side support; shade the handler without surrendering an easier direct lane.
 **Defender cue:** Call the agreed weak-side force; shade the handler toward the planned help.
@@ -341,7 +342,7 @@ Original request: five existing and sixteen new concepts (21); six other already
 **Coach proposal:** PROPOSED — coach review required: Teach a small shared call vocabulary, such as 'ball', 'help', 'screen left', 'switch', 'stay', and 'shot'; confirm exact calls with the coach.
 **Defender cue:** Talk early, loud and specific: ball, help, screen, switch, shot.
 **Common mistake:** Using vague late calls, or two defenders issuing conflicting coverage instructions.
-**Diagram instruction:** Five defenders communicate from assigned floor spots; X1 calls ball, X2 calls screen, X3 calls help, X4 calls the next rotation.
+**Diagram instruction:** The four-defender teaching scene shows X1 calling ball, X2 calling screen, X3 calling help, and X4 calling the next rotation. Add the fifth defender's responsibility when reviewing a 5-on-5 scheme.
 **Scenario:** What makes a useful defensive communication call?
 **Intended answer:** Early, clear information that teammates can act on.
 **Other choices:** A call that comes only after the play finishes. | A secret term that no teammate understands. | Shouting continuously without identifying the action.
@@ -364,5 +365,7 @@ Original request: five existing and sixteen new concepts (21); six other already
 - [ ] Preserve all original 50 diagram cases and historical Motion Steps.
 - [ ] Verify all 16 new court drawings, 27 Q/A choices, and 66-term study/quiz experience in a real browser.
 - [ ] Confirm the v0.9.15 saved-term migration retains real customized coach edits.
+- [ ] Verify four-defender communication snapshot; confirm fifth defender's responsibility in the team's 5-on-5 rules.
+- [ ] Confirm Hedge/Show and Blitz show only the depicted player paths; teach other assignments verbally unless separately diagrammed.
 - [ ] Obtain coach content/diagram approval before either merge or live publication.
 - [ ] Keep the private v4 authentication project separate and paused until this pack passes.
