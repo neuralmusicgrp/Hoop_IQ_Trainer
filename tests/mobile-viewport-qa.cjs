@@ -40,6 +40,21 @@ const server = http.createServer((req,res)=>{
         assert.equal(m.width,width,width+"px "+label+": layout viewport unexpectedly expanded to "+m.width);
         assert.ok(m.scroll<=m.width+1,width+"px "+label+": document overflow "+m.scroll+">"+m.width);
       }
+      if(width===320){
+        const layout=await page.evaluate(()=>{
+          const v=window.visualViewport;
+          const elems=[...document.querySelectorAll("body *")].map(el=>{const r=el.getBoundingClientRect();return {el,rect:r}}).filter(x=>x.rect.width&&x.rect.right>screen.width+1).slice(0,35).map(x=>({
+            tag:x.el.tagName,id:x.el.id,cls:x.el.className?.baseVal||x.el.className,
+            txt:x.el.textContent?.trim().slice(0,45),right:Math.round(x.rect.right),
+            width:Math.round(x.rect.width),display:getComputedStyle(x.el).display
+          }));
+          return {innerWidth,documentScrollWidth:document.documentElement.scrollWidth,
+            clientWidth:document.documentElement.clientWidth,
+            visualWidth:v?.width,screenWidth:screen.width,deviceWidth:outerWidth,
+            elems};
+        });
+        console.log("MOBILE LAYOUT DIAGNOSTIC "+JSON.stringify(layout));
+      }
       await checkOverflow("home");
       const buttons=await page.locator(".footer-nav button").evaluateAll(btns=>btns.map(b=>{
         const r=b.getBoundingClientRect();
