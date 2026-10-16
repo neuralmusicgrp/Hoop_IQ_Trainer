@@ -785,6 +785,13 @@
       .coach-review-frame { height: 750px; }
       .coach-review-invitation { min-height: 360px; }
     }
+
+    .ga4-consent{border:1px solid var(--border);border-radius:var(--radius);padding:14px;
+      margin-bottom:12px;background:var(--panel);overflow-wrap:anywhere}
+    .ga4-consent[hidden]{display:none!important}
+    .ga4-consent p{margin:8px 0 12px}
+    .ga4-consent .row{flex-wrap:wrap}
+    .ga4-consent .row button{max-width:100%;white-space:normal}
   </style>
 </head>
 <body>
@@ -814,6 +821,17 @@
     </header>
 
     <section id="home" class="screen active">
+
+      <div id="ga4ConsentPrompt" class="ga4-consent" hidden>
+        <strong>Optional app usage analytics</strong>
+        <p class="tiny">Help improve Hoop IQ Trainer by allowing Google Analytics to count visits and general learning activity. Google uses cookies and may process device and network information. We do not send player names, email addresses, quiz-answer text, or coach edits. You can say no and change your choice in Settings. If under 18, ask your parent or guardian to decide.</p>
+        <div class="row">
+          <button type="button" class="primary" id="ga4Allow" onclick="setGA4Consent(true)">Allow usage analytics</button>
+          <button type="button" class="ghost" id="ga4Decline" onclick="setGA4Consent(false)">No thanks</button>
+        </div>
+        <p class="tiny"><a href="https://neuralmusicgrp.github.io/Hoop_IQ_Trainer/privacy.html" target="_blank" rel="noopener noreferrer">Our Privacy Notice</a> · <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy Policy</a></p>
+      </div>
+
       <div class="panel">
         <div class="mode-title">
           <h2>Choose Your Workout</h2>
@@ -1263,7 +1281,7 @@ You can identify anything that needs correction, suggest team-specific wording, 
 Thank you for helping make this a more useful learning tool for players.</textarea>
         <div class="row coach-review-actions" style="margin-top:12px;">
           <button class="primary" type="button" id="copyCoachInvitationBtn" onclick="copyCoachReviewInvitation()">Copy invitation message</button>
-          <a class="button secondary" href="https://form.jotform.com/262882658690069" target="_blank" rel="noopener noreferrer">Open Coach Review Form</a>
+          <a class="button secondary" href="https://form.jotform.com/262882658690069" target="_blank" rel="noopener noreferrer" onclick="trackAppEvent('coach_review_opened')">Open Coach Review Form</a>
           <a class="button guide" href="https://github.com/neuralmusicgrp/Hoop_IQ_Trainer/blob/feature/defensive-iq-pack-review/docs/defensive-iq-pack-coach-review.md" target="_blank" rel="noopener noreferrer">Review all 27 terms</a>
         </div>
         <p id="coachReviewInvitationStatus" class="tiny" role="status" aria-live="polite"></p>
@@ -1326,6 +1344,17 @@ Thank you for helping make this a more useful learning tool for players.</textar
         </div>
       </div>
 
+
+      <div class="panel" id="ga4Settings">
+        <h2>Analytics &amp; Privacy</h2>
+        <p class="tiny">Optional Google Analytics counts general activity after your permission. It does not send player names, scores linked to a name, answers, or coach edits. Google may use cookies and process device/network information. If you are under 18, ask a parent or guardian to decide.</p>
+        <p class="tiny" id="ga4ConsentStatus" role="status" aria-live="polite">Analytics are off until you opt in.</p>
+        <div class="row">
+          <button type="button" class="secondary" id="ga4SettingsAllow" onclick="setGA4Consent(true)">Allow analytics</button>
+          <button type="button" class="ghost" id="ga4SettingsDisable" onclick="setGA4Consent(false)">Turn analytics off</button>
+        </div>
+        <p class="tiny"><a href="https://neuralmusicgrp.github.io/Hoop_IQ_Trainer/privacy.html" target="_blank" rel="noopener noreferrer">Hoop IQ Privacy Notice</a> · <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy Policy</a></p>
+      </div>
       <div class="panel">
         <h2>App Notes</h2>
         <p class="tiny">This app works offline. It stores progress and coach edits in this browser only using localStorage. Export JSON before moving to another phone or computer.</p>
@@ -1345,6 +1374,82 @@ Thank you for helping make this a more useful learning tool for players.</textar
   </nav>
 
   <script>
+
+    // GA4 is strictly opt-in: no third-party analytics tag before consent.
+    const GA4_ID = "G-ETJG7F3CFD";
+    const GA4_CONSENT_KEY = "hoopIQTrainerGA4ConsentV1";
+    let ga4Ready = false;
+    const GA4_EVENTS = new Set(["page_view","study_started","diagram_started",
+      "quiz_started","quiz_completed","feedback_initiated","coach_review_opened"]);
+    function ga4Consent() {
+      try { return localStorage.getItem(GA4_CONSENT_KEY); } catch { return null; }
+    }
+    function updateGA4Controls() {
+      const choice=ga4Consent();
+      const banner=document.getElementById("ga4ConsentPrompt");
+      if(banner) banner.hidden=choice==="yes"||choice==="no";
+      const status=document.getElementById("ga4ConsentStatus");
+      if(status) status.textContent=choice==="yes"
+        ? "Usage analytics enabled on this device; you can switch them off."
+        : choice==="no"
+        ? "Usage analytics disabled. Your learning progress still works."
+        : "Usage analytics are off until you opt in.";
+    }
+    function trackAppEvent(name,fields={}) {
+      if(ga4Consent()!=="yes"||!ga4Ready||!GA4_EVENTS.has(name)||
+         typeof window.gtag!=="function")return;
+      window.gtag("event",name,fields);
+    }
+    function analyticsGroup(category) {
+      return category===DEFENSIVE_IQ_PACK_KEY?"defensive_iq":"general";
+    }
+    function startGA4() {
+      if(ga4Consent()!=="yes")return;
+      window["ga-disable-"+GA4_ID]=false;
+      if(ga4Ready) {
+        window.gtag("consent","update",{analytics_storage:"granted",
+          ad_storage:"denied",ad_user_data:"denied",ad_personalization:"denied"});
+      } else {
+        ga4Ready=true;
+        window.dataLayer=window.dataLayer||[];
+        window.gtag=function(){window.dataLayer.push(arguments);};
+        window.gtag("consent","default",{analytics_storage:"granted",
+          ad_storage:"denied",ad_user_data:"denied",ad_personalization:"denied"});
+        window.gtag("js",new Date());
+        window.gtag("config",GA4_ID,{send_page_view:false,allow_google_signals:false,
+          allow_ad_personalization_signals:false});
+        const script=document.createElement("script");
+        script.async=true;
+        script.src="https://www.googletagmanager.com/gtag/js?id="+GA4_ID;
+        document.head.appendChild(script);
+      }
+      // Use URL without search terms or hash: never transmit player-provided data.
+      const loc=window.location;
+      if(loc&&loc.origin&&loc.pathname)trackAppEvent("page_view",{
+        page_title:"Hoop IQ Trainer",page_location:loc.origin+loc.pathname
+      });
+    }
+    function setGA4Consent(allow) {
+      try {localStorage.setItem(GA4_CONSENT_KEY,allow?"yes":"no");}
+      catch {updateGA4Controls();return;}
+      if(allow)startGA4();
+      else {
+        window["ga-disable-"+GA4_ID]=true;
+        if(ga4Ready)window.gtag("consent","update",{analytics_storage:"denied",
+          ad_storage:"denied",ad_user_data:"denied",ad_personalization:"denied"});
+        // Remove only this property's first-party GA cookies when disabling.
+        for(const name of ["_ga","_ga_"+GA4_ID.slice(2)])for(const path of
+            ["/","/Hoop_IQ_Trainer","/Hoop_IQ_Trainer/"]) {
+          document.cookie=name+"=; Max-Age=0; path="+path+"; SameSite=Lax";
+        }
+      }
+      updateGA4Controls();
+    }
+    function initGA4() {
+      updateGA4Controls();
+      if(ga4Consent()==="yes")startGA4();
+    }
+
     const COPYRIGHT_NOTICE = "\u00a9 2026 Anthony Boyd / Worldmedia Publishing & Consulting LLC. All rights reserved.";
     const TEAM_FEEDBACK_EMAIL = "advisor.worldmedia@gmail.com";
     const TEAM_FEEDBACK_MESSAGE = "Team, I'm testing Hoop IQ Trainer to help us learn actions, screens, cuts, coverages, and coach terminology. Please try it and send feedback: 1) what term confused you, 2) what diagram did not match how we run it, 3) what definition should sound more like coach, and 4) what feature would help you study faster.";
@@ -2111,6 +2216,7 @@ Thank you for helping make this a more useful learning tool for players.</textar
       state.cardIndex = 0;
       showScreen("flashcards");
       renderCard();
+      trackAppEvent("study_started",{content_group:analyticsGroup(category)});
     }
 
     function renderCard() {
@@ -2159,6 +2265,7 @@ Thank you for helping make this a more useful learning tool for players.</textar
       state.motionStepIndex = 0;
       showScreen("diagramStudy");
       renderDiagramStudy();
+      trackAppEvent("diagram_started",{content_group:analyticsGroup(category)});
     }
 
     function renderDiagramStudy() {
@@ -2311,6 +2418,7 @@ Thank you for helping make this a more useful learning tool for players.</textar
       document.getElementById("quizHelper").style.display = "none";
       document.getElementById("quizCategoryPill").textContent = category === "All" ? "All Terms" : category === DEFENSIVE_IQ_PACK_KEY ? DEFENSIVE_IQ_PACK_LABEL : category;
       renderQuestion();
+      trackAppEvent("quiz_started",{content_group:analyticsGroup(category),quiz_type:mode==="defensiveIQ"?"defensive_iq":"general"});
     }
 
 
@@ -2587,6 +2695,7 @@ Thank you for helping make this a more useful learning tool for players.</textar
       const progress = getProgress();
 
       if (completed) {
+        trackAppEvent("quiz_completed",{content_group:analyticsGroup(state.lastCategory),question_count:total,score_percent:percent});
         progress.sessions += 1;
         if (state.isDaily) progress.dailyWorkouts += 1;
         progress.bestScore = Math.max(progress.bestScore, percent);
@@ -2944,6 +3053,7 @@ Page/app note: Hoop IQ Trainer Team Feedback`
     function emailTypedTeamFeedback() {
       const data = requireTypedTeamFeedback();
       if (!data) return "";
+      trackAppEvent("feedback_initiated",{feedback_method:"email"});
       const subject = encodeURIComponent("Hoop IQ Trainer Feedback");
       const body = encodeURIComponent(data.message);
       const href = `mailto:${TEAM_FEEDBACK_EMAIL}?subject=${subject}&body=${body}`;
@@ -2955,6 +3065,7 @@ Page/app note: Hoop IQ Trainer Team Feedback`
     function copyTypedTeamFeedback() {
       const data = requireTypedTeamFeedback();
       if (!data) return Promise.resolve("");
+      trackAppEvent("feedback_initiated",{feedback_method:"copy"});
       setTeamFeedbackStatus("Feedback copied or ready below.");
       return copyTeamFeedbackText(data.message, "Your feedback message copied.");
     }
@@ -3868,6 +3979,7 @@ Page/app note: Hoop IQ Trainer Team Feedback`
     updateStats();
     renderEditSelect();
     setActiveNav("home");
+    initGA4();
   </script>
 </body>
 </html>
