@@ -176,4 +176,9 @@ assert.equal(fullCopy.terms().length,66,"Full snapshot replacement count changed
 assert.ok(!fullCopy.terms().some(x=>x.id==="team-special"),"Full snapshot retained omitted custom");
 
 
-console.log("PASS: P2, P3, and import-preservation regressions.");
+
+assert.match(html, /@media \(max-width: 480px\)/);
+assert.match(html, /grid-template-columns: repeat\(6, minmax\(0, 1fr\)\)/);
+assert.match(html, /\.court-wrap svg\.court \{[\s\S]*?min-width: 600px/);
+assert.match(html, /id="diagramCourt" tabindex="0"/);
+console.log("PASS: P2, P3, import and mobile CSS checks.");
