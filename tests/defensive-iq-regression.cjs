@@ -204,4 +204,20 @@ assert.ok(html.includes("Coach feedback welcome"),"Coach section cannot claim ap
 assert.ok(!html.includes("Before I release these improvements"),"Coach message still incorrectly describes a pre-release gate");
 assert.ok(html.includes("https://neuralmusicgrp.github.io/Hoop_IQ_Trainer/"),"Coach invitation must reference live app");
 
+
+// Privacy-first GA4 deployment controls (no default remote-script load).
+assert.ok(html.includes('const GA4_ID = "G-ETJG7F3CFD"'),"GA4 ID missing or mismatched");
+assert.ok(html.includes('id="ga4ConsentPrompt"'),"Analytics consent prompt missing");
+assert.ok(html.includes('id="ga4Settings"'),"Analytics preference controls missing");
+assert.ok(html.includes('onclick="setGA4Consent(false)"'),"Analytics opt-out control missing");
+assert.ok(html.includes('function trackAppEvent(name,fields={})'),"Safe event sender missing");
+assert.ok(html.includes('if(ga4Consent()!=="yes")return;'),"GA4 must never load before opt-in");
+assert.ok(html.includes('ga4Ready=false')||html.includes('let ga4Ready = false'),"GA4 bootstrap must initially be off");
+assert.ok(!/<script[^>]+src=["']https:\/\/www\.googletagmanager\.com\/gtag\/js/i.test(html),"Google tag must not load unconditionally in HTML");
+assert.ok(html.includes('window.location.pathname'),"Page URL must exclude query and hash");
+assert.ok(html.includes('page_title:"Hoop IQ Trainer"'),"Event page_title must be generic");
+for(const event of ["study_started","diagram_started","quiz_started","quiz_completed","feedback_initiated"])
+  assert.ok(html.includes('trackAppEvent("'+event+'"'),event+" not instrumented");
+assert.ok(!html.includes('trackAppEvent("quiz_completed",{student_name'),"Names must not enter analytics");
+
 console.log("PASS: P2, P3, import and mobile CSS checks.");
