@@ -194,7 +194,8 @@ assert.ok(coachSection.includes('src="https://form.jotform.com/262882658690069"'
 assert.ok(coachSection.includes('href="https://form.jotform.com/262882658690069"'),"External form fallback link missing");
 assert.ok(coachSection.includes('rel="noopener noreferrer"'),"External coach review link missing opener protection");
 assert.ok(coachSection.includes('loading="lazy"'),"External form must not load eagerly on dashboard");
-assert.ok(coachSection.includes("Coach approval pending"),"Proposed content incorrectly presented as approved");
+assert.ok(coachSection.includes("Coach feedback welcome"),"Coach feedback status is incorrect");
+assert.ok(!coachSection.includes("Coach approved"),"Proposed teaching materials must not claim coach sign-off");
 assert.ok(html.includes("async function copyCoachReviewInvitation()"),"Copy handler missing");
 
 
