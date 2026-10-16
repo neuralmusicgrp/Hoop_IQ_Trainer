@@ -30,7 +30,7 @@ assert.equal(new Set(app.defaults().map(x=>x.id)).size,66,"Expected distinct IDs
 assert.equal(app.termsByCategory("__hoop_iq_defensive_pack__").length,27,"Expected 27 defensive terms");
 assert.equal(Object.keys(app.legacy()).length,11,"Expected 11 legacy migrations");
 assert.equal(Object.keys(app.questions()).length,27,"Expected 27 scenario questions");
-for(const t of app.termsByCategory("Defensive IQ Pack")) {
+for(const t of app.termsByCategory("__hoop_iq_defensive_pack__")) {
   const q=app.questions()[t.id];
   assert.ok(q,"No scenario for "+t.id);
   assert.equal(q.distractors.length,3,"Incorrect distractors "+t.id);
@@ -112,4 +112,30 @@ const paths=xout.playerMoves.map(x=>sampleBezier(x.d));
 const closest=Math.min(...paths[0].map(a=>Math.min(...paths[1].map(b=>Math.hypot(a[0]-b[0],a[1]-b[1])))));
 assert.ok(closest<8,"X-Out defender paths do not cross");
 
-console.log("PASS: Defensive IQ Pack regressions including four P2 fixes.");
+
+// P3: Source documentation, runtime copy, and static teaching-scene descriptions must agree.
+const contentPack = JSON.parse(fs.readFileSync(path.join(root,"content/defensive-iq-pack.review.json"),"utf8"));
+const coachDoc = fs.readFileSync(path.join(root,"docs/defensive-iq-pack-coach-review.md"),"utf8");
+const allEntries = [...contentPack.existingRevisions,...contentPack.newEntries,...contentPack.supplementalCoverageRevisions];
+assert.equal(allEntries.length,27,"Review pack must contain 27 teaching entries");
+assert.equal((coachDoc.match(/\*\*Category:\*\* undefined/g)||[]).length,0,"Undefined coach-review categories");
+const six = ["over","under","high-drop","low-drop","ice-down","weak"];
+for(const id of six){
+  const title=allEntries.find(x=>x.id===id)?.term;
+  const section=coachDoc.split("### "+title+" — ")[1]?.split("\n### ")[0];
+  assert.ok(section && section.includes("**Category:** Defensive Coverage"),"Coverage category metadata not inherited: "+id);
+}
+for(const id of ["hedge-show","blitz-trap","defensive-communication"]){
+  const e = allEntries.find(x=>x.id===id);
+  assert.ok(e && e.diagramNote,"Missing reviewed diagram instruction "+id);
+  assert.equal(app.defaults().find(x=>x.id===id)?.diagramNote,e.diagramNote,"Runtime and source diagram-note mismatch "+id);
+  assert.ok(coachDoc.includes("**Diagram instruction:** "+e.diagramNote),"Coach document disagrees with source "+id);
+}
+const comm = app.diagramMoves("def-communication");
+assert.equal(comm.players.filter(p=>String(p.n).startsWith("X")).length,4,"Four-defender communication scene drift");
+assert.ok(allEntries.find(x=>x.id==="defensive-communication").diagramNote.includes("four-defender"),"Communication note doesn't disclose representative 4-player diagram");
+assert.ok(allEntries.find(x=>x.id==="hedge-show").diagramNote.includes("not separately drawn"),"Hedge note overclaims scene");
+assert.ok(allEntries.find(x=>x.id==="blitz-trap").diagramNote.includes("not illustrated"),"Blitz note overclaims scene");
+assert.equal(app.termsByCategory("__hoop_iq_defensive_pack__").length,27,"Pack count drift after note cleanup");
+
+console.log("PASS: Defensive IQ Pack regressions including P2 and P3 review consistency.");
