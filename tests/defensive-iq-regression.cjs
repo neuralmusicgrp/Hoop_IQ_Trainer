@@ -64,6 +64,8 @@ assert.equal(newer.terms().find(x=>x.id==="weak").cue,"SAVED TEAM WEAK CALL");
 assert.equal(newer.terms().find(x=>x.id==="drop").cue,app.defaults().find(x=>x.id==="drop").cue);
 newer.importTermsObject({terms:[{id:"pistol",term:"Pistol",category:"Action",definition:"QA"}]});
 assert.equal(newer.terms().length,66);
+assert.equal(newer.terms().find(x=>x.id==="low-man").coachDefinition,"SAVED COACH CUSTOM");
+assert.equal(newer.terms().find(x=>x.id==="weak").cue,"SAVED TEAM WEAK CALL");
 
 const PACK="__hoop_iq_defensive_pack__";
 for(const id of ["constructor","toString","__proto__"]){
@@ -112,4 +114,28 @@ const paths=xout.playerMoves.map(x=>sampleBezier(x.d));
 const closest=Math.min(...paths[0].map(a=>Math.min(...paths[1].map(b=>Math.hypot(a[0]-b[0],a[1]-b[1])))));
 assert.ok(closest<8,"X-Out defender paths do not cross");
 
-console.log("PASS: Defensive IQ Pack regressions including four P2 fixes.");
+
+const priorState=app.defaults().map(x=>({...x}));
+priorState.find(x=>x.id==="low-man").cue="LOCAL LOW";
+priorState.find(x=>x.id==="pistol").cue="LOCAL PISTOL";
+priorState.push({id:"team-special",term:"Team Special",category:"Team Defense",definition:"Coach original"});
+const progress='{"sessionCount":7,"missedTerms":["low-man"]}';
+const store=new Map([["hoopIQTrainerV3Terms",JSON.stringify(priorState)],["hoopIQTrainerV3Progress",progress]]);
+const patchApp=makeApp(store).app;
+patchApp.importTermsObject({terms:[{id:"pistol",term:"Pistol",category:"Action",definition:"NEW"}]});
+assert.equal(patchApp.terms().length,67,"Lost custom term");
+assert.equal(patchApp.terms().find(x=>x.id==="low-man").cue,"LOCAL LOW","Lost unrelated coach edit");
+assert.equal(patchApp.terms().find(x=>x.id==="pistol").cue,"LOCAL PISTOL","Lost omitted field");
+assert.equal(patchApp.terms().find(x=>x.id==="pistol").definition,"NEW","Patch not applied");
+assert.ok(patchApp.terms().some(x=>x.id==="team-special"),"Custom record discarded");
+assert.equal(store.get("hoopIQTrainerV3Progress"),progress,"Progress mutated");
+patchApp.importTermsObject({mode:"replace",terms:[{id:"pistol",term:"Pistol",category:"Action",definition:"REPLACED"}]});
+assert.equal(patchApp.terms().length,66,"Explicit full replacement failed");
+assert.ok(!patchApp.terms().some(x=>x.id==="team-special"),"Explicit replace retained custom record");
+assert.equal(patchApp.terms().find(x=>x.id==="low-man").cue,app.defaults().find(x=>x.id==="low-man").cue);
+const fullCopy=makeApp(new Map([["hoopIQTrainerV3Terms",JSON.stringify(priorState)]])).app;
+fullCopy.importTermsObject({terms:app.defaults()});
+assert.equal(fullCopy.terms().length,66,"Full snapshot replacement count changed");
+assert.ok(!fullCopy.terms().some(x=>x.id==="team-special"),"Full snapshot retained omitted custom");
+
+console.log("PASS: P2 regression and partial import preservation.");
