@@ -181,4 +181,20 @@ assert.match(html, /@media \(max-width: 480px\)/);
 assert.match(html, /grid-template-columns: repeat\(6, minmax\(0, 1fr\)\)/);
 assert.match(html, /\.court-wrap svg\.court \{[\s\S]*?min-width: 600px/);
 assert.match(html, /id="diagramCourt" tabindex="0"/);
+
+// Coach review is an explicit, editable handoff in the Coach Tools screen,
+// not a sent message or an automatic change to coach sign-off.
+const coachSection = html.split('<section id="edit" class="screen">')[1]?.split('<section id="data" class="screen">')[0];
+assert.ok(coachSection && coachSection.includes('id="coachReviewPanel"'),"Coach review is outside Coach Tools");
+assert.ok(coachSection.includes('id="coachReviewJump"'),"Coach review quick link is missing");
+assert.ok(coachSection.includes('id="coachReviewInvitation"'),"Editable coach invitation absent");
+assert.ok(coachSection.includes('id="copyCoachInvitationBtn"'),"Coach invitation copy control absent");
+assert.ok(coachSection.includes('id="coachReviewFrame"'),"Embeddable coach review form absent");
+assert.ok(coachSection.includes('src="https://form.jotform.com/262882658690069"'),"Unexpected coach-review form URL");
+assert.ok(coachSection.includes('href="https://form.jotform.com/262882658690069"'),"External form fallback link missing");
+assert.ok(coachSection.includes('rel="noopener noreferrer"'),"External coach review link missing opener protection");
+assert.ok(coachSection.includes('loading="lazy"'),"External form must not load eagerly on dashboard");
+assert.ok(coachSection.includes("Coach approval pending"),"Proposed content incorrectly presented as approved");
+assert.ok(html.includes("async function copyCoachReviewInvitation()"),"Copy handler missing");
+
 console.log("PASS: P2, P3, import and mobile CSS checks.");

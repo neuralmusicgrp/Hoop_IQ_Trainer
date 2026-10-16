@@ -25,12 +25,19 @@ const server = http.createServer((req,res)=>{
     for(const width of [1280,375,320]){
       const ctx=await browser.newContext({viewport:{width,height:850},deviceScaleFactor:1,isMobile:width<500,hasTouch:width<500});
       const page=await ctx.newPage(),errors=[];
+      // Isolated stub proves the embedded frame wiring without sending data
+      // to Jotform or exposing local coaching information to a remote server.
+      await page.route("https://form.jotform.com/**",route=>route.fulfill({
+        status:200,contentType:"text/html",
+        body:"<!doctype html><html><head><title>Coach QA stub</title></head><body><h1>Coach review test stub</h1></body></html>"
+      }));
       page.on("pageerror",e=>errors.push("page: "+e.message));
       page.on("console",m=>{if(m.type()==="error")errors.push("console: "+m.text())});
       await page.goto("http://127.0.0.1:"+port+"/",{waitUntil:"load"});
       await page.locator("#home.active").waitFor();
       async function checkOverflow(label) {
         const m=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
+        assert.equal(m.width,width,width+"px "+label+": layout viewport unexpectedly expanded to "+m.width);
         assert.ok(m.scroll<=m.width+1,width+"px "+label+": document overflow "+m.scroll+">"+m.width);
       }
       await checkOverflow("home");
@@ -42,6 +49,28 @@ const server = http.createServer((req,res)=>{
       assert.ok(buttons.every(b=>b.visible),width+"px clipped bottom nav "+JSON.stringify(buttons));
       await page.locator('.footer-nav button[data-nav="coach"]').click();
       await page.locator("#edit.active").waitFor();
+      await page.locator("#coachReviewJump").click();
+      assert.equal(await page.locator("#coachReviewJump").getAttribute("href"),"#coachReviewPanel");
+      const invite=page.locator("#coachReviewInvitation");
+      assert.ok(await invite.isEditable(),width+"px invitation must be editable in Coach Tools");
+      assert.match(await invite.inputValue(),/27 defensive concepts/);
+      assert.match(await invite.inputValue(),/form\.jotform\.com\/262882658690069/);
+      const reviewLink=page.locator('#coachReviewPanel a[href="https://form.jotform.com/262882658690069"]');
+      assert.equal(await reviewLink.count(),1,width+"px form link missing");
+      assert.equal(await reviewLink.getAttribute("target"),"_blank");
+      await invite.fill((await invite.inputValue())+"\\nCoach QA note (synthetic).");
+      await page.locator("#copyCoachInvitationBtn").click();
+      await page.waitForFunction(()=>document.getElementById("coachReviewInvitationStatus").textContent.trim().length>0);
+      const copyStatus=await page.locator("#coachReviewInvitationStatus").innerText();
+      assert.match(copyStatus,/copied|selected/i,width+"px invitation copy failed");
+      const disclosure=page.locator(".coach-review-embed");
+      await disclosure.locator("summary").click();
+      assert.ok(await disclosure.evaluate(el=>el.open),width+"px embedded form disclosure did not open");
+      assert.equal(await page.locator("#coachReviewFrame").getAttribute("src"),"https://form.jotform.com/262882658690069");
+      await page.frameLocator("#coachReviewFrame").getByText("Coach review test stub").waitFor();
+      const frameBox=await page.locator("#coachReviewFrame").boundingBox();
+      assert.ok(frameBox&&frameBox.width>120&&frameBox.x+frameBox.width<=width+1,width+"px embedded form frame is clipped");
+      await checkOverflow("coach review");
       await page.locator('.footer-nav button[data-nav="home"]').click();
       await page.locator("#home.active").waitFor();
       await page.locator('#home button[onclick="startFlashcards(DEFENSIVE_IQ_PACK_KEY)"]').click();
