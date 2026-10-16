@@ -214,7 +214,7 @@ assert.ok(html.includes('function trackAppEvent(name,fields={})'),"Safe event se
 assert.ok(html.includes('if(ga4Consent()!=="yes")return;'),"GA4 must never load before opt-in");
 assert.ok(html.includes('ga4Ready=false')||html.includes('let ga4Ready = false'),"GA4 bootstrap must initially be off");
 assert.ok(!/<script[^>]+src=["']https:\/\/www\.googletagmanager\.com\/gtag\/js/i.test(html),"Google tag must not load unconditionally in HTML");
-assert.ok(html.includes('window.location.pathname'),"Page URL must exclude query and hash");
+assert.ok(html.includes('page_location:loc.origin+loc.pathname'),"Page URL must exclude query and hash");
 assert.ok(html.includes('page_title:"Hoop IQ Trainer"'),"Event page_title must be generic");
 for(const event of ["study_started","diagram_started","quiz_started","quiz_completed","feedback_initiated"])
   assert.ok(html.includes('trackAppEvent("'+event+'"'),event+" not instrumented");
