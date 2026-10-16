@@ -186,6 +186,7 @@ assert.match(html, /id="diagramCourt" tabindex="0"/);
 // not a sent message or an automatic change to coach sign-off.
 const coachSection = html.split('<section id="edit" class="screen">')[1]?.split('<section id="data" class="screen">')[0];
 assert.ok(coachSection && coachSection.includes('id="coachReviewPanel"'),"Coach review is outside Coach Tools");
+assert.ok(coachSection.includes('id="coachReviewJump"'),"Coach review quick link is missing");
 assert.ok(coachSection.includes('id="coachReviewInvitation"'),"Editable coach invitation absent");
 assert.ok(coachSection.includes('id="copyCoachInvitationBtn"'),"Coach invitation copy control absent");
 assert.ok(coachSection.includes('id="coachReviewFrame"'),"Embeddable coach review form absent");
