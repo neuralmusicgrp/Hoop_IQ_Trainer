@@ -2779,7 +2779,19 @@ Page/app note: Hoop IQ Trainer Team Feedback`
       const incoming = Array.isArray(obj) ? obj : obj.terms;
       if (!Array.isArray(incoming) || !incoming.length) return alert("Import failed. JSON must include a terms array.");
       if (!incoming.every(isValidImportedTerm)) return alert("Import failed. Check term fields and motion steps; coordinates must be finite numbers within the court.");
-      TERMS = mergeWithDefaultTerms(incoming);
+      // Short imports patch current coach work; complete backups still replace.
+      const explicitReplacement = !Array.isArray(obj) && obj.mode === "replace";
+      const partialImport = !explicitReplacement && incoming.length < DEFAULT_TERMS.length;
+      if (partialImport) {
+        const currentById = new Map(TERMS.map(term => [term.id, term]));
+        const patches = incoming.map(term => {
+          const id = term.id || slugify(term.term || "");
+          return { ...(currentById.get(id) || {}), ...term };
+        });
+        TERMS = mergeWithDefaultTerms([...TERMS, ...patches]);
+      } else {
+        TERMS = mergeWithDefaultTerms(incoming);
+      }
       saveTerms();
       alert(`Imported ${TERMS.length} terms.`);
       renderLibrary("All");
