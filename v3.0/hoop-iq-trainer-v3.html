@@ -669,6 +669,122 @@
       .footer-nav { grid-template-columns: repeat(6, 1fr); }
       .footer-nav button { font-size: .72rem; padding: 8px 4px; }
     }
+
+    @media (max-width: 480px) {
+      /* Preserve original 13px diagram text instead of scaling it to ~6px. */
+      .court-wrap {
+        overflow-x: auto;
+        overflow-y: hidden;
+        overscroll-behavior-x: contain;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-x pan-y;
+      }
+      .court-wrap svg.court {
+        width: 600px;
+        min-width: 600px;
+        max-width: none;
+        max-height: none;
+      }
+      .court-wrap::after {
+        content: "← Swipe sideways to read full-size court labels →";
+        position: sticky;
+        left: 0;
+        display: block;
+        box-sizing: border-box;
+        width: max-content;
+        max-width: calc(100vw - 60px);
+        margin: 0 8px 8px;
+        padding: 6px 8px;
+        border-radius: 8px;
+        background: #1f2937;
+        color: #fff;
+        font-size: .79rem;
+        line-height: 1.35;
+        white-space: normal;
+      }
+      .court-wrap:focus-visible {outline: 3px solid var(--accent); outline-offset: 2px;}
+      /* Six shrinkable tracks keep Coach visible at 320px. */
+      .footer-nav {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 3px;
+        padding: 7px 4px calc(7px + env(safe-area-inset-bottom));
+      }
+      .footer-nav button {
+        min-width: 0;
+        padding: 8px 1px;
+        font-size: clamp(.64rem, 2.7vw, .72rem);
+        line-height: 1.12;
+        border-radius: 10px;
+        overflow-wrap: anywhere;
+      }
+    }
+
+    /* Dedicated coach-review handoff, separate from local terminology editing. */
+    /* Do not let the heading and approval pill widen a 320px viewport. */
+    #coachReviewPanel { min-width: 0; overflow-wrap: anywhere; }
+    #coachReviewPanel .mode-title {
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+    #coachReviewPanel .mode-title h2 {
+      min-width: 0;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+    #coachReviewPanel .mode-title .pill {
+      max-width: 100%;
+      white-space: normal;
+    }
+    .coach-review-invitation {
+      min-height: 300px;
+      line-height: 1.5;
+      resize: vertical;
+    }
+    .coach-review-embed {
+      margin-top: 16px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      background: var(--soft);
+      min-width: 0;
+    }
+    .coach-review-embed summary {
+      cursor: pointer;
+      font-weight: 850;
+      padding: 6px 2px;
+      line-height: 1.4;
+    }
+    .coach-review-embed summary:focus-visible,
+    .coach-review-actions a:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 3px;
+    }
+    .coach-review-frame {
+      display: block;
+      width: 100%;
+      height: 860px;
+      max-width: 100%;
+      border: 0;
+      border-radius: 12px;
+      background: #ffffff;
+    }
+    .coach-review-actions a.button {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      overflow-wrap: anywhere;
+      line-height: 1.3;
+    }
+    @media (max-width: 480px) {
+      /* Existing draft-status pills must wrap instead of widening phones. */
+      .mode-title { flex-wrap: wrap; align-items: flex-start; }
+      .mode-title > h2 { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+      .mode-title > .pill { max-width: 100%; white-space: normal; min-width: 0; }
+      .coach-review-embed { padding: 8px; }
+      .coach-review-frame { height: 750px; }
+      .coach-review-invitation { min-height: 360px; }
+    }
   </style>
 </head>
 <body>
@@ -710,6 +826,19 @@
           <button class="purple" onclick="chooseDiagramStudy()">Diagram Study<br><span class="micro">See half-court visual notes.</span></button>
           <button onclick="startDailyWorkout()">Daily 10<br><span class="micro">Weighted toward missed terms.</span></button>
           <button onclick="showScreen('dashboard')">Progress Dashboard<br><span class="micro">Strengths, misses, and category accuracy.</span></button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="mode-title">
+          <h2>Defensive IQ Pack</h2>
+          <span class="pill cool">Feedback welcome — team-specific</span>
+        </div>
+        <p class="definition">Learn defensive positioning, rotations, coverages and communication. These are proposed teaching scenes; confirm team-specific calls and diagrams with your coach.</p>
+        <div class="grid learning-grid">
+          <button class="primary" onclick="startFlashcards(DEFENSIVE_IQ_PACK_KEY)">Study Defense<br><span class="micro">All defensive terms and cues.</span></button>
+          <button class="secondary" onclick="startQuiz('defensiveIQ', DEFENSIVE_IQ_PACK_KEY)">Defensive IQ Quiz<br><span class="micro">Test reads, mistakes and terminology.</span></button>
+          <button class="purple" onclick="startDiagramStudy(DEFENSIVE_IQ_PACK_KEY)">Defense Diagrams<br><span class="micro">See defender movement and rotation scenes.</span></button>
         </div>
       </div>
 
@@ -922,7 +1051,7 @@
           <span class="pill" id="diagramDifficulty"></span>
         </div>
 
-        <div class="court-wrap" id="diagramCourt"></div>
+        <div class="court-wrap" id="diagramCourt" tabindex="0" role="region" aria-label="Basketball court diagram. On phones swipe horizontally to read full-size labels."></div>
 
         <div class="motion-panel" id="motionPanel" style="display:none;">
           <div class="mode-title">
@@ -1044,6 +1173,9 @@
           <span class="pill">Saved on this device</span>
         </div>
         <p class="tiny">Use these local tools to match terms and diagram notes to your team's language.</p>
+        <div class="row" style="margin:12px 0;">
+          <a id="coachReviewJump" class="button secondary" href="#coachReviewPanel" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;">Go to Coach Review Form &amp; Message ↓</a>
+        </div>
         <label for="editSelect">Choose Term</label>
         <select id="editSelect" onchange="loadEditForm()"></select>
 
@@ -1105,6 +1237,46 @@
           <button onclick="duplicateTerm()">Duplicate as New Term</button>
           <button class="danger" onclick="resetTermsConfirm()">Reset All Terms to Default</button>
         </div>
+      </div>
+
+      <div class="panel" id="coachReviewPanel">
+        <div class="mode-title">
+          <h2>Defensive IQ Pack — Coach Review</h2>
+          <span class="pill cool">Coach feedback welcome</span>
+        </div>
+        <p class="definition">Review the 27 proposed defensive concepts, including 16 new static scenes, player cues and quiz explanations. The review form and ready-to-share invitation are below. These are proposals; the coach decides what matches the team's system.</p>
+        <label for="coachReviewInvitation">Message to send your coach (you can edit it before copying)</label>
+        <textarea id="coachReviewInvitation" class="coach-review-invitation" spellcheck="true">Coach, I've completed the latest development and testing updates for Hoop IQ Trainer.
+
+The Defensive IQ Pack now contains 27 defensive concepts, including 16 new static diagrams, along with quizzes and coaching instructions.
+
+I'd appreciate your feedback on the current lessons so we can improve the terminology, defensive rotations, assignments, and explanations to match how you teach the game.
+
+Coach Review Form:
+https://form.jotform.com/262882658690069
+
+App:
+https://neuralmusicgrp.github.io/Hoop_IQ_Trainer/
+
+You can identify anything that needs correction, suggest team-specific wording, or recommend improvements to the teaching content.
+
+Thank you for helping make this a more useful learning tool for players.</textarea>
+        <div class="row coach-review-actions" style="margin-top:12px;">
+          <button class="primary" type="button" id="copyCoachInvitationBtn" onclick="copyCoachReviewInvitation()">Copy invitation message</button>
+          <a class="button secondary" href="https://form.jotform.com/262882658690069" target="_blank" rel="noopener noreferrer">Open Coach Review Form</a>
+          <a class="button guide" href="https://github.com/neuralmusicgrp/Hoop_IQ_Trainer/blob/feature/defensive-iq-pack-review/docs/defensive-iq-pack-coach-review.md" target="_blank" rel="noopener noreferrer">Review all 27 terms</a>
+        </div>
+        <p id="coachReviewInvitationStatus" class="tiny" role="status" aria-live="polite"></p>
+        <details class="coach-review-embed">
+          <summary>Complete the coach review form here in the app</summary>
+          <p class="tiny">This is a secure externally hosted form and needs an internet connection. If the form does not load below, use the Open Coach Review Form link above. No review is submitted merely by opening it.</p>
+          <iframe id="coachReviewFrame" class="coach-review-frame"
+            title="Hoop IQ Trainer Defensive IQ Pack Coach Review Form"
+            src="https://form.jotform.com/262882658690069"
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        </details>
+        <p class="tiny">Coach review does not publish the app or replace the owner's final release approval. This section is not a coach account or sign-in service.</p>
       </div>
     </section>
 
@@ -1506,21 +1678,42 @@
       { id:"slip", term:"Slip", category:"Screener Post-Screen Action", definition:"The screener cuts to the basket before making contact, usually because the defense jumps high, switches early, or overplays the screen.", coachDefinition:"Coach-specific version pending.", cue:"If your defender cheats the screen, slip early to the rim.", commonMistake:"Forcing contact when the defense has already opened a slip lane.", diagramNote:"5 starts to screen for 1, then cuts early to the basket before contact.", diagramType:"slip", difficulty:"Intermediate", tags:["screen read","rim cut","pick and roll"], role:["screener"], motionSteps:[] },
       { id:"curl-cut", term:"Curl Cut", category:"Cut", definition:"A cut where the player wraps tightly around a screen toward the basket or middle of the floor, usually because the defender is trailing.", coachDefinition:"Coach-specific version pending.", cue:"If the defender trails, curl tight toward the rim.", commonMistake:"Fading away when the defender is behind you.", diagramNote:"2 comes off a screen and curls tightly toward the middle or rim.", diagramType:"curl-cut", difficulty:"Beginner", tags:["cut","screen read","off-ball"], role:["cutter"], motionSteps:[] },
       { id:"fade-cut", term:"Fade Cut", category:"Cut", definition:"A cut where the player moves away from the screen toward the perimeter, often to create a catch-and-shoot opportunity when the defender goes under or helps inside.", coachDefinition:"Coach-specific version pending.", cue:"If the defender goes under or helps inside, fade to space.", commonMistake:"Curling into traffic when the open space is behind the screen.", diagramNote:"2 uses the screen, then fades to the wing or corner for a shot.", diagramType:"fade-cut", difficulty:"Beginner", tags:["cut","shooting","off-ball"], role:["shooter","cutter"], motionSteps:[] },
-      { id:"over", term:"Over", category:"Defensive Coverage", definition:"A ball-screen coverage where the on-ball defender fights over the top of the screen to stay attached to the ball handler.", coachDefinition:"Coach-specific version pending.", cue:"Expect pressure from behind and attack downhill.", commonMistake:"Not recognizing the trailing defender and slowing down after the screen.", diagramNote:"The on-ball defender chases over the screen while the screener's defender protects the next layer.", diagramType:"over", difficulty:"Intermediate", tags:["defense","ball screen coverage"], role:["ball handler","defender"], motionSteps:[] },
-      { id:"under", term:"Under", category:"Defensive Coverage", definition:"A ball-screen coverage where the on-ball defender goes below the screen to protect against the drive and dare the ball handler to shoot.", coachDefinition:"Coach-specific version pending.", cue:"If the defender goes under, be ready to shoot, re-screen, or attack space.", commonMistake:"Driving into a defender who has already gone under and recovered.", diagramNote:"The defender goes under the screen while staying between the ball and the rim.", diagramType:"under", difficulty:"Intermediate", tags:["defense","ball screen coverage"], role:["ball handler","defender"], motionSteps:[] },
-      { id:"switch", term:"Switch", category:"Defensive Coverage", definition:"A coverage where two defenders exchange assignments during a screen.", coachDefinition:"Coach-specific version pending.", cue:"Recognize the mismatch and attack it with spacing.", commonMistake:"Continuing the action without noticing the defense switched.", diagramNote:"The screener's defender takes the ball, and the on-ball defender takes the screener.", diagramType:"switch", difficulty:"Beginner", tags:["defense","coverage","mismatch"], role:["ball handler","screener"], motionSteps:[] },
-      { id:"hedge-show", term:"Hedge / Show", category:"Defensive Coverage", definition:"A coverage where the screener's defender steps out to slow or redirect the ball handler before recovering back to their original matchup.", coachDefinition:"Coach-specific version pending.", cue:"Stretch the hedge, then hit the roller or weak side.", commonMistake:"Picking up the dribble too early against the hedge.", diagramNote:"5's defender shows high to slow 1, then recovers to 5.", diagramType:"hedge-show", difficulty:"Advanced", tags:["defense","ball screen coverage"], role:["ball handler","screener"], motionSteps:[] },
-      { id:"drop", term:"Drop", category:"Defensive Coverage", definition:"A coverage where the screener's defender stays back near the paint to protect the rim while the on-ball defender fights through the screen.", coachDefinition:"Coach-specific version pending.", cue:"Use pull-ups, floaters, pocket passes, or short rolls.", commonMistake:"Driving too deep into the big without reading the pocket pass.", diagramNote:"The big defender drops toward the paint while the on-ball defender chases.", diagramType:"drop", difficulty:"Intermediate", tags:["defense","ball screen coverage","paint protection"], role:["ball handler","roller"], motionSteps:[] },
-      { id:"high-drop", term:"High Drop", category:"Defensive Coverage", definition:"A version of drop coverage where the screener's defender is higher up the floor, closer to the level of the screen, while still protecting the lane.", coachDefinition:"Coach-specific version pending.", cue:"Read whether the big is high enough to pass behind or attack downhill.", commonMistake:"Treating every drop coverage the same.", diagramNote:"The big defender is up near the screen but still retreats to protect the rim.", diagramType:"high-drop", difficulty:"Advanced", tags:["defense","ball screen coverage"], role:["ball handler","roller"], motionSteps:[] },
-      { id:"low-drop", term:"Low Drop", category:"Defensive Coverage", definition:"A deeper drop coverage where the screener's defender stays closer to the rim, inviting pull-ups and short-roll decisions.", coachDefinition:"Coach-specific version pending.", cue:"If the big is low, use space for pull-up, floater, or pocket pass.", commonMistake:"Missing the open middle because the big is sitting too deep.", diagramNote:"The big defender stays low near the paint while the guard fights through the screen.", diagramType:"low-drop", difficulty:"Advanced", tags:["defense","ball screen coverage"], role:["ball handler","roller"], motionSteps:[] },
-      { id:"ice-down", term:"Ice / Down", category:"Defensive Coverage", definition:"A side ball-screen coverage where the defense tries to force the ball handler away from the screen and toward the sideline or baseline.", coachDefinition:"Coach-specific version pending.", cue:"Reject, split, or move the ball before the sideline trap forms.", commonMistake:"Dribbling directly into the sideline where the defense wants you to go.", diagramNote:"The on-ball defender jumps to deny the screen and push the ball toward the sideline or baseline.", diagramType:"ice-down", difficulty:"Advanced", tags:["defense","ball screen coverage","side pick and roll"], role:["ball handler"], motionSteps:[] },
-      { id:"blitz-trap", term:"Blitz / Trap", category:"Defensive Coverage", definition:"A coverage where two defenders aggressively attack the ball handler after the screen to force a quick pass, turnover, or retreat.", coachDefinition:"Coach-specific version pending.", cue:"Get off the ball quickly and punish the numbers advantage.", commonMistake:"Holding the ball too long against two defenders.", diagramNote:"The on-ball defender and screener's defender both attack the ball handler.", diagramType:"blitz-trap", difficulty:"Advanced", tags:["defense","pressure","ball screen coverage"], role:["ball handler","screener"], motionSteps:[] },
-      { id:"weak", term:"Weak", category:"Defensive Coverage", definition:"A coverage concept where the defense influences the ball handler toward their weaker hand or toward a less dangerous side of the floor.", coachDefinition:"Coach-specific version pending.", cue:"Recognize the force direction and counter with spacing or a change of angle.", commonMistake:"Letting the defense dictate the entire possession.", diagramNote:"The defender shades the ball handler toward the weak hand or preferred help area.", diagramType:"weak", difficulty:"Advanced", tags:["defense","force","coverage"], role:["ball handler","defender"], motionSteps:[] },
-      { id:"low-man", term:"Low Man", category:"Defensive Concept", definition:"The weak-side help defender closest to the rim. The low man is often responsible for tagging the roller or protecting the basket.", coachDefinition:"Coach-specific version pending.", cue:"On offense, read the low man. If they help, pass to the open shooter.", commonMistake:"Driving without seeing the help defender at the rim.", diagramNote:"The low man is the weak-side defender nearest the basket who must choose between tagging the roller and staying with a shooter.", diagramType:"low-man", difficulty:"Advanced", tags:["defense","help defense","read"], role:["ball handler","roller","weak-side shooter"], motionSteps:[] }
+      { id:"over", term:"Over", category:"Defensive Coverage", definition:"A ball-screen coverage in which the on-ball defender fights over the top of the screen to stay attached to a shooting or driving ball handler.", coachDefinition:"PROPOSED — coach review required: Navigate tight over the screen, communicate to the big and reconnect to pressure the handler from behind.", cue:"Call 'over', get skinny past the screen and rear contest without fouling.", commonMistake:"Going wide around the screen and letting the ball handler turn the corner uncontested.", diagramNote:"X1 navigates above the screen and chases 1; the big provides the next defensive layer.", diagramType:"over", difficulty:"Intermediate", tags:["defense","ball screen coverage"], role:["ball handler","defender"], motionSteps:[] },
+      { id:"under", term:"Under", category:"Defensive Coverage", definition:"A ball-screen coverage where the on-ball defender travels underneath the screen to protect the drive against a less threatening outside shooter.", coachDefinition:"PROPOSED — coach review required: Go under quickly, meet the handler on the other side, and contest if the handler becomes a shooting threat.", cue:"Call 'under'; beat the ball to the far side and recover into a stance.", commonMistake:"Drifting too deep under the screen and conceding an uncontested pull-up shot.", diagramNote:"X1 passes below the screener and recovers in front of 1; teammates communicate the gap.", diagramType:"under", difficulty:"Intermediate", tags:["defense","ball screen coverage"], role:["ball handler","defender"], motionSteps:[] },
+      { id:"switch", term:"Switch", category:"Defensive Coverage", definition:"A coverage in which two defenders exchange offensive assignments as a screen arrives to stay connected without a long chase.", coachDefinition:"PROPOSED — coach review required: Call the exchange early and make both matchups explicit. X5 takes the handler while X1 takes the screener; anticipate the roll and any mismatch.", cue:"Call 'switch' early; one defender takes the ball and the other takes the screener.", commonMistake:"Both defenders follow the ball or neither claims the rolling screener, creating an open lane.", diagramNote:"X5 steps toward the handler as X1 turns and picks up the screener; two defensive assignments swap clearly.", diagramType:"switch", difficulty:"Beginner", tags:["defense","coverage","mismatch"], role:["ball handler","screener"], motionSteps:[] },
+      { id:"hedge-show", term:"Hedge / Show", category:"Defensive Coverage", definition:"A ball-screen coverage in which the screener's defender temporarily steps out to disrupt the ball handler and then recovers to the screener.", coachDefinition:"PROPOSED — coach review required: Call the show, get in the ball handler's path without fouling, and sprint back when the guard recovers; weak-side help protects the roller.", cue:"Big: show high, slow the ball, and recover. Guard: fight over and reconnect.", commonMistake:"Showing without recovering, or leaving the roller unprotected after the hedge.", diagramNote:"The static scene illustrates X5 showing toward the handler and recovering toward screener 5. X1 fighting over and weak-side roller coverage are essential coaching responsibilities but are not separately drawn.", diagramType:"hedge-show", difficulty:"Advanced", tags:["defense","ball screen coverage"], role:["ball handler","screener"], motionSteps:[] },
+      { id:"drop", term:"Drop", category:"Defensive Coverage", definition:"A ball-screen coverage in which the screener's defender retreats to protect the basket and the on-ball defender fights over or through the screen to recover.", coachDefinition:"PROPOSED — coach review required: Keep the ball between the two defenders. The big communicates depth; the guard reconnects from behind without conceding a layup.", cue:"Big: call 'drop'; contain the drive and roller. Guard: fight through and recover to the ball.", commonMistake:"The big backs all the way to the rim without addressing the ball, or the guard dies on the screen.", diagramNote:"X5 retreats in the lane while X1 chases the ball handler over the screen; they protect the rim and pocket pass together.", diagramType:"drop", difficulty:"Intermediate", tags:["defense","ball screen coverage","paint protection"], role:["ball handler","roller"], motionSteps:[] },
+      { id:"high-drop", term:"High Drop", category:"Defensive Coverage", definition:"A drop variation in which the screener's defender begins higher toward the ball-screen level before retreating to protect the rim and roller.", coachDefinition:"PROPOSED — coach review required: Start near the screen level, stay balanced between the ball and roller, then retreat on the drive while the guard reconnects.", cue:"Big: show at the higher drop point, then retreat and contain the paint.", commonMistake:"Staying stranded above the screen and giving the roller a free lane to the rim.", diagramNote:"X5 begins near the screen instead of deep in the lane, then drops as the guard fights through.", diagramType:"high-drop", difficulty:"Advanced", tags:["defense","ball screen coverage"], role:["ball handler","roller"], motionSteps:[] },
+      { id:"low-drop", term:"Low Drop", category:"Defensive Coverage", definition:"A deeper form of drop coverage in which the screener's defender stays closer to the basket to prioritize rim and rolling-lane protection.", coachDefinition:"PROPOSED — coach review required: Maintain a low but active stance to contain the drive and roller while the guard recovers to challenge open pull-ups.", cue:"Big: stay low and protect the rim; guard: reconnect and contest the pull-up.", commonMistake:"Standing flat-footed under the rim while both the roller and ball handler arrive unchallenged.", diagramNote:"X5 begins closer to the rim than in high drop, while X1 must fight back into the play.", diagramType:"low-drop", difficulty:"Advanced", tags:["defense","ball screen coverage"], role:["ball handler","roller"], motionSteps:[] },
+      { id:"ice-down", term:"Ice / Down", category:"Defensive Coverage", definition:"A side ball-screen coverage that denies use of the screen by influencing the ball handler toward the sideline or baseline and away from the middle.", coachDefinition:"PROPOSED — coach review required: The guard denies the screen with the high-side angle; the big positions below it to contain the forced-side drive.", cue:"Call 'ice'; deny the screen and send the ball into prepared baseline help.", commonMistake:"Forcing the ball toward baseline without the second defender and low help ready to contain it.", diagramNote:"X1 jumps to the screen-side shoulder to deny the screen while X5 waits below the screen.", diagramType:"ice-down", difficulty:"Advanced", tags:["defense","ball screen coverage","side pick and roll"], role:["ball handler"], motionSteps:[] },
+      { id:"blitz-trap", term:"Blitz / Trap", category:"Defensive Coverage", definition:"An aggressive ball-screen coverage in which two defenders attack the ball handler together to force a quick pass, retreat, or turnover.", coachDefinition:"PROPOSED — coach review required: X1 and X5 arrive together with active hands and legal spacing; the remaining three defenders rotate to cover the first pass and protect the rim.", cue:"Call 'blitz'; trap together and rotate behind the pressure.", commonMistake:"One defender attacks early while the other stays back, leaving a clear escape and an uncovered roller.", diagramNote:"The static scene shows X1 and X5 converging on the ball after the screen. Weak-side outlet coverage and roller rotations are coaching responsibilities, not illustrated defender movements in this scene.", diagramType:"blitz-trap", difficulty:"Advanced", tags:["defense","pressure","ball screen coverage"], role:["ball handler","screener"], motionSteps:[] },
+      { id:"weak", term:"Weak", category:"Defensive Coverage", definition:"A defensive influence or coverage call that steers the ball handler toward a less effective hand or predetermined help area according to the team's rules.", coachDefinition:"PROPOSED — coach review required: Know the scouting direction and help-side support; shade the handler without surrendering an easier direct lane.", cue:"Call the agreed weak-side force; shade the handler toward the planned help.", commonMistake:"Guessing the force direction and opening the middle or baseline without support.", diagramNote:"X1 shades the handler toward the scouting-agreed weaker hand while other defenders prepare help.", diagramType:"weak", difficulty:"Advanced", tags:["defense","force","coverage"], role:["ball handler","defender"], motionSteps:[] },
+      { id:"low-man", term:"Low Man", category:"Defensive Concept", definition:"The deepest weak-side help defender nearest the basket, responsible for protecting the rim and often delaying a rolling screener before the team rotates.", coachDefinition:"PROPOSED — coach review required: Identify the low man early, tag the roller when required by our scheme, then call the next rotation and recover or X-out on the pass.", cue:"Call 'low!' or the team's agreed help call; protect the rim, then find the next matchup.", commonMistake:"Watching the ball while the roller slips behind, or tagging with no planned recovery.", diagramNote:"X3 starts on the weak-side baseline, steps into the roller's path and communicates coverage behind the ball screen.", diagramType:"low-man", difficulty:"Advanced", tags:["defense","help defense","read"], role:["ball handler","roller","weak-side shooter"], motionSteps:[] },
+      // Defensive IQ proposed terms; approval/QA pending.
+      {"id":"shell-defense","term":"Shell Defense / Shell Drill","category":"Defensive Drill","definition":"A team-defense teaching drill in which players shift between guarding the ball, denying a pass, and helping away from the ball as passes move around the perimeter.","coachDefinition":"PROPOSED — coach review required: In a 4-on-4 shell, freeze after each pass to check ball-you-player vision, help gaps, low-man positioning and controlled closeouts; add live drives gradually.","cue":"Call 'ball', 'deny' and 'help'; move on the pass, not after the catch.","commonMistake":"Standing still off the ball or losing sight of the assigned player during a rotation.","diagramNote":"Four offensive spots on the perimeter with four matching defenders: X1 pressures the ball, X2 is a pass away, X3 and X4 are in help positions.","diagramType":"def-shell","difficulty":"Beginner","tags":["defense","defensive IQ"],"role":["defender"],"motionSteps":[]},
+      {"id":"closeout","term":"Closeout","category":"Defensive Fundamental","definition":"The controlled approach a defender uses to reach a shooter or receiver, contest a shot and stay balanced against a drive.","coachDefinition":"PROPOSED — coach review required: Sprint most of the distance, decelerate under control with active hands and balanced feet, then take away the direction required by the team's scheme.","cue":"Sprint, brake, contest, contain; arrive ready to slide.","commonMistake":"Flying past the shooter or chopping too early and allowing an uncontested shot.","diagramNote":"X2 closes from help toward offensive 2 at the wing and stops short in a balanced guarding stance.","diagramType":"def-closeout","difficulty":"Beginner","tags":["defense","defensive IQ"],"role":["defender"],"motionSteps":[]},
+      {"id":"help-side","term":"Help-Side Defense","category":"Defensive Concept","definition":"Off-ball positioning that places a defender ready to support a teammate when the ball is on the opposite side, while still tracking their assigned player.","coachDefinition":"PROPOSED — coach review required: Sink toward the help line when appropriately away from the ball; maintain vision of both ball and matchup and rotate as the ball moves.","cue":"See ball and player; step toward the lane when you are the weak-side helper.","commonMistake":"Face-guarding the matchup so completely that the helper cannot see penetration.","diagramNote":"X3 drops toward the lane as offensive 1 controls the ball on the opposite wing.","diagramType":"def-help-side","difficulty":"Beginner","tags":["defense","defensive IQ"],"role":["defender"],"motionSteps":[]},
+      {"id":"tag-roller","term":"Tag the Roller","category":"Defensive Concept","definition":"A temporary bump, body presence or path interruption by a help defender that slows the screener rolling toward the rim.","coachDefinition":"PROPOSED — coach review required: The assigned helper contacts only legally, meets the roll early, communicates the tag and releases into the required next rotation or recovery.","cue":"Tag the roller early; call the handoff and recover or rotate on the pass.","commonMistake":"Tagging too late or standing on the roller and surrendering an open corner shooter.","diagramNote":"X3 crosses from the weak-side gap to meet rolling 5, then must rotate to a perimeter matchup.","diagramType":"def-tag-roller","difficulty":"Advanced","tags":["defense","defensive IQ"],"role":["defender"],"motionSteps":[]},
+      {"id":"stunt-recover","term":"Stunt and Recover","category":"Defensive Concept","definition":"A brief aggressive step toward the ball or driving lane that makes the ball handler hesitate, followed by a quick return to the original matchup.","coachDefinition":"PROPOSED — coach review required: Stunt far enough to influence the drive or passing lane, then recover before the offense can exploit the abandoned shooter.","cue":"Show help, then sprint back under control.","commonMistake":"Fully committing to the ball and giving up an easy catch-and-shoot opportunity.","diagramNote":"X2 jabs into the lane toward driving 1, then returns to guard shooter 2.","diagramType":"def-stunt-recover","difficulty":"Intermediate","tags":["defense","defensive IQ"],"role":["defender"],"motionSteps":[]},
+      {"id":"dig","term":"Dig at the Post","category":"Defensive Concept","definition":"A brief swipe or jab by a nearby perimeter defender toward a post player's dribble to disrupt rhythm without abandoning the perimeter assignment.","coachDefinition":"PROPOSED — coach review required: Dig on the post dribble with active hands, communicate the help and retreat to the shooter without recklessly reaching or fouling.","cue":"Dig on the dribble; get back to the shooter.","commonMistake":"Reaching across the post player's body or lingering in the paint while a shooter stands open.","diagramNote":"X2 momentarily steps from the wing toward post player 5's dribble, then recovers to offensive 2.","diagramType":"def-dig","difficulty":"Intermediate","tags":["defense","defensive IQ"],"role":["defender"],"motionSteps":[]},
+      {"id":"gap-help","term":"Gap Help","category":"Defensive Concept","definition":"Positioning by an off-ball defender in the space between offensive players so they can discourage a drive while staying close enough to recover.","coachDefinition":"PROPOSED — coach review required: Sit in the driving gap according to team rules, show early help, then close out under control if the pass goes to the matchup.","cue":"Own the driving gap and recover on the pass.","commonMistake":"Hugging a non-shooter too tightly and leaving the lane open, or helping so deep that recovery is impossible.","diagramNote":"X2 shifts into the gap between driving 1 and wing receiver 2, then recovers toward 2.","diagramType":"def-gap-help","difficulty":"Intermediate","tags":["defense","defensive IQ"],"role":["defender"],"motionSteps":[]},
+      {"id":"nail-help","term":"Nail Help","category":"Defensive Concept","definition":"Help positioned near the center of the free-throw line, often called the nail, to deter a drive into the middle and support ball-screen coverage.","coachDefinition":"PROPOSED — coach review required: The designated nail helper moves early to the free-throw line center, communicates penetration and knows whether to stunt or rotate fully.","cue":"Touch the nail area early; stop the middle without losing the next pass.","commonMistake":"Arriving after the driver reaches the free-throw line or never identifying the next shooter.","diagramNote":"X4 slides from the weak-side slot to the free-throw-line nail as 1 drives toward the middle.","diagramType":"def-nail-help","difficulty":"Intermediate","tags":["defense","defensive IQ"],"role":["defender"],"motionSteps":[]},
+      {"id":"peel-switch","term":"Peel Switch","category":"Defensive Concept","definition":"A help rotation in which an on-ball defender who has been beaten peels off the driver to take a teammate's vacated assignment while the teammate contains the ball.","coachDefinition":"PROPOSED — coach review required: Call the peel clearly: the helper takes the dribbler and the beaten defender immediately picks up the helper's matchup; do not chase the same ball.","cue":"When beaten, peel to the open matchup as your helper contains the drive.","commonMistake":"Both defenders chase the driver, leaving the helper's original player open.","diagramNote":"X2 leaves wing 2 to contain a penetrating 1; beaten X1 peels away to cover 2.","diagramType":"def-peel-switch","difficulty":"Advanced","tags":["defense","defensive IQ"],"role":["defender"],"motionSteps":[]},
+      {"id":"x-out","term":"X-Out Rotation","category":"Defensive Concept","definition":"A two-defender scramble rotation in which defenders exchange coverage of a wing and corner after help or a drive-and-kick, creating crossing recovery paths.","coachDefinition":"PROPOSED — coach review required: Identify the pass sequence and communicate who takes the first receiver and who closes to the second, avoiding two defenders on one shooter.","cue":"Call 'X-out'; first defender closes, second covers the next pass.","commonMistake":"Both defenders closing to the same shooter and leaving the next receiver open.","diagramNote":"X3 closes from the lane to the corner while X2 rotates across to the wing, making crossing paths.","diagramType":"def-x-out","difficulty":"Advanced","tags":["defense","defensive IQ"],"role":["defender"],"motionSteps":[]},
+      {"id":"scram-switch","term":"Scram Switch","category":"Defensive Concept","definition":"An off-ball switch used to remove an unfavorable defender, often a smaller player, from a post mismatch before the offense can exploit it.","coachDefinition":"PROPOSED — coach review required: A bigger teammate calls the scram, replaces the small defender on the post player and sends the small defender to the new matchup before the entry pass.","cue":"Call 'scram' early; swap out of a bad post mismatch.","commonMistake":"Waiting until the post entry is complete or sending two defenders to the post without a clear exchange.","diagramNote":"X4 leaves the weak-side slot to take post 5 while smaller X1 escapes from 5 to guard offensive 4.","diagramType":"def-scram-switch","difficulty":"Advanced","tags":["defense","defensive IQ"],"role":["defender"],"motionSteps":[]},
+      {"id":"top-lock","term":"Top Lock","category":"Defensive Concept","definition":"An off-ball denial technique in which a defender positions above a cutter to block their intended route over a screen, often against a dangerous shooter.","coachDefinition":"PROPOSED — coach review required: Take away the shooter's route to the top of the screen and communicate the backdoor cut that this pressure can invite.","cue":"Sit on the high side of the cutter; call out the backdoor risk.","commonMistake":"Overplaying the top without a teammate protecting the backdoor lane.","diagramNote":"X2 positions between shooter 2 and the upper screen route; offensive 2 may counter with a backdoor cut.","diagramType":"def-top-lock","difficulty":"Advanced","tags":["defense","defensive IQ"],"role":["defender"],"motionSteps":[]},
+      {"id":"no-middle","term":"No-Middle Defense","category":"Defensive System","definition":"A team defensive rule or scheme designed to keep ball handlers out of the middle of the floor, commonly by influencing perimeter drives toward the sideline or baseline.","coachDefinition":"PROPOSED — coach review required: Angle the on-ball stance to deny the middle and coordinate low help and next-pass rotations; team details differ and must be confirmed.","cue":"No middle; send the drive toward the help the team has assigned.","commonMistake":"Forcing baseline without the backline help being ready, or allowing an easy middle drive.","diagramNote":"X1 shades driver 1 toward the sideline while X3 prepares to protect a baseline drive.","diagramType":"def-no-middle","difficulty":"Advanced","tags":["defense","defensive IQ"],"role":["defender"],"motionSteps":[]},
+      {"id":"pack-line","term":"Pack-Line Defense","category":"Defensive System","definition":"A player-to-player team defense that pressures the ball while off-ball defenders position inside an imaginary interior boundary to crowd driving lanes and protect the paint.","coachDefinition":"PROPOSED — coach review required: One defender pressures the ball; the other defenders stay in help positions inside the pack until passing action requires controlled closeouts. Do not confuse it with a no-middle forcing scheme.","cue":"Pressure the ball; pack the driving lanes; close out on passes.","commonMistake":"Over-denying away from the ball and opening straight-line drives into the paint.","diagramNote":"X1 pressures ball 1 while X2, X3 and X4 sit inside a compact shell along the paint and elbows.","diagramType":"def-pack-line","difficulty":"Advanced","tags":["defense","defensive IQ"],"role":["defender"],"motionSteps":[]},
+      {"id":"box-out","term":"Box Out","category":"Defensive Fundamental","definition":"Legal positioning after a shot that keeps an opponent from taking a direct path to an offensive rebound, followed by pursuit of the ball.","coachDefinition":"PROPOSED — coach review required: On the shot, find your opponent, establish inside positioning with balanced body contact when legal, then release to secure the rebound.","cue":"Shot up: find, make contact legally, then go get the ball.","commonMistake":"Watching the shot without locating an opponent, or using an illegal push to create space.","diagramNote":"X5 seals offensive 5 away from the rim while teammates locate other rebounders and pursue the shot.","diagramType":"def-box-out","difficulty":"Beginner","tags":["defense","defensive IQ"],"role":["defender"],"motionSteps":[]},
+      {"id":"defensive-communication","term":"Defensive Communication Calls","category":"Defensive Fundamental","definition":"Short, consistent spoken signals that tell teammates about the ball, help, screens, switches, cutters and rotations so the team responds together.","coachDefinition":"PROPOSED — coach review required: Teach a small shared call vocabulary, such as 'ball', 'help', 'screen left', 'switch', 'stay', and 'shot'; confirm exact calls with the coach.","cue":"Talk early, loud and specific: ball, help, screen, switch, shot.","commonMistake":"Using vague late calls, or two defenders issuing conflicting coverage instructions.","diagramNote":"The four-defender teaching scene shows X1 calling ball, X2 calling screen, X3 calling help, and X4 calling the next rotation. Add the fifth defender's responsibility when reviewing a 5-on-5 scheme.","diagramType":"def-communication","difficulty":"Beginner","tags":["defense","defensive IQ"],"role":["defender"],"motionSteps":[]}
     ];
+
+    const LEGACY_DEFENSE_DEFAULTS = {"low-man":{"definition":"The weak-side help defender closest to the rim. The low man is often responsible for tagging the roller or protecting the basket.","coachDefinition":"Coach-specific version pending.","cue":"On offense, read the low man. If they help, pass to the open shooter.","commonMistake":"Driving without seeing the help defender at the rim.","diagramNote":"The low man is the weak-side defender nearest the basket who must choose between tagging the roller and staying with a shooter."},"drop":{"definition":"A coverage where the screener's defender stays back near the paint to protect the rim while the on-ball defender fights through the screen.","coachDefinition":"Coach-specific version pending.","cue":"Use pull-ups, floaters, pocket passes, or short rolls.","commonMistake":"Driving too deep into the big without reading the pocket pass.","diagramNote":"The big defender drops toward the paint while the on-ball defender chases."},"switch":{"definition":"A coverage where two defenders exchange assignments during a screen.","coachDefinition":"Coach-specific version pending.","cue":"Recognize the mismatch and attack it with spacing.","commonMistake":"Continuing the action without noticing the defense switched.","diagramNote":"The screener's defender takes the ball, and the on-ball defender takes the screener."},"hedge-show":{"definition":"A coverage where the screener's defender steps out to slow or redirect the ball handler before recovering back to their original matchup.","coachDefinition":"Coach-specific version pending.","cue":"Stretch the hedge, then hit the roller or weak side.","commonMistake":"Picking up the dribble too early against the hedge.","diagramNote":"5's defender shows high to slow 1, then recovers to 5."},"blitz-trap":{"definition":"A coverage where two defenders aggressively attack the ball handler after the screen to force a quick pass, turnover, or retreat.","coachDefinition":"Coach-specific version pending.","cue":"Get off the ball quickly and punish the numbers advantage.","commonMistake":"Holding the ball too long against two defenders.","diagramNote":"The on-ball defender and screener's defender both attack the ball handler."},"over":{"definition":"A ball-screen coverage where the on-ball defender fights over the top of the screen to stay attached to the ball handler.","coachDefinition":"Coach-specific version pending.","cue":"Expect pressure from behind and attack downhill.","commonMistake":"Not recognizing the trailing defender and slowing down after the screen.","diagramNote":"The on-ball defender chases over the screen while the screener's defender protects the next layer."},"under":{"definition":"A ball-screen coverage where the on-ball defender goes below the screen to protect against the drive and dare the ball handler to shoot.","coachDefinition":"Coach-specific version pending.","cue":"If the defender goes under, be ready to shoot, re-screen, or attack space.","commonMistake":"Driving into a defender who has already gone under and recovered.","diagramNote":"The defender goes under the screen while staying between the ball and the rim."},"high-drop":{"definition":"A version of drop coverage where the screener's defender is higher up the floor, closer to the level of the screen, while still protecting the lane.","coachDefinition":"Coach-specific version pending.","cue":"Read whether the big is high enough to pass behind or attack downhill.","commonMistake":"Treating every drop coverage the same.","diagramNote":"The big defender is up near the screen but still retreats to protect the rim."},"low-drop":{"definition":"A deeper drop coverage where the screener's defender stays closer to the rim, inviting pull-ups and short-roll decisions.","coachDefinition":"Coach-specific version pending.","cue":"If the big is low, use space for pull-up, floater, or pocket pass.","commonMistake":"Missing the open middle because the big is sitting too deep.","diagramNote":"The big defender stays low near the paint while the guard fights through the screen."},"ice-down":{"definition":"A side ball-screen coverage where the defense tries to force the ball handler away from the screen and toward the sideline or baseline.","coachDefinition":"Coach-specific version pending.","cue":"Reject, split, or move the ball before the sideline trap forms.","commonMistake":"Dribbling directly into the sideline where the defense wants you to go.","diagramNote":"The on-ball defender jumps to deny the screen and push the ball toward the sideline or baseline."},"weak":{"definition":"A coverage concept where the defense influences the ball handler toward their weaker hand or toward a less dangerous side of the floor.","coachDefinition":"Coach-specific version pending.","cue":"Recognize the force direction and counter with spacing or a change of angle.","commonMistake":"Letting the defense dictate the entire possession.","diagramNote":"The defender shades the ball handler toward the weak hand or preferred help area."}};
 
     let CATEGORIES = [...new Set(DEFAULT_TERMS.map(t => t.category))];
     const QUIZ_LENGTH = 10;
+    const DEFENSIVE_IQ_PACK_KEY = "__hoop_iq_defensive_pack__";
+    const DEFENSIVE_IQ_PACK_LABEL = "Defensive IQ Pack";
     const progressKey = "hoopIQTrainerV3Progress";
     const termsKey = "hoopIQTrainerV3Terms";
 
@@ -1657,6 +1850,12 @@
     }
 
 
+    function defenseFieldOrCustom(def, saved, field) {
+      const old = LEGACY_DEFENSE_DEFAULTS[def.id];
+      if (old && (!saved[field] || saved[field] === old[field])) return def[field];
+      return saved[field] || def[field];
+    }
+
     function mergeWithDefaultTerms(savedTerms) {
       const savedList = Array.isArray(savedTerms) ? savedTerms : [];
       const savedById = new Map(savedList.map(term => [term.id || slugify(term.term || ""), term]));
@@ -1671,11 +1870,11 @@
           id: defaultTerm.id,
           term: saved.term || defaultTerm.term,
           category: saved.category || defaultTerm.category,
-          definition: saved.definition || defaultTerm.definition,
-          coachDefinition: saved.coachDefinition || defaultTerm.coachDefinition,
-          cue: saved.cue || defaultTerm.cue,
-          commonMistake: saved.commonMistake || defaultTerm.commonMistake,
-          diagramNote: saved.diagramNote || defaultTerm.diagramNote,
+          definition: defenseFieldOrCustom(defaultTerm, saved, "definition"),
+          coachDefinition: defenseFieldOrCustom(defaultTerm, saved, "coachDefinition"),
+          cue: defenseFieldOrCustom(defaultTerm, saved, "cue"),
+          commonMistake: defenseFieldOrCustom(defaultTerm, saved, "commonMistake"),
+          diagramNote: defenseFieldOrCustom(defaultTerm, saved, "diagramNote"),
           diagramType: saved.diagramType || defaultTerm.diagramType || "generic",
           difficulty: saved.difficulty || defaultTerm.difficulty || "Intermediate",
           tags: Array.isArray(saved.tags) && saved.tags.length ? saved.tags : (Array.isArray(defaultTerm.tags) ? defaultTerm.tags : []),
@@ -1855,6 +2054,7 @@
     }
 
     function termsByCategory(category) {
+      if (category === DEFENSIVE_IQ_PACK_KEY) return TERMS.filter(term => Object.hasOwn(DEFENSIVE_IQ_QUESTIONS, term.id));
       if (!category || category === "All") return TERMS;
       if (category === "Missed") {
         const missed = getProgress().missedTerms || [];
@@ -1887,14 +2087,18 @@
       const wrap = document.getElementById("pickerButtons");
       wrap.innerHTML = "";
 
-      const options = ["All", ...CATEGORIES];
+      const options = ["All", DEFENSIVE_IQ_PACK_KEY, ...CATEGORIES];
+      const hasPackCategoryCollision = CATEGORIES.includes(DEFENSIVE_IQ_PACK_LABEL);
       if (includeMissed) options.push("Missed");
 
       options.forEach(category => {
         const count = category === "All" ? TERMS.length : category === "Missed" ? (getProgress().missedTerms || []).length : termsByCategory(category).length;
         const btn = document.createElement("button");
         btn.className = category === "All" ? "primary" : category === "Missed" ? "secondary" : "";
-        btn.innerHTML = `${escapeHtml(category)}<br><span class="micro">${count} term${count === 1 ? "" : "s"}</span>`;
+        const label = category === DEFENSIVE_IQ_PACK_KEY
+          ? (hasPackCategoryCollision ? "Defensive IQ Pack (Curated)" : DEFENSIVE_IQ_PACK_LABEL)
+          : category === DEFENSIVE_IQ_PACK_LABEL ? "Defensive IQ Pack (Saved Category)" : category;
+        btn.innerHTML = `${escapeHtml(label)}<br><span class="micro">${count} term${count === 1 ? "" : "s"}</span>`;
         btn.onclick = () => callback(category);
         wrap.appendChild(btn);
       });
@@ -1969,7 +2173,7 @@
       document.getElementById("diagramDefinition").textContent = term.definition;
       document.getElementById("diagramCoach").textContent = term.coachDefinition;
       document.getElementById("diagramCue").textContent = term.cue;
-      document.getElementById("diagramNote").textContent = term.diagramNote;
+      document.getElementById("diagramNote").textContent = (String(term.diagramType || "").startsWith("def-") ? "Legend: X = defender; number = offense. " : "") + term.diagramNote;
     }
 
 
@@ -2090,11 +2294,14 @@
 
     function startQuiz(mode = "mixed", category = "All", customTerms = null, isDaily = false) {
       const sourceTerms = customTerms || termsByCategory(category);
-      if (!sourceTerms.length) return alert("No terms available for that quiz.");
+      const activeTerms = mode === "defensiveIQ"
+        ? sourceTerms.filter(term => Object.hasOwn(DEFENSIVE_IQ_QUESTIONS, term.id))
+        : sourceTerms;
+      if (!activeTerms.length) return alert("No terms available for that quiz.");
       state.lastMode = mode;
       state.lastCategory = category;
       state.isDaily = isDaily;
-      state.quizQuestions = buildQuiz(mode, sourceTerms);
+      state.quizQuestions = buildQuiz(mode, activeTerms);
       state.currentQuestionIndex = 0;
       state.score = 0;
       state.answered = false;
@@ -2102,7 +2309,7 @@
       showScreen("quiz");
       document.getElementById("quizModeTitle").textContent = isDaily ? "Daily 10" : modeTitle(mode);
       document.getElementById("quizHelper").style.display = "none";
-      document.getElementById("quizCategoryPill").textContent = category === "All" ? "All Terms" : category;
+      document.getElementById("quizCategoryPill").textContent = category === "All" ? "All Terms" : category === DEFENSIVE_IQ_PACK_KEY ? DEFENSIVE_IQ_PACK_LABEL : category;
       renderQuestion();
     }
 
@@ -2158,6 +2365,7 @@
       if (mode === "definition") return "Definition Match";
       if (mode === "cue") return "Cue Match";
       if (mode === "diagram") return "Name This Action";
+      if (mode === "defensiveIQ") return "Defensive IQ Challenge";
       return "Mixed Quiz";
     }
 
@@ -2170,12 +2378,28 @@
       const picked = sample(unique, Math.min(QUIZ_LENGTH, unique.length));
       return picked.map(term => {
         const actual = mode === "mixed" ? sample(["category", "definition", "cue", "mistake"], 1)[0] : mode;
+        if (actual === "defensiveIQ") return makeDefensiveIQQuestion(term);
         if (actual === "category") return makeCategoryQuestion(term);
         if (actual === "cue") return makeCueQuestion(term);
         if (actual === "mistake") return makeMistakeQuestion(term);
         if (actual === "diagram") return makeDiagramQuestion(term);
         return makeDefinitionQuestion(term);
       });
+    }
+
+    const DEFENSIVE_IQ_QUESTIONS = {"low-man":{"prompt":"The roller breaks free down the lane. Which defender is commonly responsible for the first weak-side tag?","correctResponse":"The low man, subject to the team's help rules.","distractors":["The ball handler's primary on-ball defender.","The screener's defender nearest half court.","The first defender who calls a timeout."]},"drop":{"prompt":"What must the on-ball defender do when their teammate is playing drop coverage?","correctResponse":"Navigate the screen and recover to the ball handler.","distractors":["Immediately abandon the handler and guard the corner.","Switch automatically without calling it.","Double-team the ball alone after the screen."]},"switch":{"prompt":"After switching a ball screen, who guards the screener?","correctResponse":"The defender who was guarding the ball before the switch.","distractors":["The defender who was originally guarding the screener.","The nearest weak-side corner defender.","Nobody; both defenders stay with the ball."]},"hedge-show":{"prompt":"What happens after a screener's defender hedges?","correctResponse":"Recover to their original matchup while the on-ball defender reconnects.","distractors":["Stay with the ball handler for the rest of the possession.","Stop at the screen and wait for a timeout.","Abandon the roller and rotate to the opposite corner."]},"blitz-trap":{"prompt":"When two defenders blitz the ball, what must the other defenders do?","correctResponse":"Rotate behind the trap to cover the roller and passing outlets.","distractors":["Keep all five defenders on their original players without shifting.","Send a third defender to trap and leave the rim vacant.","Run back to half court before locating an outlet."]},"shell-defense":{"prompt":"The ball moves from the top to the wing during shell drill. When should off-ball defenders adjust?","correctResponse":"While the pass is moving, before the catch.","distractors":["Only when the passer has taken their next dribble.","After the receiver already starts driving.","Only after a coach yells stop."]},"closeout":{"prompt":"Why does a defender slow down at the end of a closeout?","correctResponse":"To contest without giving up an immediate drive.","distractors":["To avoid contesting the ball at all.","To set a screen for the receiver.","To turn and run toward the baseline."]},"help-side":{"prompt":"Where should a weak-side defender look when positioned to help?","correctResponse":"Keep the ball and their assigned player in view.","distractors":["Watch only their own player and ignore the ball.","Face the bench until their player cuts.","Look only at the offensive rebounders."]},"tag-roller":{"prompt":"Why does a help defender tag a rolling screener?","correctResponse":"To delay the roll and buy time for the primary coverage and rotation.","distractors":["To keep a teammate away from the basket.","To give the ball handler an open passing lane.","To deny all three-point shots without rotating."]},"stunt-recover":{"prompt":"After the stunt forces a hesitation, what is the defender's next responsibility?","correctResponse":"Recover to the original assignment unless a team rotation is called.","distractors":["Become an extra permanent on-ball defender.","Sprint to the opposite baseline and remain there.","Switch onto the screener automatically."]},"dig":{"prompt":"When is a short dig at the post most often timed?","correctResponse":"When the post player puts the ball on the floor.","distractors":["Before the entry pass leaves the point guard's hands.","Only once the shot is already in the air.","After the post player has passed out and the ball is gone."]},"gap-help":{"prompt":"Why does a gap defender shade toward the ball?","correctResponse":"To discourage straight-line penetration while remaining able to recover.","distractors":["To allow a direct layup while denying every pass.","To screen the shooter for their teammate.","To avoid ever closing out to their original player."]},"nail-help":{"prompt":"Where on the court is the 'nail'?","correctResponse":"At the middle of the free-throw line.","distractors":["The midpoint of the half-court line.","The corner of the backboard.","A spot outside the sideline at the scorer's table."]},"peel-switch":{"prompt":"After a helper stops the drive on a peel switch, what does the beaten on-ball defender do?","correctResponse":"Leave the ball and pick up the helper's vacated assignment.","distractors":["Keep chasing the handler alongside the helper.","Run to the bench for a substitution.","Automatically trap the ball with no rotation."]},"x-out":{"prompt":"What problem does an X-out rotation solve?","correctResponse":"It covers two perimeter passing options after a defender has helped in the lane.","distractors":["Both defenders stay in the paint regardless of passes.","The closest big guards every perimeter shooter.","Both players collapse on the same receiver."]},"scram-switch":{"prompt":"Why would a defense use a scram switch?","correctResponse":"To remove an unfavorable mismatch, especially a small defender guarding the post.","distractors":["To make a smaller defender guard a bigger post scorer.","To prevent a teammate from closing out on any shooter.","To force a ball-screen trap with no post defender."]},"top-lock":{"prompt":"What is the main risk when a defender top-locks an off-ball shooter?","correctResponse":"A backdoor cut behind the overplaying defender.","distractors":["The shooter must remain stationary outside the arc.","The defender is forced to guard the referee.","The screener becomes an automatic ball handler."]},"no-middle":{"prompt":"In a no-middle scheme, which direction is the defender trying to deny?","correctResponse":"The middle of the floor.","distractors":["The sideline and baseline.","The offensive team's bench area.","Every pass outside the three-point line."]},"pack-line":{"prompt":"What is the off-ball priority in pack-line defense?","correctResponse":"Crowd driving lanes in help positions, then close out on the pass.","distractors":["Deny every pass at full court regardless of ball position.","Leave driving lanes open while trapping the weak side.","Stay at the rim and never close out on passes."]},"box-out":{"prompt":"What happens after a defender establishes a box-out position?","correctResponse":"Pursue and secure the rebound.","distractors":["Run away from the ball to start the fast break.","Watch the shot until the opponent gets the rebound.","Hold or push the opponent illegally instead of pursuing."]},"defensive-communication":{"prompt":"What makes a useful defensive communication call?","correctResponse":"Early, clear information that teammates can act on.","distractors":["A call that comes only after the play finishes.","A secret term that no teammate understands.","Shouting continuously without identifying the action."]},"over":{"prompt":"When going over a ball screen, what is the on-ball defender trying to do?","correctResponse":"Stay attached to the handler by navigating above the screen.","distractors":["Leave the handler and guard a corner shooter.","Run under the screen and concede every three.","Switch without a call regardless of the plan."]},"under":{"prompt":"What is the main risk of choosing to go under against a strong shooter?","correctResponse":"The handler can stop and shoot behind the screen.","distractors":["The screener always becomes the on-ball defender.","The defense automatically earns possession.","The ball handler must pass to the corner."]},"high-drop":{"prompt":"What distinguishes high drop from a deeper low drop?","correctResponse":"The big begins closer to the level of the screen.","distractors":["Both defenders must trap above half court.","The guard refuses to navigate the screen.","The big guards the opposite corner immediately."]},"low-drop":{"prompt":"What is a primary trade-off of a low drop position?","correctResponse":"More rim protection but more space for a pull-up jumper.","distractors":["Less rim protection and no possible driving lane.","An automatic switch of both defenders.","An immediate full-court double team."]},"ice-down":{"prompt":"What is the basic aim of ICE on a side ball screen?","correctResponse":"Deny the screen and direct the handler toward sideline/baseline help.","distractors":["Invite a middle drive before the screen arrives.","Switch all five defenders to the nearest player.","Leave the corner defender to pressure half court."]},"weak":{"prompt":"Before forcing a handler 'weak', what must the on-ball defender know?","correctResponse":"The agreed force direction and where the help is positioned.","distractors":["Only the opponent's jersey number.","Whether the referee has stopped the clock.","Which teammate will take the next free throw."]}};
+
+    function makeDefensiveIQQuestion(term) {
+      const review = Object.hasOwn(DEFENSIVE_IQ_QUESTIONS, term.id) ? DEFENSIVE_IQ_QUESTIONS[term.id] : null;
+      if (!review || typeof review.prompt !== "string" || typeof review.correctResponse !== "string" ||
+          !Array.isArray(review.distractors) || review.distractors.length !== 3) return makeDefinitionQuestion(term);
+      return {
+        type: "defensiveIQ", term,
+        question: review.prompt,
+        answer: review.correctResponse,
+        options: shuffle([review.correctResponse, ...review.distractors]),
+        explanation: term.term + ": " + term.definition + " Defensive cue: " + term.cue
+      };
     }
 
     function makeCategoryQuestion(term) {
@@ -2655,6 +2879,31 @@
       return copyTeamFeedbackText(TEAM_FEEDBACK_MESSAGE, "Team feedback message copied.");
     }
 
+
+    async function copyCoachReviewInvitation() {
+      const field = document.getElementById("coachReviewInvitation");
+      const status = document.getElementById("coachReviewInvitationStatus");
+      if (!field || !status) return false;
+      const message = field.value.trim();
+      if (!message) {
+        status.textContent = "Write an invitation before copying.";
+        return false;
+      }
+      try {
+        if (!navigator.clipboard || typeof navigator.clipboard.writeText !== "function") {
+          throw new Error("Clipboard unavailable");
+        }
+        await navigator.clipboard.writeText(message);
+        status.textContent = "Invitation copied. Paste it into your coach message; nothing has been sent.";
+        return true;
+      } catch {
+        field.focus();
+        field.select();
+        status.textContent = "Clipboard unavailable. The invitation is selected; copy it manually. Nothing has been sent.";
+        return false;
+      }
+    }
+
     function copyCoachReviewChecklist() {
       return copyTeamFeedbackText(COACH_REVIEW_CHECKLIST, "Coach review checklist copied.");
     }
@@ -2714,7 +2963,19 @@ Page/app note: Hoop IQ Trainer Team Feedback`
       const incoming = Array.isArray(obj) ? obj : obj.terms;
       if (!Array.isArray(incoming) || !incoming.length) return alert("Import failed. JSON must include a terms array.");
       if (!incoming.every(isValidImportedTerm)) return alert("Import failed. Check term fields and motion steps; coordinates must be finite numbers within the court.");
-      TERMS = mergeWithDefaultTerms(incoming);
+      // Short imports patch current coach work; complete backups still replace.
+      const explicitReplacement = !Array.isArray(obj) && obj.mode === "replace";
+      const partialImport = !explicitReplacement && incoming.length < DEFAULT_TERMS.length;
+      if (partialImport) {
+        const currentById = new Map(TERMS.map(term => [term.id, term]));
+        const patches = incoming.map(term => {
+          const id = term.id || slugify(term.term || "");
+          return { ...(currentById.get(id) || {}), ...term };
+        });
+        TERMS = mergeWithDefaultTerms([...TERMS, ...patches]);
+      } else {
+        TERMS = mergeWithDefaultTerms(incoming);
+      }
       saveTerms();
       alert(`Imported ${TERMS.length} terms.`);
       renderLibrary("All");
@@ -2984,7 +3245,10 @@ Page/app note: Hoop IQ Trainer Team Feedback`
       ];
     }
 
+    const DEFENSIVE_IQ_DIAGRAMS = {"def-shell":{"players":[{"n":1,"x":315,"y":430},{"n":2,"x":105,"y":350},{"n":3,"x":495,"y":345},{"n":4,"x":140,"y":160},{"n":"X1","x":315,"y":385},{"n":"X2","x":150,"y":335},{"n":"X3","x":405,"y":278},{"n":"X4","x":220,"y":235}],"playerMoves":[{"d":"M315 385 C301 385, 294 390, 280 390"},{"d":"M150 335 C140 335, 135 333, 125 333"},{"d":"M405 278 C391 278, 384 248, 370 248"},{"d":"M220 235 C229 235, 233 213, 242 213"}],"passes":[{"d":"M315 430 C231 430, 189 350, 105 350"}],"screens":[],"extra":[{"type":"space","text":"ball","x":350,"y":406},{"type":"space","text":"deny","x":125,"y":300},{"type":"space","text":"help","x":410,"y":250}]},"def-closeout":{"players":[{"n":1,"x":320,"y":435},{"n":2,"x":110,"y":335},{"n":3,"x":510,"y":345},{"n":"X1","x":295,"y":390},{"n":"X2","x":235,"y":270},{"n":"X3","x":440,"y":285}],"playerMoves":[{"d":"M235 270 C199 270, 181 329, 145 329"},{"d":"M145 329 C138 329, 135 340, 128 340"}],"passes":[{"d":"M320 435 C236 435, 194 335, 110 335"}],"screens":[],"extra":[{"type":"space","text":"close out","x":225,"y":245},{"type":"space","text":"brake","x":150,"y":295}]},"def-help-side":{"players":[{"n":1,"x":440,"y":370},{"n":2,"x":490,"y":160},{"n":3,"x":100,"y":335},{"n":"X1","x":405,"y":343},{"n":"X2","x":435,"y":218},{"n":"X3","x":170,"y":280}],"playerMoves":[{"d":"M170 280 C202 280, 218 245, 250 245"},{"d":"M250 245 C262 245, 268 225, 280 225"}],"passes":[],"screens":[],"extra":[{"type":"space","text":"ball side","x":410,"y":320},{"type":"space","text":"weak help","x":248,"y":225}]},"def-tag-roller":{"players":[{"n":1,"x":400,"y":420},{"n":5,"x":295,"y":300},{"n":3,"x":110,"y":320},{"n":"X1","x":373,"y":380},{"n":"X5","x":325,"y":250},{"n":"X3","x":185,"y":245}],"playerMoves":[{"d":"M295 300 C298 300, 299 180, 302 180"},{"d":"M185 245 C220 245, 237 210, 272 210"}],"passes":[{"d":"M400 420 C358 420, 337 300, 295 300"}],"screens":[{"x1":280,"y1":315,"x2":315,"y2":315,"label":"Screen"}],"extra":[{"type":"space","text":"tag","x":235,"y":180},{"type":"space","text":"roller","x":315,"y":155}]},"def-stunt-recover":{"players":[{"n":1,"x":360,"y":410},{"n":2,"x":115,"y":340},{"n":5,"x":300,"y":165},{"n":"X1","x":330,"y":370},{"n":"X2","x":167,"y":315},{"n":"X5","x":315,"y":205}],"playerMoves":[{"d":"M167 315 C201 315, 218 305, 252 305"},{"d":"M252 305 C217 305, 200 310, 165 310"}],"passes":[],"screens":[],"extra":[{"type":"space","text":"stunt","x":242,"y":278},{"type":"space","text":"recover","x":145,"y":278}]},"def-dig":{"players":[{"n":5,"x":285,"y":190},{"n":2,"x":110,"y":335},{"n":1,"x":405,"y":410},{"n":"X5","x":329,"y":218},{"n":"X2","x":150,"y":295},{"n":"X1","x":379,"y":365}],"playerMoves":[{"d":"M150 295 C190 295, 210 218, 250 218"},{"d":"M250 218 C215 218, 198 296, 163 296"}],"passes":[{"d":"M405 410 C357 410, 333 190, 285 190"}],"screens":[],"extra":[{"type":"space","text":"dig on dribble","x":233,"y":255},{"type":"space","text":"recover","x":118,"y":275}]},"def-gap-help":{"players":[{"n":1,"x":425,"y":390},{"n":2,"x":505,"y":180},{"n":3,"x":120,"y":350},{"n":"X1","x":400,"y":354},{"n":"X2","x":455,"y":240},{"n":"X3","x":230,"y":300}],"playerMoves":[{"d":"M455 240 C450 260, 443 285, 436 303"},{"d":"M436 303 C440 285, 450 259, 455 240"}],"passes":[],"screens":[],"extra":[{"type":"space","text":"gap","x":416,"y":330},{"type":"space","text":"see both","x":485,"y":285}]},"def-nail-help":{"players":[{"n":1,"x":390,"y":430},{"n":4,"x":120,"y":350},{"n":2,"x":510,"y":335},{"n":"X1","x":375,"y":390},{"n":"X4","x":195,"y":325},{"n":"X2","x":465,"y":309}],"playerMoves":[{"d":"M195 325 C238 325, 259 300, 302 300"},{"d":"M302 300 C308 300, 312 284, 318 284"}],"passes":[],"screens":[],"extra":[{"type":"space","text":"nail","x":310,"y":270},{"type":"space","text":"middle drive","x":410,"y":315}]},"def-peel-switch":{"players":[{"n":1,"x":400,"y":415},{"n":2,"x":505,"y":200},{"n":3,"x":110,"y":340},{"n":"X1","x":376,"y":368},{"n":"X2","x":445,"y":270},{"n":"X3","x":170,"y":280}],"playerMoves":[{"d":"M445 270 C409 270, 391 310, 355 310"},{"d":"M390 380 C420 380, 435 215, 465 215"}],"passes":[],"screens":[],"extra":[{"type":"space","text":"helper ball","x":303,"y":285},{"type":"space","text":"peel to 2","x":460,"y":253}]},"def-x-out":{"players":[{"n":1,"x":395,"y":410},{"n":2,"x":505,"y":345},{"n":3,"x":505,"y":165},{"n":4,"x":130,"y":340},{"n":"X1","x":370,"y":372},{"n":"X2","x":325,"y":155},{"n":"X3","x":315,"y":252}],"playerMoves":[{"d":"M325 155 C375 175, 410 290, 485 330"},{"d":"M315 252 C370 235, 425 175, 485 170"}],"passes":[{"d":"M395 410 C438 410, 468 345, 505 345"},{"d":"M505 345 C505 296, 505 217, 505 165"}],"screens":[],"extra":[{"type":"space","text":"first close: wing","x":450,"y":290},{"type":"space","text":"second close: corner","x":435,"y":205}]},"def-scram-switch":{"players":[{"n":5,"x":235,"y":190},{"n":1,"x":400,"y":400},{"n":4,"x":500,"y":180},{"n":"X1","x":240,"y":228},{"n":"X4","x":370,"y":265},{"n":"X5","x":395,"y":360}],"playerMoves":[{"d":"M370 265 C328 265, 307 202, 265 202"},{"d":"M240 228 C329 228, 373 187, 462 187"}],"passes":[{"d":"M400 400 C334 400, 301 190, 235 190"}],"screens":[],"extra":[{"type":"space","text":"scram","x":330,"y":190},{"type":"space","text":"X1 escapes","x":335,"y":295}]},"def-top-lock":{"players":[{"n":2,"x":135,"y":345},{"n":5,"x":305,"y":255},{"n":1,"x":430,"y":420},{"n":"X2","x":195,"y":305},{"n":"X5","x":340,"y":230}],"playerMoves":[{"d":"M135 345 C183 345, 207 263, 255 263"},{"d":"M135 345 C148 345, 155 202, 168 202"}],"passes":[],"screens":[{"x1":250,"y1":265,"x2":285,"y2":245,"label":"Pin"}],"extra":[{"type":"space","text":"top lock","x":195,"y":250},{"type":"space","text":"backdoor risk","x":145,"y":193}]},"def-no-middle":{"players":[{"n":1,"x":430,"y":350},{"n":2,"x":125,"y":350},{"n":3,"x":110,"y":160},{"n":"X1","x":405,"y":320},{"n":"X2","x":175,"y":315},{"n":"X3","x":180,"y":210}],"playerMoves":[{"d":"M430 350 C460 350, 475 400, 505 400"},{"d":"M405 320 C429 320, 441 373, 465 373"},{"d":"M180 210 C218 210, 237 185, 275 185"}],"passes":[],"screens":[],"extra":[{"type":"space","text":"deny middle","x":335,"y":342},{"type":"space","text":"force edge","x":492,"y":310},{"type":"space","text":"low help","x":270,"y":152}]},"def-pack-line":{"players":[{"n":1,"x":400,"y":415},{"n":2,"x":115,"y":350},{"n":3,"x":505,"y":350},{"n":4,"x":115,"y":150},{"n":"X1","x":378,"y":375},{"n":"X2","x":255,"y":260},{"n":"X3","x":350,"y":257},{"n":"X4","x":278,"y":180}],"playerMoves":[{"d":"M255 260 C253 260, 252 280, 250 280"},{"d":"M350 257 C352 257, 353 280, 355 280"}],"passes":[],"screens":[],"extra":[{"type":"space","text":"pack gap","x":255,"y":245},{"type":"space","text":"paint help","x":352,"y":220},{"type":"space","text":"ball pressure","x":430,"y":365}]},"def-box-out":{"players":[{"n":5,"x":295,"y":240},{"n":2,"x":110,"y":320},{"n":1,"x":500,"y":340},{"n":"X5","x":295,"y":192},{"n":"X2","x":135,"y":285},{"n":"X1","x":465,"y":310}],"playerMoves":[{"d":"M295 192 C305 192, 310 155, 320 155"},{"d":"M135 285 C133 285, 132 240, 130 240"}],"passes":[],"screens":[],"extra":[{"type":"space","text":"box out","x":345,"y":190},{"type":"space","text":"rebound","x":320,"y":126}]},"def-communication":{"players":[{"n":1,"x":400,"y":425},{"n":2,"x":110,"y":340},{"n":3,"x":505,"y":185},{"n":4,"x":115,"y":160},{"n":"X1","x":380,"y":386},{"n":"X2","x":153,"y":310},{"n":"X3","x":410,"y":235},{"n":"X4","x":215,"y":240}],"playerMoves":[{"d":"M410 235 C384 235, 371 230, 345 230"},{"d":"M215 240 C227 240, 233 208, 245 208"}],"passes":[],"screens":[],"extra":[{"type":"space","text":"ball","x":408,"y":362},{"type":"space","text":"screen left","x":143,"y":275},{"type":"space","text":"help","x":398,"y":205},{"type":"space","text":"rotate","x":235,"y":190}]}};
+
     function diagramMoves(type) {
+      if (Object.prototype.hasOwnProperty.call(DEFENSIVE_IQ_DIAGRAMS, type)) return structuredClone(DEFENSIVE_IQ_DIAGRAMS[type]);
       let players = basePlayers();
       let playerMoves = [];
       let passes = [];
