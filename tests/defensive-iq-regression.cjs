@@ -114,6 +114,18 @@ const paths=xout.playerMoves.map(x=>sampleBezier(x.d));
 const closest=Math.min(...paths[0].map(a=>Math.min(...paths[1].map(b=>Math.hypot(a[0]-b[0],a[1]-b[1])))));
 assert.ok(closest<8,"X-Out defender paths do not cross");
 
+const pathOneStart=xout.playerMoves[0].d.match(/^M(\d+) (\d+)/);
+const pathTwoStart=xout.playerMoves[1].d.match(/^M(\d+) (\d+)/);
+const dx2=xout.players.find(p=>p.n==="X2"),dx3=xout.players.find(p=>p.n==="X3");
+assert.equal(Number(pathOneStart[1]),dx2.x,"X2 must perform first close to wing");
+assert.equal(Number(pathOneStart[2]),dx2.y,"X2 movement origin y incorrect");
+assert.equal(Number(pathTwoStart[1]),dx3.x,"X3 must close toward corner");
+assert.equal(Number(pathTwoStart[2]),dx3.y,"X3 movement origin y incorrect");
+const wingEnd=paths[0].at(-1),cornerEnd=paths[1].at(-1);
+assert.ok(Math.hypot(wingEnd[0]-wing.x,wingEnd[1]-wing.y)<30,"X2 wing arrival not at receiver");
+assert.ok(Math.hypot(cornerEnd[0]-corner.x,cornerEnd[1]-corner.y)<30,"X3 corner arrival not at receiver");
+
+
 
 // P3: Source documentation, runtime copy, and static teaching-scene descriptions must agree.
 const contentPack = JSON.parse(fs.readFileSync(path.join(root,"content/defensive-iq-pack.review.json"),"utf8"));
