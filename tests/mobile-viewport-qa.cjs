@@ -54,7 +54,7 @@ const server = http.createServer((req,res)=>{
       const ga4=await page.evaluate(()=>window.dataLayer.map(args=>Array.from(args)));
       assert.ok(ga4.some(x=>x[0]==="config"&&x[1]==="G-ETJG7F3CFD"),width+"px GA config missing");
       assert.ok(ga4.some(x=>x[0]==="event"&&x[1]==="page_view"&&
-        x[2].page_location===location.origin+location.pathname),width+"px sanitized page view missing");
+        x[2].page_location===new URL(page.url()).origin+new URL(page.url()).pathname),width+"px sanitized page view missing");
       assert.ok(ga4.some(x=>x[0]==="consent"&&x[2].ad_storage==="denied"),width+"px ads consent must remain denied");
       await page.locator('.footer-nav button[data-nav="home"]').click();
       await page.locator("#home.active").waitFor();
