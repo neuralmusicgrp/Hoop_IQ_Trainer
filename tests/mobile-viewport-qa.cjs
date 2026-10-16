@@ -144,6 +144,20 @@ const server = http.createServer((req,res)=>{
       await answers.first().click();
       await page.locator("#feedback.show").waitFor();
       await checkOverflow("quiz");
+      for(let question=1;question<10;question++) {
+        await page.locator("#nextQuestionBtn").click();
+        await page.locator("#answers button").first().click();
+      }
+      await page.locator("#nextQuestionBtn").click();
+      await page.locator("#results.active").waitFor();
+      const completedEvents=await page.evaluate(()=>window.dataLayer
+        .filter(a=>a[0]==="event"&&a[1]==="quiz_completed").map(a=>a[2]));
+      assert.equal(completedEvents.length,1,width+"px quiz completion event should fire once");
+      assert.equal(completedEvents[0].question_count,10);
+      assert.ok(completedEvents[0].score_percent>=0&&completedEvents[0].score_percent<=100);
+      assert.deepEqual(Object.keys(completedEvents[0]).sort(),
+        ["content_group","question_count","score_percent"].sort(),
+        width+"px event must not include names, answers, or coach notes");
       await page.evaluate(()=>showScreen("settings"));
       await page.locator("#ga4SettingsDisable").click();
       assert.equal(await page.evaluate(()=>window["ga-disable-G-ETJG7F3CFD"]),true);
