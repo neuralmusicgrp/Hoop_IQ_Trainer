@@ -6,7 +6,7 @@ Hoop IQ Trainer helps players study coach-assigned basketball terminology throug
 
 ## Current Version
 
-v0.9.14 - Import Safety and Quiz Reliability
+v3 production — Defensive IQ Pack and Coach Review (October 16, 2026)
 
 ## Current App Status
 
@@ -18,6 +18,9 @@ v0.9.14 - Import Safety and Quiz Reliability
 - Coach-edited and imported categories appear in local study, quiz, Coach Tools, and progress views
 - Static SVG half-court diagrams and diagram quiz mode
 - Team feedback helper that opens an email draft or copies feedback text
+- Optional Google Analytics 4 measurement is **off until visitors opt in**. No Google tag loads for visitors who decline.
+- GA4 events (when permitted): page views, study/diagram starts, quiz starts/completions, and feedback initiation. Custom events never contain player names, individual answers, or coach-edited notes.
+- Visitors can allow or decline on Home and change their choice under Player / Settings. See [Privacy Notice](privacy.html).
 - Future Supabase/auth/team features are planning-only and not live in the app
 
 ## Features
