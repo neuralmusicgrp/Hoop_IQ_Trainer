@@ -21,9 +21,36 @@ function makeApp(store = new Map()) {
     createElement(){return node()},querySelectorAll(){return []},body:node()};
   const localStorage = {getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(k,v)};
   const fn = new Function("document","localStorage","window","alert","confirm","structuredClone","console",js+
-    "\nreturn {defaults:()=>DEFAULT_TERMS,terms:()=>TERMS,legacy:()=>LEGACY_DEFENSE_DEFAULTS,questions:()=>DEFENSIVE_IQ_QUESTIONS,termsByCategory,diagramMoves,courtSvg,showPicker,startQuiz,quizQuestions:()=>state.quizQuestions,importTermsObject,makeDefensiveIQQuestion};");
+    "\nreturn {defaults:()=>DEFAULT_TERMS,terms:()=>TERMS,legacy:()=>LEGACY_DEFENSE_DEFAULTS,questions:()=>DEFENSIVE_IQ_QUESTIONS,termsByCategory,diagramMoves,courtSvg,showPicker,startQuiz,quizQuestions:()=>state.quizQuestions,importTermsObject,makeDefensiveIQQuestion,startFlashcards,revealCard,nextCard,openDiagramForCurrentCard,startDiagramStudy,nextDiagram,prevDiagram,getProgress};");
   return {app:fn(document,localStorage,{scrollTo(){}},()=>{},()=>true,x=>JSON.parse(JSON.stringify(x)),{warn(){},log(){}}),nodes};
 }
+
+// Cards Studied is cumulative, and an individual flashcard visit counts once.
+// A learner may reveal its meaning, advance directly, or open its diagram.
+const studied = makeApp();
+const lesson = studied.app;
+assert.equal(lesson.getProgress().cardsStudied,0);
+lesson.startFlashcards("Action");
+assert.equal(lesson.getProgress().cardsStudied,0,"Opening flashcards alone should not count");
+lesson.revealCard();
+assert.equal(lesson.getProgress().cardsStudied,1,"Revealing a flashcard must count");
+lesson.revealCard();
+lesson.nextCard();
+assert.equal(lesson.getProgress().cardsStudied,1,"Reveal then Next must not double count");
+lesson.nextCard();
+assert.equal(lesson.getProgress().cardsStudied,2,"Next without reveal must count");
+lesson.openDiagramForCurrentCard();
+assert.equal(lesson.getProgress().cardsStudied,3,"Opening current card diagram must count");
+lesson.nextDiagram();
+assert.equal(lesson.getProgress().cardsStudied,4,"Advancing diagrams must count");
+lesson.prevDiagram();
+assert.equal(lesson.getProgress().cardsStudied,5,"Reviewing previous diagram must count");
+lesson.startDiagramStudy("Defensive Coverage");
+assert.equal(lesson.getProgress().cardsStudied,6,"Opening Diagram Study must count first lesson");
+lesson.nextDiagram();
+assert.equal(lesson.getProgress().cardsStudied,7,"Studying another diagram must count");
+assert.equal(studied.nodes.get("statStudied").textContent,7,"Cards Studied header must update");
+
 const {app,nodes} = makeApp();
 assert.equal(app.defaults().length,66,"Expected 66 default terms");
 assert.equal(new Set(app.defaults().map(x=>x.id)).size,66,"Expected distinct IDs");
