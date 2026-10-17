@@ -2246,7 +2246,21 @@ Thank you for helping make this a more useful learning tool for players.</textar
       trackAppEvent("study_started",{content_group:analyticsGroup(category)});
     }
 
+    // Record each card at most once per visit, whether revealed or advanced.
+    function incrementStudiedCount() {
+      const progress = getProgress();
+      progress.cardsStudied += 1;
+      saveProgress(progress);
+    }
+
+    function markCurrentCardStudied() {
+      if (state.currentCardCounted || !state.cardDeck.length) return;
+      state.currentCardCounted = true;
+      incrementStudiedCount();
+    }
+
     function renderCard() {
+      state.currentCardCounted = false;
       const term = state.cardDeck[state.cardIndex % state.cardDeck.length];
       document.getElementById("cardProgress").textContent = `${state.cardIndex + 1} / ${state.cardDeck.length}`;
       document.getElementById("cardBar").style.width = `${((state.cardIndex + 1) / state.cardDeck.length) * 100}%`;
@@ -2265,17 +2279,17 @@ Thank you for helping make this a more useful learning tool for players.</textar
     function revealCard() {
       document.getElementById("cardDetails").style.display = "block";
       document.getElementById("revealBtn").style.display = "none";
-      const progress = getProgress();
-      progress.cardsStudied += 1;
-      saveProgress(progress);
+      markCurrentCardStudied();
     }
 
     function nextCard() {
+      markCurrentCardStudied();
       state.cardIndex = (state.cardIndex + 1) % state.cardDeck.length;
       renderCard();
     }
 
     function openDiagramForCurrentCard() {
+      markCurrentCardStudied();
       const term = state.cardDeck[state.cardIndex % state.cardDeck.length];
       state.diagramDeck = [term, ...TERMS.filter(t => t.id !== term.id)];
       state.diagramIndex = 0;
@@ -2292,6 +2306,7 @@ Thank you for helping make this a more useful learning tool for players.</textar
       state.motionStepIndex = 0;
       showScreen("diagramStudy");
       renderDiagramStudy();
+      incrementStudiedCount();
       trackAppEvent("diagram_started",{content_group:analyticsGroup(category)});
     }
 
@@ -2418,12 +2433,14 @@ Thank you for helping make this a more useful learning tool for players.</textar
       state.diagramIndex = (state.diagramIndex + 1) % state.diagramDeck.length;
       state.motionStepIndex = 0;
       renderDiagramStudy();
+      incrementStudiedCount();
     }
 
     function prevDiagram() {
       state.diagramIndex = (state.diagramIndex - 1 + state.diagramDeck.length) % state.diagramDeck.length;
       state.motionStepIndex = 0;
       renderDiagramStudy();
+      incrementStudiedCount();
     }
 
     function startQuiz(mode = "mixed", category = "All", customTerms = null, isDaily = false) {
