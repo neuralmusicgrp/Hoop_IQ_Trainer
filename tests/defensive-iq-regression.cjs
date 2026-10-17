@@ -28,6 +28,21 @@ const {app,nodes} = makeApp();
 assert.equal(app.defaults().length,66,"Expected 66 default terms");
 assert.equal(new Set(app.defaults().map(x=>x.id)).size,66,"Expected distinct IDs");
 assert.equal(app.termsByCategory("__hoop_iq_defensive_pack__").length,27,"Expected 27 defensive terms");
+const offenseKey="__hoop_iq_offensive_pack__";
+const offense=app.termsByCategory(offenseKey),defense=app.termsByCategory("__hoop_iq_defensive_pack__");
+assert.equal(offense.length,39,"Original offensive IQ deck must contain 39 terms");
+assert.equal(new Set(offense.map(t=>t.id)).size,39,"Duplicate offensive term ID");
+assert.equal(new Set([...offense,...defense].map(t=>t.id)).size,66,
+  "Offensive and Defensive IQ must together cover all 66 default terms");
+assert.ok(["pistol","spain","chicago"].every(id=>offense.some(t=>t.id===id)),
+  "Original offensive actions missing");
+assert.match(html, /<h2>All Basketball IQ<\/h2>/);
+assert.match(html, /<h2>Offensive IQ Pack<\/h2>/);
+assert.match(html, /<h2>Defensive IQ Pack<\/h2>/);
+assert.ok(html.includes("startFlashcards(OFFENSIVE_IQ_PACK_KEY)"));
+assert.ok(html.includes("startQuiz('offensiveIQ', OFFENSIVE_IQ_PACK_KEY)"));
+assert.ok(html.includes("startDiagramStudy(OFFENSIVE_IQ_PACK_KEY)"));
+
 assert.equal(Object.keys(app.legacy()).length,11,"Expected 11 legacy migrations");
 assert.equal(Object.keys(app.questions()).length,27,"Expected 27 scenario questions");
 for(const t of app.termsByCategory("__hoop_iq_defensive_pack__")) {
@@ -48,6 +63,14 @@ for(const t of newest) {
 }
 app.showPicker("Study","Study","Test",()=>{});
 assert.ok(nodes.get("pickerButtons").children.some(x=>x.innerHTML.includes("Defensive IQ Pack")));
+assert.ok(nodes.get("pickerButtons").children.some(x=>x.innerHTML.includes("Offensive IQ Pack")));
+app.startQuiz("offensiveIQ",offenseKey);
+assert.equal(app.quizQuestions().length,10,"Offensive IQ quiz must have 10 questions");
+assert.ok(app.quizQuestions().every(q=>offense.some(t=>t.id===q.term.id)),
+  "Offensive IQ quiz pulled a defensive term");
+assert.ok(app.quizQuestions().every(q=>q.options.length===4&&q.options.includes(q.answer)),
+  "Offensive IQ quiz options invalid");
+
 app.startQuiz("defensiveIQ","__hoop_iq_defensive_pack__");
 assert.equal(app.quizQuestions().length,10);
 assert.ok(app.quizQuestions().every(x=>x.options.length===4&&x.options.includes(x.answer)));
@@ -84,10 +107,22 @@ const labels=collision.nodes.get("pickerButtons").children.map(x=>x.innerHTML);
 assert.equal(new Set(labels).size,labels.length,"Duplicate category choice");
 assert.ok(labels.some(x=>x.includes("Defensive IQ Pack (Curated)")),"Missing curated choice");
 assert.ok(labels.some(x=>x.includes("Defensive IQ Pack (Saved Category)")),"Missing saved-category choice");
+const offensiveCollision=makeApp(new Map([["hoopIQTrainerV3Terms",JSON.stringify([
+  ...app.defaults(),{id:"custom-coach-offense",term:"Coach offense",category:"Offensive IQ Pack",definition:"Team offense"}
+])]]));
+offensiveCollision.app.showPicker("Study","Study","Test",()=>{});
+const offensiveLabels=offensiveCollision.nodes.get("pickerButtons").children.map(x=>x.innerHTML);
+assert.equal(new Set(offensiveLabels).size,offensiveLabels.length,"Duplicate offensive picker choice");
+assert.ok(offensiveLabels.some(x=>x.includes("Offensive IQ Pack (Curated)")),"Curated offense missing");
+assert.ok(offensiveLabels.some(x=>x.includes("Offensive IQ Pack (Saved Category)")),"Saved offense missing");
+assert.equal(offensiveCollision.app.termsByCategory(offenseKey).length,39,"Curated offense set polluted");
+
 const recategorized=app.defaults().map(x=>({...x}));
 recategorized.find(x=>x.id==="low-man").category="Team Defense";
+recategorized.find(x=>x.id==="pistol").category="Team Offense";
 const coach=makeApp(new Map([["hoopIQTrainerV3Terms",JSON.stringify(recategorized)]]));
 assert.equal(coach.app.termsByCategory(PACK).length,27,"Coach category changed pack membership");
+assert.equal(coach.app.termsByCategory(offenseKey).length,39,"Coach category changed original offense membership");
 assert.equal(coach.app.terms().find(x=>x.id==="low-man").category,"Team Defense");
 const gap=app.diagramMoves("def-gap-help");
 const x2=gap.players.find(x=>x.n==="X2"),x3=gap.players.find(x=>x.n==="X3");
