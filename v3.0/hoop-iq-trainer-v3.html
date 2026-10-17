@@ -834,16 +834,29 @@
 
       <div class="panel">
         <div class="mode-title">
-          <h2>Choose Your Workout</h2>
+          <h2>All Basketball IQ</h2>
           <span class="pill hot" id="termCount">31 terms</span>
         </div>
-
+        <p class="definition">Train your complete basketball IQ with offense and defense together, or focus on any individual category.</p>
         <div class="grid learning-grid">
           <button class="primary" onclick="chooseStudy()">Study Flashcards<br><span class="micro">Pick all terms or one category.</span></button>
           <button class="secondary" onclick="chooseQuiz()">Take Quiz<br><span class="micro">Mixed, category, or missed-term training.</span></button>
           <button class="purple" onclick="chooseDiagramStudy()">Diagram Study<br><span class="micro">See half-court visual notes.</span></button>
           <button onclick="startDailyWorkout()">Daily 10<br><span class="micro">Weighted toward missed terms.</span></button>
           <button onclick="showScreen('dashboard')">Progress Dashboard<br><span class="micro">Strengths, misses, and category accuracy.</span></button>
+        </div>
+      </div>
+
+      <div class="panel" id="offensiveIQPanel">
+        <div class="mode-title">
+          <h2>Offensive IQ Pack</h2>
+          <span class="pill cool">Original offensive curriculum</span>
+        </div>
+        <p class="definition">Study offensive actions, screens, cuts and screener decisions. The original offensive lessons are all here, with their teaching cues, quizzes and diagrams.</p>
+        <div class="grid learning-grid">
+          <button class="primary" onclick="startFlashcards(OFFENSIVE_IQ_PACK_KEY)">Study Offense<br><span class="micro">Original offensive terms and cues.</span></button>
+          <button class="secondary" onclick="startQuiz('offensiveIQ', OFFENSIVE_IQ_PACK_KEY)">Offensive IQ Quiz<br><span class="micro">Test actions, screens, cuts and reads.</span></button>
+          <button class="purple" onclick="startDiagramStudy(OFFENSIVE_IQ_PACK_KEY)">Offense Diagrams<br><span class="micro">View offensive movement and screen actions.</span></button>
         </div>
       </div>
 
@@ -1401,7 +1414,8 @@ Thank you for helping make this a more useful learning tool for players.</textar
       window.gtag("event",name,fields);
     }
     function analyticsGroup(category) {
-      return category===DEFENSIVE_IQ_PACK_KEY?"defensive_iq":"general";
+      return category===OFFENSIVE_IQ_PACK_KEY?"offensive_iq":
+        category===DEFENSIVE_IQ_PACK_KEY?"defensive_iq":"general";
     }
     function startGA4() {
       if(ga4Consent()!=="yes")return;
@@ -1819,6 +1833,12 @@ Thank you for helping make this a more useful learning tool for players.</textar
     const QUIZ_LENGTH = 10;
     const DEFENSIVE_IQ_PACK_KEY = "__hoop_iq_defensive_pack__";
     const DEFENSIVE_IQ_PACK_LABEL = "Defensive IQ Pack";
+    const OFFENSIVE_IQ_PACK_KEY = "__hoop_iq_offensive_pack__";
+    const OFFENSIVE_IQ_PACK_LABEL = "Offensive IQ Pack";
+    const OFFENSIVE_IQ_CATEGORIES = new Set(["Action", "Screen", "Cut", "Screener Post-Screen Action"]);
+    // Freeze the original offensive identities even if an owner edits their categories.
+    const OFFENSIVE_IQ_DEFAULT_IDS = new Set(DEFAULT_TERMS.filter(term =>
+      OFFENSIVE_IQ_CATEGORIES.has(term.category)).map(term => term.id));
     const progressKey = "hoopIQTrainerV3Progress";
     const termsKey = "hoopIQTrainerV3Terms";
 
@@ -2160,6 +2180,9 @@ Thank you for helping make this a more useful learning tool for players.</textar
 
     function termsByCategory(category) {
       if (category === DEFENSIVE_IQ_PACK_KEY) return TERMS.filter(term => Object.hasOwn(DEFENSIVE_IQ_QUESTIONS, term.id));
+      if (category === OFFENSIVE_IQ_PACK_KEY) return TERMS.filter(term =>
+        !Object.hasOwn(DEFENSIVE_IQ_QUESTIONS, term.id) &&
+        (OFFENSIVE_IQ_DEFAULT_IDS.has(term.id) || OFFENSIVE_IQ_CATEGORIES.has(term.category)));
       if (!category || category === "All") return TERMS;
       if (category === "Missed") {
         const missed = getProgress().missedTerms || [];
@@ -2192,15 +2215,19 @@ Thank you for helping make this a more useful learning tool for players.</textar
       const wrap = document.getElementById("pickerButtons");
       wrap.innerHTML = "";
 
-      const options = ["All", DEFENSIVE_IQ_PACK_KEY, ...CATEGORIES];
+      const options = ["All", OFFENSIVE_IQ_PACK_KEY, DEFENSIVE_IQ_PACK_KEY, ...CATEGORIES];
       const hasPackCategoryCollision = CATEGORIES.includes(DEFENSIVE_IQ_PACK_LABEL);
+      const hasOffenseCategoryCollision = CATEGORIES.includes(OFFENSIVE_IQ_PACK_LABEL);
       if (includeMissed) options.push("Missed");
 
       options.forEach(category => {
         const count = category === "All" ? TERMS.length : category === "Missed" ? (getProgress().missedTerms || []).length : termsByCategory(category).length;
         const btn = document.createElement("button");
         btn.className = category === "All" ? "primary" : category === "Missed" ? "secondary" : "";
-        const label = category === DEFENSIVE_IQ_PACK_KEY
+        const label = category === OFFENSIVE_IQ_PACK_KEY
+          ? (hasOffenseCategoryCollision ? "Offensive IQ Pack (Curated)" : OFFENSIVE_IQ_PACK_LABEL)
+          : category === OFFENSIVE_IQ_PACK_LABEL ? "Offensive IQ Pack (Saved Category)"
+          : category === DEFENSIVE_IQ_PACK_KEY
           ? (hasPackCategoryCollision ? "Defensive IQ Pack (Curated)" : DEFENSIVE_IQ_PACK_LABEL)
           : category === DEFENSIVE_IQ_PACK_LABEL ? "Defensive IQ Pack (Saved Category)" : category;
         btn.innerHTML = `${escapeHtml(label)}<br><span class="micro">${count} term${count === 1 ? "" : "s"}</span>`;
@@ -2416,9 +2443,11 @@ Thank you for helping make this a more useful learning tool for players.</textar
       showScreen("quiz");
       document.getElementById("quizModeTitle").textContent = isDaily ? "Daily 10" : modeTitle(mode);
       document.getElementById("quizHelper").style.display = "none";
-      document.getElementById("quizCategoryPill").textContent = category === "All" ? "All Terms" : category === DEFENSIVE_IQ_PACK_KEY ? DEFENSIVE_IQ_PACK_LABEL : category;
+      document.getElementById("quizCategoryPill").textContent = category === "All" ? "All Terms" :
+        category === OFFENSIVE_IQ_PACK_KEY ? OFFENSIVE_IQ_PACK_LABEL :
+        category === DEFENSIVE_IQ_PACK_KEY ? DEFENSIVE_IQ_PACK_LABEL : category;
       renderQuestion();
-      trackAppEvent("quiz_started",{content_group:analyticsGroup(category),quiz_type:mode==="defensiveIQ"?"defensive_iq":"general"});
+      trackAppEvent("quiz_started",{content_group:analyticsGroup(category),quiz_type:mode==="defensiveIQ"?"defensive_iq":mode==="offensiveIQ"?"offensive_iq":"general"});
     }
 
 
@@ -2474,6 +2503,7 @@ Thank you for helping make this a more useful learning tool for players.</textar
       if (mode === "cue") return "Cue Match";
       if (mode === "diagram") return "Name This Action";
       if (mode === "defensiveIQ") return "Defensive IQ Challenge";
+      if (mode === "offensiveIQ") return "Offensive IQ Challenge";
       return "Mixed Quiz";
     }
 
@@ -2485,7 +2515,8 @@ Thank you for helping make this a more useful learning tool for players.</textar
       });
       const picked = sample(unique, Math.min(QUIZ_LENGTH, unique.length));
       return picked.map(term => {
-        const actual = mode === "mixed" ? sample(["category", "definition", "cue", "mistake"], 1)[0] : mode;
+        const actual = (mode === "mixed" || mode === "offensiveIQ")
+          ? sample(["category", "definition", "cue", "mistake"], 1)[0] : mode;
         if (actual === "defensiveIQ") return makeDefensiveIQQuestion(term);
         if (actual === "category") return makeCategoryQuestion(term);
         if (actual === "cue") return makeCueQuestion(term);
