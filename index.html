@@ -792,19 +792,13 @@
     .ga4-consent p{margin:8px 0 12px}
     .ga4-consent .row{flex-wrap:wrap}
     .ga4-consent .row button{max-width:100%;white-space:normal}
-      /* Public beta recruitment: private v4 remains behind Cloudflare Access. */
-    .beta-invite { position:relative; overflow:hidden; border:1px solid #d99334; border-radius:22px; padding:clamp(18px,4vw,30px); margin:0 0 18px; color:#f7f9ff; background:radial-gradient(circle at 95% 10%,#253e5f 0,transparent 43%),linear-gradient(115deg,#091423,#101f38 65%,#211a20); box-shadow:0 14px 30px #0002; }
-    .beta-invite:before { content:""; position:absolute; width:260px; height:260px; border:2px dashed #ff9e303f; border-radius:50%; right:-75px; top:-120px; pointer-events:none; }
-    .beta-invite-layout { display:flex; align-items:center; gap:22px; justify-content:space-between; position:relative; }
-    .beta-invite-copy { flex:1; min-width:0; }
-    .beta-invite h2 { color:#fff; font-size:clamp(1.4rem,3vw,2rem); margin:6px 0 8px; line-height:1.2; }
-    .beta-invite p { color:#e4eaf4; line-height:1.5; margin:6px 0 14px; }
-    .beta-invite-kicker { display:block; text-transform:uppercase; letter-spacing:.12em; font-size:.76rem; font-weight:800; color:#ffbd69; }
-    .beta-invite-art { max-width:145px; width:24%; height:auto; object-fit:contain; filter:drop-shadow(0 9px 15px #0008); }
-    a.beta-invite-cta { display:inline-block; background:linear-gradient(135deg,#ff9d28,#ffd16a); color:#201306; font-weight:900; text-decoration:none; border-radius:14px; padding:13px 24px; text-align:center; min-height:0; border:0; }
-    a.beta-invite-cta:hover,a.beta-invite-cta:focus-visible { outline:2px solid #fff; outline-offset:3px; }
-    .beta-invite .beta-fineprint { font-size:.8rem; color:#d3ddec; margin:12px 0 0; }
-    @media(max-width:520px) { .beta-invite-art { max-width:90px; } .beta-invite-layout { gap:8px; } .beta-invite { padding:18px; } }
+      /* Public v3 beta recruitment; v4 remains Cloudflare Access-protected. */
+    .beta-invite { margin:0 0 18px; overflow:hidden; border:1px solid #d99334; border-radius:20px; background:#091423; box-shadow:0 14px 30px #0002; }
+    .beta-invite-banner { display:block; width:100%; line-height:0; }
+    .beta-invite-banner:focus-visible { outline:3px solid #ffd166; outline-offset:-4px; border-radius:17px; }
+    .beta-invite-image { display:block; width:100%; height:auto; }
+    .beta-invite-footer { margin:0; padding:12px 18px 15px; color:#e3e9f5; font-size:.86rem; line-height:1.55; }
+    .beta-invite-footer a { color:#ffc879; font-weight:800; text-underline-offset:3px; }
   </style>
 </head>
 <body>
@@ -845,17 +839,11 @@
         <p class="tiny"><a href="https://neuralmusicgrp.github.io/Hoop_IQ_Trainer/privacy.html" target="_blank" rel="noopener noreferrer">Our Privacy Notice</a> · <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy Policy</a></p>
       </div>
 
-      <aside class="beta-invite" aria-labelledby="betaInviteTitle">
-        <div class="beta-invite-layout">
-          <div class="beta-invite-copy">
-            <span class="beta-invite-kicker">Early access · Free educational beta</span>
-            <h2 id="betaInviteTitle">Join the Hoop IQ Trainer v4 Beta Team</h2>
-            <p>Help test offense, defense, flashcards, quizzes and diagrams. Players, coaches, parents and trainers are welcome to apply.</p>
-            <a class="beta-invite-cta" href="https://form.jotform.com/262897624934069" target="_blank" rel="noopener noreferrer">Apply to Beta ↗</a>
-            <p class="beta-fineprint">Applicants under 18 need a parent or legal guardian to apply and consent. Ages 13–17 only; no under-13 applications. Approval is required before private v4 access. Never share passwords.</p>
-          </div>
-          <img class="beta-invite-art" src="assets/brand/hoop-iq-logo-512.png" alt="Hoop IQ Trainer basketball logo" width="145" height="145" loading="lazy">
-        </div>
+      <aside class="beta-invite" aria-label="Join the Hoop IQ Trainer v4 Beta Team">
+        <a class="beta-invite-banner" href="https://form.jotform.com/262897624934069" target="_blank" rel="noopener noreferrer" aria-label="Apply to the free Hoop IQ Trainer v4 beta (opens the application form)">
+          <img class="beta-invite-image" src="assets/beta/hoop-iq-v4-beta-banner.png" width="1672" height="941" alt="Join the Hoop IQ Trainer v4 Beta Team. Study offense and defense, flashcards, quizzes, court diagrams and progress. Apply to Beta." decoding="async" loading="lazy">
+        </a>
+        <p class="beta-invite-footer">Free, invitation-only testing. Players aged 13–17 need their parent or legal guardian to <a href="https://form.jotform.com/262897624934069" target="_blank" rel="noopener noreferrer">apply and consent</a>. Children under 13 aren't eligible. Access to private v4 requires approval.</p>
       </aside>
 
       <div class="panel">
