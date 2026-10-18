@@ -7,6 +7,17 @@ const root = path.join(__dirname, "..");
 const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
 const twin = fs.readFileSync(path.join(root, "v3.0/hoop-iq-trainer-v3.html"), "utf8");
 assert.equal(html, twin, "App mirrors differ");
+const betaBannerPath = path.join(root, "assets/beta/hoop-iq-v4-beta-banner.png");
+assert.ok(fs.existsSync(betaBannerPath), "The full beta banner image must be committed before publishing the new CTA");
+const betaBanner = fs.readFileSync(betaBannerPath);
+assert.equal(betaBanner.subarray(0, 8).toString("hex"), "89504e470d0a1a0a", "Beta banner must be a valid PNG");
+assert.ok(betaBanner.length > 1000, "Beta banner PNG must not be empty");
+assert.ok(html.includes('src="assets/beta/hoop-iq-v4-beta-banner.png"'), "Beta CTA image path mismatch");
+const betaCTA = html.split('<aside class="beta-invite"')[1]?.split("</aside>")[0];
+assert.ok(betaCTA && betaCTA.includes('href="https://form.jotform.com/262897624934069"'), "Beta banner must link to the live signup");
+assert.ok(betaCTA.includes("parent or legal guardian"), "Beta CTA must retain teen guardian instructions");
+assert.ok(!betaCTA.includes("assets/brand/hoop-iq-logo-512.png"), "Do not use the old small logo inside the beta CTA");
+
 const js = html.split("<script>")[1]?.split("</script>")[0];
 assert.ok(js, "Main app inline script missing");
 function makeApp(store = new Map()) {
